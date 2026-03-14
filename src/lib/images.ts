@@ -30,18 +30,23 @@ export const images = {
       alt: 'Collar personalizado especial PatitasCoquetas'
     },
     design2: {
-      path: '/images/material%20/diseno2.jpg',
+      path: '/images/material%20/Diseno5.jpg',
       fallback: '🐕‍🦺',
       alt: 'Collar personalizado PatitasCoquetas'
     },
     design3: {
-      path: '/images/material%20/diseno3.jpg',
+      path: '/images/material%20/Diseno6.jpg',
       fallback: '🐶',
       alt: 'Collar personalizado PatitasCoquetas'
     },
     design4: {
-      path: '/images/material%20/diseno4.jpg',
+      path: '/images/material%20/Diseno7.jpg',
       fallback: '🦮',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design5: {
+      path: '/images/material%20/Diseno8.jpg',
+      fallback: '🐾',
       alt: 'Collar personalizado PatitasCoquetas'
     }
   },

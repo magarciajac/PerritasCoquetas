@@ -25,12 +25,39 @@ interface Step {
 }
 
 const collarColors = [
-  { name: 'rosa-empolvado', value: 'bg-rose-200', label: 'Rosa Empolvado' },
-  { name: 'beige', value: 'bg-orange-100', label: 'Beige' },
-  { name: 'verde-sage', value: 'bg-green-200', label: 'Verde Sage' },
-  { name: 'lavanda', value: 'bg-purple-200', label: 'Lavanda' },
-  { name: 'camel', value: 'bg-orange-200', label: 'Camel' },
-  { name: 'negro', value: 'bg-gray-800', label: 'Negro' }
+  { name: 'rosa', value: 'bg-pink-400', label: 'Rosa' },
+  { name: 'rosa-claro', value: 'bg-pink-200', label: 'Rosa Claro' },
+  { name: 'rojo', value: 'bg-red-600', label: 'Rojo' },
+  { name: 'naranja', value: 'bg-orange-500', label: 'Naranja' },
+  { name: 'amarillo', value: 'bg-yellow-400', label: 'Amarillo' },
+  { name: 'verde-lima', value: 'bg-lime-400', label: 'Verde Lima' },
+  { name: 'verde', value: 'bg-green-500', label: 'Verde' },
+  { name: 'verde-oscuro', value: 'bg-green-700', label: 'Verde Oscuro' },
+  { name: 'turquesa', value: 'bg-cyan-400', label: 'Turquesa' },
+  { name: 'azul-claro', value: 'bg-sky-300', label: 'Azul Claro' },
+  { name: 'azul', value: 'bg-blue-600', label: 'Azul' },
+  { name: 'azul-marino', value: 'bg-blue-900', label: 'Azul Marino' },
+  { name: 'morado', value: 'bg-purple-500', label: 'Morado' },
+  { name: 'lavanda', value: 'bg-purple-300', label: 'Lavanda' },
+  { name: 'cafe', value: 'bg-amber-700', label: 'Café' },
+  { name: 'beige', value: 'bg-amber-200', label: 'Beige' },
+  { name: 'gris', value: 'bg-gray-400', label: 'Gris' },
+  { name: 'gris-oscuro', value: 'bg-gray-600', label: 'Gris Oscuro' },
+  { name: 'negro', value: 'bg-gray-900', label: 'Negro' },
+  { name: 'blanco', value: 'bg-white border-2 border-gray-300', label: 'Blanco' }
+]
+
+const multicolorPatterns = [
+  { name: 'rosa-gris', value: 'bg-gradient-to-br from-pink-400 via-pink-300 to-gray-400', label: 'Rosa Gris' },
+  { name: 'rojo-amarillo', value: 'bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400', label: 'Rojo Amarillo' },
+  { name: 'rosa-blanco', value: 'bg-gradient-to-br from-pink-400 via-pink-200 to-white', label: 'Rosa Blanco' },
+  { name: 'azul-amarillo', value: 'bg-gradient-to-br from-blue-600 via-blue-400 to-yellow-400', label: 'Azul Amarillo' },
+  { name: 'negro-gris', value: 'bg-gradient-to-br from-gray-900 via-gray-600 to-gray-400', label: 'Negro Gris' },
+  { name: 'camuflaje', value: 'bg-gradient-to-br from-green-900 via-green-700 to-amber-700', label: 'Camuflaje' },
+  { name: 'arcoiris', value: 'bg-gradient-to-br from-pink-400 via-purple-500 to-cyan-400', label: 'Arcoíris' },
+  { name: 'turquesa-morado', value: 'bg-gradient-to-br from-cyan-400 via-purple-400 to-pink-500', label: 'Turquesa Morado' },
+  { name: 'gris-blanco', value: 'bg-gradient-to-br from-gray-500 via-gray-300 to-white', label: 'Gris Blanco' },
+  { name: 'azul-morado', value: 'bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800', label: 'Azul Morado' }
 ]
 
 const letterStyles = [
@@ -74,8 +101,8 @@ export default function CollarCustomizer() {
     color: collarColors[0],
     letterStyle: letterStyles[0],
     petName: '',
-    charms: [charmOptions[0]],
-    size: collarSizes[2] // Default to M
+    charms: [],
+    size: undefined // No talla por defecto - la seleccionan en paso 4
   })
   
   // Estados existentes
@@ -199,62 +226,6 @@ export default function CollarCustomizer() {
     ctx.closePath()
     ctx.fill()
 
-    // Dibujar textura del collar según el material
-    if (customization.letterStyle.name === 'dorado') {
-      // Puntos dorados
-      ctx.fillStyle = '#d97706'
-      for (let i = 70; i <= 330; i += 40) {
-        ctx.beginPath()
-        ctx.arc(i, 115, 3, 0, 2 * Math.PI)
-        ctx.fill()
-        ctx.beginPath()
-        ctx.arc(i, 145, 3, 0, 2 * Math.PI)
-        ctx.fill()
-      }
-      // Línea de costura
-      ctx.strokeStyle = '#92400e'
-      ctx.setLineDash([5, 5])
-      ctx.beginPath()
-      ctx.moveTo(70, 130)
-      ctx.lineTo(330, 130)
-      ctx.stroke()
-      ctx.setLineDash([])
-    } else if (customization.letterStyle.name === 'negro') {
-      // Textura de cuero negro
-      ctx.strokeStyle = '#374151'
-      ctx.setLineDash([3, 3])
-      ctx.beginPath()
-      ctx.moveTo(70, 130)
-      ctx.lineTo(330, 130)
-      ctx.stroke()
-      ctx.setLineDash([])
-      
-      // Pequeños rectángulos texturizados
-      ctx.fillStyle = '#4b5563'
-      for (let i = 80; i <= 320; i += 20) {
-        ctx.fillRect(i, 120, 8, 3)
-        ctx.fillRect(i, 135, 8, 3)
-      }
-    } else if (customization.letterStyle.name === 'plata') {
-      // Textura metálica
-      ctx.fillStyle = '#9ca3af'
-      for (let i = 70; i <= 330; i += 10) {
-        ctx.fillRect(i, 115, 4, 30)
-      }
-      // Brillos
-      ctx.fillStyle = 'rgba(255,255,255,0.6)'
-      ctx.fillRect(70, 115, 260, 2)
-      ctx.fillRect(70, 143, 260, 2)
-    } else if (customization.letterStyle.name === 'rosa') {
-      // Patrón floral
-      ctx.fillStyle = '#f472b6'
-      for (let i = 90; i <= 310; i += 60) {
-        ctx.beginPath()
-        ctx.arc(i, 130, 8, 0, 2 * Math.PI)
-        ctx.fill()
-      }
-    }
-
     // Agregar texto del nombre - SIEMPRE dorado para visibilidad
     ctx.fillStyle = '#d97706'
     ctx.font = 'bold 24px serif'
@@ -271,7 +242,9 @@ export default function CollarCustomizer() {
     ctx.fillText('PatitasCoquetas - Collar Personalizado', 50, 200)
     ctx.fillText(`Color: ${customization.color.label}`, 50, 220)
     ctx.fillText(`Material: ${customization.letterStyle.name}`, 50, 240)
-    ctx.fillText(`Dijes: ${customization.charms.map(c => c.label).join(', ')}`, 50, 260)
+    if (customization.charms.length > 0) {
+      ctx.fillText(`Dijes: ${customization.charms.map(c => c.label).join(', ')}`, 50, 260)
+    }
 
     return canvas.toDataURL('image/png')
   }
@@ -344,7 +317,9 @@ export default function CollarCustomizer() {
 
   const handleConfirmOrder = () => {
     const phoneNumber = '526143663694'
-    const charmsText = customization.charms.map(c => c.label).join(', ')
+    const charmsText = customization.charms.length > 0 
+      ? customization.charms.map(c => c.label).join(', ')
+      : 'Ninguno'
     const message = `Hola! Quiero ordenar un collar personalizado para mi mascota:
 
 DETALLES DEL DISEÑO:
@@ -481,91 +456,6 @@ Espero crear algo hermoso para mi mascota!`
                 >
                   {/* Fondo base del collar con el color seleccionado */}
                   <div className={`absolute inset-0 ${customization.color.value} rounded-full`}></div>
-                  
-                  {/* Textura del collar según el material seleccionado */}
-                  <div className="absolute inset-0 rounded-full">
-                    {customization.letterStyle.name === 'dorado' && (
-                      <div className="absolute inset-0 rounded-full">
-                        {/* Textura cuero dorado */}
-                        <div className="absolute top-3 left-4 right-4">
-                          <div className="flex justify-between">
-                            {[...Array(8)].map((_, i) => (
-                              <div key={i} className="w-2 h-2 border border-yellow-700 rounded-full bg-yellow-600 opacity-80"></div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="absolute bottom-3 left-4 right-4">
-                          <div className="flex justify-between">
-                            {[...Array(8)].map((_, i) => (
-                              <div key={i} className="w-2 h-2 border border-yellow-700 rounded-full bg-yellow-600 opacity-80"></div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="absolute inset-x-4 top-1/2 transform -translate-y-1/2">
-                          <div className="border-t-2 border-dashed border-yellow-700 opacity-70"></div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {customization.letterStyle.name === 'rosa' && (
-                      <div className="absolute inset-0 rounded-full">
-                        {/* Textura tela suave */}
-                        <div className="absolute inset-4">
-                          <div className="grid grid-cols-6 gap-2 h-full">
-                            {[...Array(12)].map((_, i) => (
-                              <div key={i} className="w-full h-3 bg-pink-400 rounded-full opacity-60"></div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                          <div className="w-4 h-4 bg-rose-500 rounded-full opacity-80"></div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {customization.letterStyle.name === 'plata' && (
-                      <div className="absolute inset-0 rounded-full">
-                        {/* Textura metálica */}
-                        <div className="absolute inset-3">
-                          <div className="grid grid-cols-12 gap-1 h-full">
-                            {[...Array(36)].map((_, i) => (
-                              <div key={i} className="bg-gray-600 opacity-50 rounded-sm"></div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="absolute top-3 left-3 right-3 h-1 bg-white opacity-60 rounded"></div>
-                        <div className="absolute bottom-3 left-3 right-3 h-1 bg-white opacity-60 rounded"></div>
-                      </div>
-                    )}
-                    
-                    {customization.letterStyle.name === 'negro' && (
-                      <div className="absolute inset-0 rounded-full">
-                        {/* Textura cuero negro */}
-                        <div className="absolute inset-4">
-                          <div className="grid grid-rows-3 gap-2 h-full">
-                            <div className="grid grid-cols-10 gap-1">
-                              {[...Array(10)].map((_, i) => (
-                                <div key={i} className="w-full h-2 bg-gray-700 opacity-60 rounded"></div>
-                              ))}
-                            </div>
-                            <div className="grid grid-cols-10 gap-1">
-                              {[...Array(10)].map((_, i) => (
-                                <div key={i} className="w-full h-2 bg-gray-700 opacity-60 rounded"></div>
-                              ))}
-                            </div>
-                            <div className="grid grid-cols-10 gap-1">
-                              {[...Array(10)].map((_, i) => (
-                                <div key={i} className="w-full h-2 bg-gray-700 opacity-60 rounded"></div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="absolute inset-x-4 top-1/2 transform -translate-y-1/2">
-                          <div className="border-t border-dashed border-gray-600 opacity-70"></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
 
                   {/* Pet Name Display - Siempre dorado para visibilidad */}
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -580,14 +470,16 @@ Espero crear algo hermoso para mi mascota!`
                     </span>
                   </div>
                   
-                  {/* Charm Display */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className="bg-white rounded-full p-3 shadow-xl border-4 border-white">
-                      <span className="text-3xl">
-                        {nameSlots.find(s => s.type === 'charm')?.content || customization.charms[0]?.emoji || '💖'}
-                      </span>
+                  {/* Charm Display - Solo mostrar si hay charm seleccionado */}
+                  {(nameSlots.some(s => s.type === 'charm') || customization.charms.length > 0) && (
+                    <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+                      <div className="bg-white rounded-full p-3 shadow-xl border-4 border-white">
+                        <span className="text-3xl">
+                          {nameSlots.find(s => s.type === 'charm')?.content || customization.charms[0]?.emoji}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Progress Indicator */}
@@ -629,7 +521,9 @@ Espero crear algo hermoso para mi mascota!`
                     <div className="flex justify-between">
                       <span>Dijes:</span>
                       <span className={`font-medium ${nameSlots.some(s => s.type === 'charm') ? 'text-gray-800' : 'text-gray-400'}`}>
-                        {nameSlots.filter(s => s.type === 'charm').length || customization.charms.length} seleccionados
+                        {nameSlots.filter(s => s.type === 'charm').length > 0 
+                          ? `${nameSlots.filter(s => s.type === 'charm').length} seleccionados`
+                          : 'Ninguno'}
                       </span>
                     </div>
                     <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
@@ -709,13 +603,13 @@ Espero crear algo hermoso para mi mascota!`
                         </div>
                       </div>
                       <div className="flex flex-col md:flex-row items-center gap-6">
-                        <div className="w-48 h-48 bg-white rounded-2xl overflow-hidden shadow-lg flex-shrink-0">
+                        <div className="w-64 h-64 bg-white rounded-2xl overflow-hidden shadow-lg flex-shrink-0">
                           <PatitasImage
                             src={getImageSrc('featured', customization.baseDesign.imageKey).src}
                             fallback={getImageSrc('featured', customization.baseDesign.imageKey).fallback}
                             alt={customization.baseDesign.name}
-                            width={300}
-                            height={300}
+                            width={400}
+                            height={400}
                             className="w-full h-full object-contain p-2"
                           />
                         </div>
@@ -773,36 +667,86 @@ Espero crear algo hermoso para mi mascota!`
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                  <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
                     {collarColors.map((color) => (
                       <button
                         key={color.name}
                         onClick={() => handleColorSelect(color)}
-                        className={`group relative aspect-square rounded-3xl ${color.value} transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                          customization.color.name === color.name ? 'ring-4 ring-orange-400 ring-offset-4 shadow-xl' : 'hover:ring-2 hover:ring-gray-300'
+                        className={`group relative flex flex-col items-center gap-2 transition-all duration-300 ${
+                          customization.color.name === color.name ? 'scale-110' : 'hover:scale-105'
                         }`}
+                        title={color.label}
                       >
-                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent" />
-                        
-                        {customization.color.name === color.name && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
-                              <svg className="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
+                        <div className={`w-14 h-14 rounded-full ${color.value} shadow-lg transition-all duration-300 ${
+                          customization.color.name === color.name 
+                            ? 'ring-4 ring-orange-400 ring-offset-2 shadow-xl' 
+                            : 'hover:shadow-xl'
+                        }`}>
+                          {customization.color.name === color.name && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-lg">
+                                <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        
-                        <div className="absolute -bottom-2 left-0 right-0">
-                          <div className="bg-white rounded-2xl p-3 mx-2 shadow-lg">
-                            <p className={`text-sm font-semibold text-center ${customization.color.name === color.name ? 'text-orange-600' : 'text-gray-700'}`}>
-                              {color.label}
-                            </p>
-                          </div>
+                          )}
                         </div>
+                        
+                        <span className={`text-xs font-medium transition-colors ${
+                          customization.color.name === color.name ? 'text-orange-600' : 'text-gray-600'
+                        }`}>
+                          {color.label}
+                        </span>
                       </button>
                     ))}
+                  </div>
+                  
+                  {/* Sección de Multicolor */}
+                  <div className="pt-8 border-t-2 border-gray-200">
+                    <div className="text-center mb-6">
+                      <h5 className="text-xl font-semibold text-gray-800 mb-2">
+                        🌈 Diseños Multicolor
+                      </h5>
+                      <p className="text-sm text-gray-600">
+                        Patrones especiales con combinaciones de colores
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
+                      {multicolorPatterns.map((pattern) => (
+                        <button
+                          key={pattern.name}
+                          onClick={() => handleColorSelect(pattern)}
+                          className={`group relative flex flex-col items-center gap-2 transition-all duration-300 ${
+                            customization.color.name === pattern.name ? 'scale-110' : 'hover:scale-105'
+                          }`}
+                          title={pattern.label}
+                        >
+                          <div className={`w-14 h-14 rounded-full ${pattern.value} shadow-lg transition-all duration-300 ${
+                            customization.color.name === pattern.name 
+                              ? 'ring-4 ring-orange-400 ring-offset-2 shadow-xl' 
+                              : 'hover:shadow-xl'
+                          }`}>
+                            {customization.color.name === pattern.name && (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <div className="bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-lg">
+                                  <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <span className={`text-xs font-medium transition-colors ${
+                            customization.color.name === pattern.name ? 'text-orange-600' : 'text-gray-600'
+                          }`}>
+                            {pattern.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}

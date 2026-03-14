@@ -12,20 +12,26 @@ export const baseDesigns = [
   },
   { 
     id: 2, 
-    name: 'Diseño Turquesa Elegante', 
+    name: 'Diseño Turquesa con Dijes', 
     imageKey: 'design2', 
     description: 'Diseño elegante con dijes personalizados' 
   },
   { 
     id: 3, 
-    name: 'Diseño Morado Divertido', 
+    name: 'Diseño Rosa Premium', 
     imageKey: 'design3', 
     description: 'Collar colorido lleno de personalidad' 
   },
   { 
     id: 4, 
-    name: 'Diseño Gato Multicolor', 
+    name: 'Diseño Multicolor Elegante', 
     imageKey: 'design4', 
     description: 'Creación especial para tu mascota' 
+  },
+  { 
+    id: 5, 
+    name: 'Diseño Artesanal Único', 
+    imageKey: 'design5', 
+    description: 'Estilo exclusivo con acabados especiales' 
   }
 ]
