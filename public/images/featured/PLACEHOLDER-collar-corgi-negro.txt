@@ -1,0 +1,4 @@
+# Coloca aquí la imagen: collar-corgi-negro.jpg
+# Foto de Corgi con collar negro personalizado
+# Tamaño recomendado: 600x400px
+# Formato: JPG

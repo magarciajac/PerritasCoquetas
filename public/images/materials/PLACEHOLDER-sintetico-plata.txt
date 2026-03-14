@@ -1,0 +1,4 @@
+# Coloca aquí la imagen: sintetico-plata.jpg
+# Material sintético resistente plateado
+# Tamaño recomendado: 400x300px  
+# Formato: JPG

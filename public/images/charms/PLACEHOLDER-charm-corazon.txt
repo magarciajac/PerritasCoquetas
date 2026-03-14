@@ -1,0 +1,4 @@
+# Coloca aquí la imagen: charm-corazon.png
+# Dije de corazón para collar
+# Tamaño recomendado: 200x200px
+# Formato: PNG con fondo transparente

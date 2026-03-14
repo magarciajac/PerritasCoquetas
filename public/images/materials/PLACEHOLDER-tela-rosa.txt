@@ -1,0 +1,4 @@
+# Coloca aquí la imagen: tela-rosa.jpg
+# Textura de tela suave con acabado delicado 
+# Tamaño recomendado: 400x300px
+# Formato: JPG

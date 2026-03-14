@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐾 PatitasCoquetas
 
-## Getting Started
+Landing page profesional para collares personalizados de mascotas con sistema de personalización interactivo.
 
-First, run the development server:
+## 🚀 Stack Tecnológico
+
+- **Framework**: Next.js 16 con App Router
+- **Lenguaje**: TypeScript
+- **Estilos**: Tailwind CSS
+- **Integración**: WhatsApp Business API
+
+## ✨ Características
+
+### Landing Page
+- Hero section optimizado para conversiones
+- Galería de diseños destacados con fotos reales
+- Sistema de precios por talla (XS a XL)
+- Integración directa con WhatsApp
+
+### Personalizador de Collares (Wizard 4 Pasos)
+1. **Diseño Base**: Selección de estilo de bordado desde galería modal
+2. **Color**: Personalización del color del collar
+3. **Personalización**: Sistema drag & drop para nombre y dijes
+4. **Talla**: Selección de medida con precios dinámicos
+
+### Sistema de Imágenes
+- Gestión centralizada de assets
+- Fallbacks automáticos con emojis
+- Fácil escalabilidad para agregar nuevos diseños
+
+## 🛠️ Comandos
 
 ```bash
+# Desarrollo
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Producción
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📱 WhatsApp Integration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Número configurado: **526143663694**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Los pedidos incluyen:
+- Diseño base seleccionado
+- Color personalizado
+- Nombre y dijes
+- Talla y precio
 
-## Learn More
+## 📦 Estructura del Proyecto
 
-To learn more about Next.js, take a look at the following resources:
+```
+PatitasCoquetas/
+├── src/
+│   ├── app/              # App Router
+│   ├── components/       # Componentes React
+│   ├── lib/              # Utilidades y configuración
+│   └── styles/           # Estilos globales
+└── public/
+    └── images/           # Assets de imágenes
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Agregar Nuevos Diseños
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ver documentación en: `COMO-AGREGAR-DISEÑOS.md`
 
-## Deploy on Vercel
+## 📄 Licencia
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proyecto privado - PatitasCoquetas © 2026
