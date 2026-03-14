@@ -136,7 +136,11 @@ export default function CollarCustomizer() {
   const [selectedLetterStyle, setSelectedLetterStyle] = useState<typeof letterStylesConfig[0] | null>(null)
   const [selectedCharmType, setSelectedCharmType] = useState<typeof charmTypes[0] | null>(null)
   const [generatedImageUrl, setGeneratedImageUrl] = useState('')
-  const [nameSlots, setNameSlots] = useState<Array<{type: 'letter' | 'charm', content: string}>>([])
+  const [nameSlots, setNameSlots] = useState<Array<{
+    type: 'letter' | 'charm'
+    content: string
+    charmColor?: { name: string; value: string; label: string }
+  }>>([])
   const [draggedItem, setDraggedItem] = useState<{type: 'letter' | 'charm', content: string} | null>(null)
   const [draggedCharm, setDraggedCharm] = useState<typeof charmOptions[0] | null>(null)
 
@@ -198,15 +202,33 @@ export default function CollarCustomizer() {
   }
 
   // Función para actualizar el nombre en customization
-  const updatePetName = (slots: Array<{type: 'letter' | 'charm', content: string}>) => {
+  const updatePetName = (slots: Array<{
+    type: 'letter' | 'charm'
+    content: string
+    charmColor?: { name: string; value: string; label: string }
+  }>) => {
+    // Crear el nombre completo incluyendo indicadores de charms
+    const fullName = slots.map(slot => {
+      if (slot.type === 'letter') {
+        return slot.content
+      } else {
+        return `●` // Usar un símbolo visual para los charms en el texto
+      }
+    }).join('')
+    
+    // Mantener solo las letras para el petName
     const letters = slots.filter(slot => slot.type === 'letter').map(slot => slot.content).join('')
-    const charms = slots.filter(slot => slot.type === 'charm').map(slot => 
-      charmOptions.find(charm => charm.emoji === slot.content)
-    ).filter(Boolean) as typeof charmOptions
+    
+    // Crear lista de charms para el mensaje de WhatsApp
+    const charms = slots.filter(slot => slot.type === 'charm').map(slot => ({
+      name: slot.charmColor?.name || 'unknown',
+      emoji: '●', // Símbolo para charms
+      label: slot.charmColor?.label || slot.content
+    }))
     
     setCustomization(prev => ({ 
       ...prev, 
-      petName: letters,
+      petName: letters, // Solo letras para compatibilidad
       charms: charms
     }))
   }
@@ -315,9 +337,15 @@ export default function CollarCustomizer() {
     e.preventDefault()
     
     if (draggedCharm) {
+      // Encontrar el color del charm arrastrado
+      const charmColorInfo = charmColors.find(color => color.name === draggedCharm.name)
       // Insertar charm en la posición específica
       const newSlots = [...nameSlots]
-      newSlots.splice(targetIndex, 0, {type: 'charm', content: draggedCharm.emoji})
+      newSlots.splice(targetIndex, 0, {
+        type: 'charm', 
+        content: draggedCharm.label,
+        charmColor: charmColorInfo
+      })
       setNameSlots(newSlots)
       updatePetName(newSlots)
       setDraggedCharm(null)
@@ -344,16 +372,29 @@ export default function CollarCustomizer() {
 
   const handleConfirmOrder = () => {
     const phoneNumber = '526143663694'
-    const charmsText = customization.charms.length > 0 
-      ? customization.charms.map(c => c.label).join(', ')
+    
+    // Crear representación visual del diseño completo
+    const designRepresentation = nameSlots.length > 0 
+      ? nameSlots.map(slot => {
+          if (slot.type === 'letter') {
+            return slot.content
+          } else {
+            return `[Dije ${slot.charmColor?.label || 'color'}]`
+          }
+        }).join(' ')
+      : 'BELLA'
+    
+    const charmsText = nameSlots.filter(s => s.type === 'charm').length > 0 
+      ? nameSlots.filter(s => s.type === 'charm').map(s => s.charmColor?.label).join(', ')
       : 'Ninguno'
+      
     const message = `Hola! Quiero ordenar un collar personalizado para mi mascota:
 
 DETALLES DEL DISEÑO:
 - Diseño Base: ${customization.baseDesign?.name || 'No seleccionado'}
 - Color del Collar: ${customization.color.label}
-- Nombre: ${customization.petName || nameSlots.filter(s => s.type === 'letter').map(s => s.content).join('') || 'BELLA'}
-- Dijes: ${charmsText}
+- Diseño Completo: ${designRepresentation}
+- Colores de Dijes: ${charmsText}
 - Talla: ${customization.size?.name} (${customization.size?.measurements})
 - Precio: ${customization.size?.price}
 
@@ -484,29 +525,40 @@ Espero crear algo hermoso para mi mascota!`
                   {/* Fondo base del collar con el color seleccionado */}
                   <div className={`absolute inset-0 ${customization.color.value} rounded-full`}></div>
 
-                  {/* Pet Name Display - Siempre dorado para visibilidad */}
+                  {/* Pet Name and Charms Display - Integrado en una sola cadena */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span 
-                      className="text-3xl font-bold text-yellow-600 transition-all duration-300 z-10"
-                      style={{ 
-                        fontFamily: 'serif',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(255,215,0,0.3)'
-                      }}
-                    >
-                      {customization.petName || nameSlots.filter(s => s.type === 'letter').map(s => s.content).join('') || 'BELLA'}
-                    </span>
-                  </div>
-                  
-                  {/* Charm Display - Solo mostrar si hay charm seleccionado */}
-                  {(nameSlots.some(s => s.type === 'charm') || customization.charms.length > 0) && (
-                    <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-                      <div className="bg-white rounded-full p-3 shadow-xl border-4 border-white">
-                        <span className="text-3xl">
-                          {nameSlots.find(s => s.type === 'charm')?.content || customization.charms[0]?.emoji}
+                    <div className="flex items-center justify-center gap-2">
+                      {nameSlots.length > 0 ? (
+                        nameSlots.map((slot, index) => (
+                          <div key={`preview-${index}`} className="flex items-center">
+                            {slot.type === 'letter' ? (
+                              <span 
+                                className="text-3xl font-bold text-yellow-600 transition-all duration-300"
+                                style={{ 
+                                  fontFamily: 'serif',
+                                  textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(255,215,0,0.3)'
+                                }}
+                              >
+                                {slot.content}
+                              </span>
+                            ) : (
+                              <div className={`w-5 h-5 rounded-full ${slot.charmColor?.value || 'bg-gray-300'} border-2 border-white shadow-lg`}></div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <span 
+                          className="text-3xl font-bold text-yellow-600 transition-all duration-300"
+                          style={{ 
+                            fontFamily: 'serif',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(255,215,0,0.3)'
+                          }}
+                        >
+                          BELLA
                         </span>
-                      </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Progress Indicator */}
@@ -540,17 +592,11 @@ Espero crear algo hermoso para mi mascota!`
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Nombre:</span>
+                      <span>Diseño Completo:</span>
                       <span className={`font-medium ${nameSlots.length > 0 ? 'text-gray-800' : 'text-gray-400'}`}>
-                        {nameSlots.filter(s => s.type === 'letter').map(s => s.content).join('') || customization.petName || 'Por personalizar'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Dijes:</span>
-                      <span className={`font-medium ${nameSlots.some(s => s.type === 'charm') ? 'text-gray-800' : 'text-gray-400'}`}>
-                        {nameSlots.filter(s => s.type === 'charm').length > 0 
-                          ? `${nameSlots.filter(s => s.type === 'charm').length} seleccionados`
-                          : 'Ninguno'}
+                        {nameSlots.length > 0 
+                          ? `${nameSlots.filter(s => s.type === 'letter').length} letras + ${nameSlots.filter(s => s.type === 'charm').length} dijes`
+                          : 'Por personalizar'}
                       </span>
                     </div>
                     <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
@@ -894,7 +940,7 @@ Espero crear algo hermoso para mi mascota!`
                                   {slot.type === 'letter' ? (
                                     <span className="text-base font-bold text-gray-800">{slot.content}</span>
                                   ) : (
-                                    <span className="text-lg">{slot.content}</span>
+                                    <div className={`w-8 h-8 rounded-full ${slot.charmColor?.value || 'bg-gray-300'}`}></div>
                                   )}
                                   <button
                                     onClick={() => removeItem(index)}
