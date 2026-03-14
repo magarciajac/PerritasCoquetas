@@ -51,7 +51,80 @@ export const images = {
     }
   },
 
-  // Dijes/charms
+  // Dijes/charms (fotos reales)
+  charmPhotos: {
+    charm1: {
+      path: '/images/material%20/Charm1.jpg',
+      fallback: '💖',
+      alt: 'Charm tipo 1'
+    },
+    charm2: {
+      path: '/images/material%20/Charm2.jpg',
+      fallback: '⭐',
+      alt: 'Charm tipo 2'
+    },
+    charm3: {
+      path: '/images/material%20/Charm3.jpg',
+      fallback: '🌸',
+      alt: 'Charm tipo 3'
+    },
+    charm4: {
+      path: '/images/material%20/Charm4.jpg',
+      fallback: '🎀',
+      alt: 'Charm tipo 4'
+    },
+    charm5: {
+      path: '/images/material%20/Charm5.jpg',
+      fallback: '👑',
+      alt: 'Charm tipo 5'
+    },
+    charm6: {
+      path: '/images/material%20/Charm6.jpg',
+      fallback: '🌙',
+      alt: 'Charm tipo 6'
+    },
+    charm7: {
+      path: '/images/material%20/Charm7.jpg',
+      fallback: '💎',
+      alt: 'Charm tipo 7'
+    },
+    charm8: {
+      path: '/images/material%20/Charm8.jpg',
+      fallback: '🦋',
+      alt: 'Charm tipo 8'
+    },
+    charm9: {
+      path: '/images/material%20/Charm9.jpg',
+      fallback: '✨',
+      alt: 'Charm tipo 9'
+    }
+  },
+
+  // Estilos de letras (fotos reales)
+  letterStyles: {
+    style1: {
+      path: '/images/material%20/Letras1.jpg',
+      fallback: 'A',
+      alt: 'Estilo de letra 1'
+    },
+    style2: {
+      path: '/images/material%20/Letras2.jpg',
+      fallback: 'B',
+      alt: 'Estilo de letra 2'
+    },
+    style3: {
+      path: '/images/material%20/Letras3.jpg',
+      fallback: 'C',
+      alt: 'Estilo de letra 3'
+    },
+    style4: {
+      path: '/images/material%20/Letras4.jpg',
+      fallback: 'D',
+      alt: 'Estilo de letra 4'
+    }
+  },
+
+  // Dijes/charms (emoji fallbacks - deprecated)
   charms: {
     corazon: {
       fallback: '💖',

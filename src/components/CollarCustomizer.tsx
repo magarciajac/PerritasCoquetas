@@ -7,6 +7,8 @@ import DesignPreviewModal from './DesignPreviewModal'
 import PatitasImage from './ui/PatitasImage'
 import { getImageSrc } from '@/lib/images'
 import { baseDesigns } from '@/lib/baseDesigns'
+import { charmTypes } from '@/lib/charmTypes'
+import { letterStylesConfig } from '@/lib/letterStylesConfig'
 
 interface CollarCustomization {
   baseDesign?: { id: number; name: string; imageKey: string }
@@ -76,6 +78,27 @@ const charmOptions = [
   { name: 'luna', emoji: '🌙', label: 'Luna' }
 ]
 
+const charmColors = [
+  { name: 'rosa', value: 'bg-pink-400', label: 'Rosa' },
+  { name: 'rosa-claro', value: 'bg-pink-200', label: 'Rosa Claro' },
+  { name: 'rojo', value: 'bg-red-600', label: 'Rojo' },
+  { name: 'naranja', value: 'bg-orange-500', label: 'Naranja' },
+  { name: 'amarillo', value: 'bg-yellow-400', label: 'Amarillo' },
+  { name: 'verde-lima', value: 'bg-lime-400', label: 'Verde Lima' },
+  { name: 'verde', value: 'bg-green-500', label: 'Verde' },
+  { name: 'turquesa', value: 'bg-cyan-400', label: 'Turquesa' },
+  { name: 'azul-claro', value: 'bg-sky-300', label: 'Azul Claro' },
+  { name: 'azul', value: 'bg-blue-600', label: 'Azul' },
+  { name: 'morado', value: 'bg-purple-500', label: 'Morado' },
+  { name: 'lavanda', value: 'bg-purple-300', label: 'Lavanda' },
+  { name: 'cafe', value: 'bg-amber-700', label: 'Café' },
+  { name: 'gris', value: 'bg-gray-400', label: 'Gris' },
+  { name: 'negro', value: 'bg-gray-900', label: 'Negro' },
+  { name: 'blanco', value: 'bg-white border-2 border-gray-300', label: 'Blanco' },
+  { name: 'dorado', value: 'bg-gradient-to-br from-yellow-400 to-yellow-600', label: 'Dorado' },
+  { name: 'plateado', value: 'bg-gradient-to-br from-gray-300 to-gray-500', label: 'Plateado' }
+]
+
 const collarSizes = [
   { name: 'XS', measurements: '17-29cm', price: '$255' },
   { name: 'S', measurements: '25-40cm', price: '$290' },
@@ -108,6 +131,10 @@ export default function CollarCustomizer() {
   // Estados existentes
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false)
+  const [isLetterStyleModalOpen, setIsLetterStyleModalOpen] = useState(false)
+  const [isCharmTypeModalOpen, setIsCharmTypeModalOpen] = useState(false)
+  const [selectedLetterStyle, setSelectedLetterStyle] = useState<typeof letterStylesConfig[0] | null>(null)
+  const [selectedCharmType, setSelectedCharmType] = useState<typeof charmTypes[0] | null>(null)
   const [generatedImageUrl, setGeneratedImageUrl] = useState('')
   const [nameSlots, setNameSlots] = useState<Array<{type: 'letter' | 'charm', content: string}>>([])
   const [draggedItem, setDraggedItem] = useState<{type: 'letter' | 'charm', content: string} | null>(null)
@@ -753,153 +780,249 @@ Espero crear algo hermoso para mi mascota!`
 
               {/* Step 3: Personalización */}
               {currentStep === 3 && (
-                <div className="space-y-8">
+                <div className="space-y-4">
                   <div className="text-center">
-                    <h4 className="text-2xl font-semibold text-gray-800 mb-4">
+                    <h4 className="text-2xl font-semibold text-gray-800 mb-2">
                       ✨ Personaliza con Nombre y Dijes
                     </h4>
-                    <p className="text-gray-600 mb-8">
-                      Arrastra letras y dijes para crear el diseño perfecto
+                    <p className="text-gray-600 text-sm mb-4">
+                      Primero selecciona el estilo de letras y tipo de dijes, luego arrástralos para crear tu diseño
                     </p>
                   </div>
 
-                  {/* Pet Name Builder */}
-                  <div className="space-y-6">
-                    <h5 className="text-lg font-semibold text-gray-800">
-                      Crea el Nombre de tu Mascota
-                    </h5>
-                    
-                    {/* Name Display Area */}
-                    <div className="bg-gray-50 rounded-2xl p-6 min-h-24">
-                      <p className="text-center text-sm text-gray-600 mb-4">
-                        Arrastra letras y dijes aquí:
-                      </p>
+                  {/* Selección de Estilos */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Estilo de Letras */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-3 border-2 border-blue-200">
+                      <h5 className="text-sm font-semibold text-gray-800 mb-2 flex items-center">
+                        <span className="text-lg mr-1">🔤</span>
+                        Estilo de Letras
+                      </h5>
                       
-                      <div className="flex flex-wrap justify-center gap-3 empty:min-h-16">
-                        {nameSlots.map((slot, index) => (
-                          <div key={`slot-${index}`} className="flex items-center">
-                            {/* Slot actual */}
-                            <div className="relative w-14 h-14 rounded-full flex items-center justify-center border-3 border-gray-300 bg-white shadow-md hover:shadow-lg transition-shadow">
-                              {slot.type === 'letter' ? (
-                                <span className="text-xl font-bold text-gray-800">{slot.content}</span>
-                              ) : (
-                                <span className="text-2xl">{slot.content}</span>
-                              )}
-                              <button
-                                onClick={() => removeItem(index)}
-                                className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-sm hover:bg-red-600 transition-colors shadow-md"
-                              >
-                                ×
-                              </button>
+                      {selectedLetterStyle ? (
+                        <div className="space-y-2">
+                          <div className="bg-white rounded-xl p-2 border-2 border-blue-300">
+                            <div className="h-24 bg-white rounded-lg overflow-hidden mb-1 flex items-center justify-center">
+                              <PatitasImage
+                                src={getImageSrc('letterStyles', selectedLetterStyle.imageKey).src}
+                                fallback={getImageSrc('letterStyles', selectedLetterStyle.imageKey).fallback}
+                                alt={selectedLetterStyle.name}
+                                width={120}
+                                height={120}
+                                className="max-h-full max-w-full object-contain"
+                              />
                             </div>
-                            
-                            {/* Drop zone between items */}
-                            <div
-                              className="w-10 h-14 flex items-center justify-center group"
-                              onDragOver={handleDragOver}
-                              onDrop={(e) => handleSlotDrop(e, index + 1)}
-                            >
-                              <div className="w-3 h-10 border-l-3 border-dashed border-orange-300 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            </div>
+                            <p className="text-center text-xs font-semibold text-blue-800">{selectedLetterStyle.name}</p>
                           </div>
-                        ))}
-                        
-                        {/* Drop zone inicial */}
-                        {nameSlots.length === 0 && (
-                          <div
-                            className="w-full h-20 border-3 border-dashed border-orange-300 rounded-xl flex items-center justify-center text-orange-500 hover:border-orange-400 hover:bg-orange-50 transition-colors"
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleSlotDrop(e, 0)}
+                          <button
+                            onClick={() => setIsLetterStyleModalOpen(true)}
+                            className="w-full px-3 py-1.5 bg-white border-2 border-blue-300 rounded-lg hover:bg-blue-50 transition-colors text-blue-700 text-xs font-medium"
                           >
-                            <span className="font-medium">Arrastra aquí para empezar</span>
-                          </div>
-                        )}
-                        
-                        {/* Drop zone final */}
-                        {nameSlots.length > 0 && (
-                          <div
-                            className="w-14 h-14 flex items-center justify-center group"
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleSlotDrop(e, nameSlots.length)}
-                          >
-                            <div className="w-12 h-12 border-3 border-dashed border-orange-300 rounded-full flex items-center justify-center hover:bg-orange-50 transition-colors">
-                              <span className="text-orange-400 text-2xl">+</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <p className="text-center text-sm text-gray-500 mt-4">
-                        Máximo 15 elementos total • {nameSlots.length}/15 usados
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Alphabet */}
-                  <div className="space-y-6">
-                    <h5 className="text-lg font-semibold text-gray-800">
-                      Arrastra las Letras
-                    </h5>
-                    <div className="grid grid-cols-6 gap-3">
-                      {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => (
-                        <div
-                          key={letter}
-                          draggable
-                          onDragStart={() => handleLetterDragStart(letter)}
-                          className="w-12 h-12 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-full flex items-center justify-center text-lg font-bold text-blue-800 hover:border-blue-400 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all duration-200 hover:scale-110"
-                        >
-                          {letter}
+                            🔄 Cambiar
+                          </button>
                         </div>
-                      ))}
+                      ) : (
+                        <button
+                          onClick={() => setIsLetterStyleModalOpen(true)}
+                          className="w-full px-4 py-3 bg-white rounded-xl border-2 border-dashed border-blue-300 hover:border-blue-400 hover:bg-blue-50 transition-all text-blue-700 font-semibold text-sm"
+                        >
+                          + Seleccionar Estilo
+                        </button>
+                      )}
                     </div>
-                    
-                    {/* Números */}
-                    <div>
-                      <h6 className="text-md font-medium text-gray-600 mb-3">Números</h6>
-                      <div className="grid grid-cols-5 gap-3">
-                        {'0123456789'.split('').map((number) => (
-                          <div
-                            key={number}
-                            draggable
-                            onDragStart={() => handleLetterDragStart(number)}
-                            className="w-12 h-12 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-full flex items-center justify-center text-lg font-bold text-green-800 hover:border-green-400 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all duration-200 hover:scale-110"
-                          >
-                            {number}
+
+                    {/* Tipo de Charm */}
+                    <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-3 border-2 border-pink-200">
+                      <h5 className="text-sm font-semibold text-gray-800 mb-2 flex items-center">
+                        <span className="text-lg mr-1">✨</span>
+                        Tipo de Dijes
+                      </h5>
+                      
+                      {selectedCharmType ? (
+                        <div className="space-y-2">
+                          <div className="bg-white rounded-xl p-2 border-2 border-pink-300">
+                            <div className="h-24 bg-white rounded-lg overflow-hidden mb-1 flex items-center justify-center">
+                              <PatitasImage
+                                src={getImageSrc('charmPhotos', selectedCharmType.imageKey).src}
+                                fallback={getImageSrc('charmPhotos', selectedCharmType.imageKey).fallback}
+                                alt={selectedCharmType.name}
+                                width={120}
+                                height={120}
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            </div>
+                            <p className="text-center text-xs font-semibold text-pink-800">{selectedCharmType.name}</p>
                           </div>
-                        ))}
-                      </div>
+                          <button
+                            onClick={() => setIsCharmTypeModalOpen(true)}
+                            className="w-full px-3 py-1.5 bg-white border-2 border-pink-300 rounded-lg hover:bg-pink-50 transition-colors text-pink-700 text-xs font-medium"
+                          >
+                            🔄 Cambiar
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setIsCharmTypeModalOpen(true)}
+                          className="w-full px-4 py-3 bg-white rounded-xl border-2 border-dashed border-pink-300 hover:border-pink-400 hover:bg-pink-50 transition-all text-pink-700 font-semibold text-sm"
+                        >
+                          + Seleccionar Tipo
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  {/* Charms Selection */}
-                  <div className="space-y-6">
-                    <h5 className="text-lg font-semibold text-gray-800">
-                      Arrastra los Dijes
-                    </h5>
-                    <p className="text-sm text-gray-600">
-                      Arrastra los dijes entre las letras del nombre para crear combinaciones únicas
-                    </p>
-                    <div className="grid grid-cols-3 gap-4">
-                      {charmOptions.map((charm) => (
-                        <div
-                          key={charm.name}
-                          draggable
-                          onDragStart={() => handleCharmDragStart(charm)}
-                          className="relative p-4 rounded-3xl border-2 border-gray-200 bg-gradient-to-br from-pink-50 to-rose-50 hover:border-pink-300 transition-all duration-200 hover:scale-105 cursor-grab active:cursor-grabbing hover:shadow-lg"
-                        >
-                          <div className="text-4xl mb-3 text-center">{charm.emoji}</div>
-                          <div className="text-sm text-gray-700 font-medium text-center">{charm.label}</div>
+                  {/* Solo mostrar el área de construcción si hay estilos seleccionados */}
+                  {(selectedLetterStyle || selectedCharmType) && (
+                    <>
+                      {/* Pet Name Builder */}
+                      <div className="space-y-3">
+                        <h5 className="text-base font-semibold text-gray-800">
+                          Crea el Nombre de tu Mascota
+                        </h5>
+                        
+                        {/* Name Display Area */}
+                        <div className="bg-gray-50 rounded-xl p-3 min-h-20">
+                          <p className="text-center text-xs text-gray-600 mb-2">
+                            Arrastra letras y dijes aquí:
+                          </p>
                           
-                          {/* Drag indicator */}
-                          <div className="absolute top-2 right-2 text-pink-400 opacity-70">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
+                          <div className="flex flex-wrap justify-center gap-2 empty:min-h-16">
+                            {nameSlots.map((slot, index) => (
+                              <div key={`slot-${index}`} className="flex items-center">
+                                {/* Slot actual */}
+                                <div className="relative w-11 h-11 rounded-full flex items-center justify-center border-3 border-gray-300 bg-white shadow-md hover:shadow-lg transition-shadow">
+                                  {slot.type === 'letter' ? (
+                                    <span className="text-base font-bold text-gray-800">{slot.content}</span>
+                                  ) : (
+                                    <span className="text-lg">{slot.content}</span>
+                                  )}
+                                  <button
+                                    onClick={() => removeItem(index)}
+                                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-600 transition-colors shadow-md"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                                
+                                {/* Drop zone between items */}
+                                <div
+                                  className="w-5 h-11 flex items-center justify-center group"
+                                  onDragOver={handleDragOver}
+                                  onDrop={(e) => handleSlotDrop(e, index + 1)}
+                                >
+                                  <div className="w-1.5 h-7 border-l-2 border-dashed border-orange-300 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                              </div>
+                            ))}
+                            
+                            {/* Drop zone inicial */}
+                            {nameSlots.length === 0 && (
+                              <div
+                                className="w-full h-16 border-3 border-dashed border-orange-300 rounded-xl flex items-center justify-center text-orange-500 hover:border-orange-400 hover:bg-orange-50 transition-colors"
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleSlotDrop(e, 0)}
+                              >
+                                <span className="font-medium text-sm">Arrastra aquí para empezar</span>
+                              </div>
+                            )}
+                            
+                            {/* Drop zone final */}
+                            {nameSlots.length > 0 && (
+                              <div
+                                className="w-11 h-11 flex items-center justify-center group"
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleSlotDrop(e, nameSlots.length)}
+                              >
+                                <div className="w-9 h-9 border-3 border-dashed border-orange-300 rounded-full flex items-center justify-center hover:bg-orange-50 transition-colors">
+                                  <span className="text-orange-400 text-lg">+</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <p className="text-center text-xs text-gray-500 mt-2">
+                            Máximo 15 elementos • {nameSlots.length}/15 usados
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Alphabet - Solo si hay estilo de letra seleccionado */}
+                      {selectedLetterStyle && (
+                        <div className="space-y-2">
+                          <h5 className="text-base font-semibold text-gray-800">
+                            Arrastra las Letras ({selectedLetterStyle.name})
+                          </h5>
+                          <div className="grid grid-cols-9 gap-1.5">
+                            {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => (
+                              <div
+                                key={letter}
+                                draggable
+                                onDragStart={() => handleLetterDragStart(letter)}
+                                className="w-9 h-9 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-full flex items-center justify-center text-sm font-bold text-blue-800 hover:border-blue-400 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all duration-200 hover:scale-110"
+                              >
+                                {letter}
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Números */}
+                          <div>
+                            <h6 className="text-sm font-medium text-gray-600 mb-2">Números</h6>
+                            <div className="grid grid-cols-10 gap-1.5">
+                              {'0123456789'.split('').map((number) => (
+                                <div
+                                  key={number}
+                                  draggable
+                                  onDragStart={() => handleLetterDragStart(number)}
+                                  className="w-9 h-9 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-full flex items-center justify-center text-sm font-bold text-green-800 hover:border-green-400 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all duration-200 hover:scale-110"
+                                >
+                                  {number}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      )}
+
+                      {/* Charms - Solo si hay tipo de charm seleccionado */}
+                      {selectedCharmType && (
+                        <div className="space-y-2">
+                          <h5 className="text-base font-semibold text-gray-800">
+                            Color de los Dijes ({selectedCharmType.name})
+                          </h5>
+                          <p className="text-xs text-gray-600 mb-3">
+                            Selecciona el color y arrastra el dije al nombre de tu mascota
+                          </p>
+                          
+                          {/* Selector de colores de charms */}
+                          <div className="flex flex-wrap justify-start gap-3">
+                            {charmColors.map((color) => (
+                              <button
+                                key={color.name}
+                                draggable
+                                onDragStart={() => handleCharmDragStart({ name: color.name, emoji: '✨', label: color.label })}
+                                className={`group relative flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 cursor-grab active:cursor-grabbing`}
+                                title={color.label}
+                              >
+                                <div className={`w-11 h-11 rounded-full ${color.value} shadow-lg transition-all duration-300 hover:shadow-xl`}>
+                                </div>
+                                
+                                <span className="text-xs font-medium text-gray-600">
+                                  {color.label}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <div className="mt-3 bg-pink-50 border-l-4 border-pink-400 rounded-r-xl p-2">
+                            <p className="text-xs text-pink-800">
+                              <span className="font-semibold">💡 Tip:</span> Arrastra el color del dije y suéltalo entre las letras del nombre
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               )}
 
@@ -1158,6 +1281,213 @@ Espero crear algo hermoso para mi mascota!`
                       <span className="font-semibold">Nota:</span> Estás eligiendo el estilo de bordado. En el siguiente paso podrás personalizar el color del collar a tu gusto.
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Selección de Estilo de Letras */}
+      {isLetterStyleModalOpen && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-900/30 backdrop-blur-md"
+              onClick={() => setIsLetterStyleModalOpen(false)}
+            />
+
+            {/* Modal Panel */}
+            <div className="inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl relative z-50">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-1">
+                      🔤 Estilos de Letras
+                    </h3>
+                    <p className="text-blue-100">
+                      Selecciona el estilo de letras para el nombre de tu mascota
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsLetterStyleModalOpen(false)}
+                    className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Gallery Grid */}
+              <div className="p-8">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                  {letterStylesConfig.map((style) => {
+                    const { src, fallback, alt } = getImageSrc('letterStyles', style.imageKey)
+                    const isSelected = selectedLetterStyle?.id === style.id
+
+                    return (
+                      <button
+                        key={style.id}
+                        onClick={() => {
+                          setSelectedLetterStyle(style)
+                          setIsLetterStyleModalOpen(false)
+                        }}
+                        className={`group relative rounded-2xl border-3 transition-all duration-300 hover:scale-105 overflow-hidden ${
+                          isSelected
+                            ? 'border-blue-400 shadow-xl ring-4 ring-blue-200' 
+                            : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
+                        }`}
+                      >
+                        {/* Imagen */}
+                        <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+                          <PatitasImage
+                            src={src}
+                            fallback={fallback}
+                            alt={alt}
+                            width={400}
+                            height={300}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        
+                        {/* Info */}
+                        <div className={`p-4 text-center transition-all ${
+                          isSelected ? 'bg-blue-50' : 'bg-white'
+                        }`}>
+                          <h5 className="text-lg font-semibold text-gray-800 mb-1">
+                            {style.name}
+                          </h5>
+                          <p className="text-sm text-gray-600">
+                            {style.description}
+                          </p>
+                          
+                          {isSelected && (
+                            <div className="flex items-center justify-center text-blue-600 font-semibold text-sm mt-2">
+                              <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              Seleccionado
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Check indicator */}
+                        {isSelected && (
+                          <div className="absolute top-4 right-4 bg-blue-500 rounded-full p-2 shadow-lg">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Selección de Tipo de Charm */}
+      {isCharmTypeModalOpen && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-900/30 backdrop-blur-md"
+              onClick={() => setIsCharmTypeModalOpen(false)}
+            />
+
+            {/* Modal Panel */}
+            <div className="inline-block w-full max-w-5xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl relative z-50">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-1">
+                      ✨ Tipos de Dijes
+                    </h3>
+                    <p className="text-pink-100">
+                      Selecciona el tipo de dijes para personalizar tu collar
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsCharmTypeModalOpen(false)}
+                    className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Gallery Grid */}
+              <div className="p-8">
+                <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
+                  {charmTypes.map((charm) => {
+                    const { src, fallback, alt } = getImageSrc('charmPhotos', charm.imageKey)
+                    const isSelected = selectedCharmType?.id === charm.id
+
+                    return (
+                      <button
+                        key={charm.id}
+                        onClick={() => {
+                          setSelectedCharmType(charm)
+                          setIsCharmTypeModalOpen(false)
+                        }}
+                        className={`group relative rounded-2xl border-3 transition-all duration-300 hover:scale-105 overflow-hidden ${
+                          isSelected
+                            ? 'border-pink-400 shadow-xl ring-4 ring-pink-200' 
+                            : 'border-gray-200 hover:border-pink-300 hover:shadow-lg'
+                        }`}
+                      >
+                        {/* Imagen */}
+                        <div className="aspect-square bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center p-3">
+                          <PatitasImage
+                            src={src}
+                            fallback={fallback}
+                            alt={alt}
+                            width={300}
+                            height={300}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        
+                        {/* Info */}
+                        <div className={`p-3 text-center transition-all ${
+                          isSelected ? 'bg-pink-50' : 'bg-white'
+                        }`}>
+                          <h5 className="text-sm font-semibold text-gray-800">
+                            {charm.name}
+                          </h5>
+                          
+                          {isSelected && (
+                            <div className="flex items-center justify-center text-pink-600 font-semibold text-xs mt-1">
+                              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              Seleccionado
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Check indicator */}
+                        {isSelected && (
+                          <div className="absolute top-3 right-3 bg-pink-500 rounded-full p-1.5 shadow-lg">
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             </div>
