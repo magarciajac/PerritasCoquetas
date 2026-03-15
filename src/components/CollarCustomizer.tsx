@@ -189,7 +189,6 @@ export default function CollarCustomizer() {
     'Tipo de Bordado',
     'Color del Collar', 
     'Letras y Texto',
-    'Dijes y Charms',
     'Tamaño'
   ]
 
@@ -366,8 +365,7 @@ export default function CollarCustomizer() {
       case 1: return !requiresEmbroidery() || customization.embroideryType !== null
       case 2: return customization.color.id !== ''
       case 3: return customization.petName.trim() !== '' && customization.letterStyle.id !== '' && customization.charmType.id !== ''
-      case 4: return true // Charms are optional
-      case 5: return customization.size.id !== ''
+      case 4: return customization.size.id !== ''
       default: return false
     }
   }
@@ -864,48 +862,6 @@ DETALLES DEL DISEÑO:
         )
 
       case 4:
-        return (
-          <div>
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
-              Agrega Dijes y Charms (Opcional)
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6 max-w-5xl mx-auto">
-              {charmItems.map((charm) => {
-                const isSelected = customization.charms.some(c => c.id === charm.id)
-                return (
-                  <div
-                    key={charm.id}
-                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-pink-500 bg-pink-50 shadow-lg'
-                        : 'border-gray-200 hover:border-pink-300'
-                    }`}
-                    onClick={() => handleCharmToggle(charm)}
-                  >
-                    <div className="text-center">
-                      <div className="text-4xl mb-3">{charm.icon}</div>
-                      <h4 className="text-lg font-semibold text-gray-800">{charm.label}</h4>
-                      {isSelected && (
-                        <div className="mt-2">
-                          <span className="text-pink-500 text-sm font-medium">✓ Seleccionado</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-            {customization.charms.length > 0 && (
-              <div className="mt-6 text-center">
-                <p className="text-gray-600">
-                  Seleccionados: {customization.charms.map(c => c.label).join(', ')}
-                </p>
-              </div>
-            )}
-          </div>
-        )
-
-      case 5:
         return (
           <div>
             <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
