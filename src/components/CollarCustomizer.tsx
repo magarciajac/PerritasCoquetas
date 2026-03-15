@@ -283,7 +283,7 @@ export default function CollarCustomizer() {
 
   const handleDropOnName = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    if (customization.petName.length < 12) {
+    if (Array.from(customization.petName).length < 12) {
       if (draggedLetter) {
         setCustomization(prev => ({
           ...prev,
@@ -302,10 +302,14 @@ export default function CollarCustomizer() {
   }
 
   const handleRemoveLetter = (index: number) => {
-    setCustomization(prev => ({
-      ...prev,
-      petName: prev.petName.slice(0, index) + prev.petName.slice(index + 1)
-    }))
+    setCustomization(prev => {
+      const characters = Array.from(prev.petName)
+      characters.splice(index, 1)
+      return {
+        ...prev,
+        petName: characters.join('')
+      }
+    })
   }
 
   const handleClearName = () => {
@@ -691,12 +695,12 @@ DETALLES DEL DISEÑO:
                     onDragOver={handleDragOver}
                     onDrop={handleDropOnName}
                   >
-                    {customization.petName.length === 0 ? (
+                    {Array.from(customization.petName).length === 0 ? (
                       <span className="text-gray-400 text-lg">
                         Arrastra letras y colores aquí
                       </span>
                     ) : (
-                      customization.petName.split('').map((char, index) => (
+                      Array.from(customization.petName).map((char, index) => (
                         <div
                           key={`${char}-${index}`}
                           className={`relative bg-white border-2 border-pink-300 rounded-lg px-3 py-2 text-2xl font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
@@ -715,7 +719,7 @@ DETALLES DEL DISEÑO:
                   </div>
                   
                   <p className="text-sm text-gray-500 mb-6">
-                    Máximo 12 caracteres • Clic para eliminar • Caracteres: {customization.petName.length}/12
+                    Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.petName).length}/12
                   </p>
 
                   {/* Grid de Letras y Colores */}
@@ -730,12 +734,12 @@ DETALLES DEL DISEÑO:
                         {alphabet.map((letter) => (
                           <div
                             key={letter}
-                            draggable={customization.petName.length < 12}
+                            draggable={Array.from(customization.petName).length < 12}
                             onDragStart={(e) => handleDragStart(e, letter)}
                             className={`bg-white border-2 border-gray-300 rounded-lg px-2 py-2 text-lg font-bold text-center cursor-grab active:cursor-grabbing hover:bg-pink-50 hover:border-pink-300 transition-all ${
-                              customization.petName.length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
+                              Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
                             } ${customization.letterStyle.style}`}
-                            title={customization.petName.length >= 12 ? 'Máximo alcanzado' : `Arrastra ${letter}`}
+                            title={Array.from(customization.petName).length >= 12 ? 'Máximo alcanzado' : `Arrastra ${letter}`}
                           >
                             {letter}
                           </div>
@@ -752,12 +756,12 @@ DETALLES DEL DISEÑO:
                         {typicalColors.map((colorItem) => (
                           <div
                             key={colorItem.id}
-                            draggable={customization.petName.length < 12}
+                            draggable={Array.from(customization.petName).length < 12}
                             onDragStart={(e) => handleColorDragStart(e, colorItem.id)}
                             className={`bg-white border-2 border-gray-300 rounded-lg px-3 py-3 text-2xl text-center cursor-grab active:cursor-grabbing hover:bg-purple-50 hover:border-purple-300 transition-all ${
-                              customization.petName.length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
+                              Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
-                            title={customization.petName.length >= 12 ? 'Máximo alcanzado' : `Arrastra ${colorItem.label}`}
+                            title={Array.from(customization.petName).length >= 12 ? 'Máximo alcanzado' : `Arrastra ${colorItem.label}`}
                           >
                             {colorItem.label}
                           </div>
