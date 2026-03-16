@@ -15,6 +15,11 @@ interface CollarCustomization {
   charmType: { id: string; name: string; style: string }
   charms: { id: string; label: string; icon: string }[]
   size: { id: string; name: string; description: string }
+  // Second collar for combined design
+  secondCollar: {
+    petName: string
+    color: { id: string; label: string; value: string }
+  }
 }
 
 const designTypes = [
@@ -177,7 +182,11 @@ export default function CollarCustomizer() {
     letterStyle: { id: '', name: '', style: '' },
     charmType: { id: '', name: '', style: '' },
     charms: [],
-    size: { id: '', name: '', description: '' }
+    size: { id: '', name: '', description: '' },
+    secondCollar: {
+      petName: '',
+      color: { id: '', label: '', value: '' }
+    }
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
@@ -318,6 +327,58 @@ export default function CollarCustomizer() {
     }))
   }
 
+  // Second collar handlers for combined design
+  const handleDropOnSecondCollar = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    if (Array.from(customization.secondCollar.petName).length < 12) {
+      if (draggedLetter) {
+        setCustomization(prev => ({
+          ...prev,
+          secondCollar: {
+            ...prev.secondCollar,
+            petName: prev.secondCollar.petName + draggedLetter
+          }
+        }))
+      } else if (draggedColor) {
+        const colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
+        setCustomization(prev => ({
+          ...prev,
+          secondCollar: {
+            ...prev.secondCollar,
+            petName: prev.secondCollar.petName + colorEmoji,
+            color: typicalColors.find(c => c.id === draggedColor) || prev.secondCollar.color
+          }
+        }))
+      }
+    }
+    setDraggedLetter(null)
+    setDraggedColor(null)
+  }
+
+  const handleRemoveSecondCollarLetter = (index: number) => {
+    setCustomization(prev => {
+      const characters = Array.from(prev.secondCollar.petName)
+      characters.splice(index, 1)
+      return {
+        ...prev,
+        secondCollar: {
+          ...prev.secondCollar,
+          petName: characters.join('')
+        }
+      }
+    })
+  }
+
+  const handleClearSecondCollarName = () => {
+    setCustomization(prev => ({
+      ...prev,
+      secondCollar: {
+        ...prev.secondCollar,
+        petName: ''
+      }
+    }))
+  }
+
   const handleCharmToggle = (charm: typeof charmItems[0]) => {
     setCustomization(prev => {
       const isSelected = prev.charms.some(c => c.id === charm.id)
@@ -364,7 +425,14 @@ export default function CollarCustomizer() {
       case 0: return customization.designType !== null
       case 1: return !requiresEmbroidery() || customization.embroideryType !== null
       case 2: return customization.color.id !== ''
-      case 3: return customization.petName.trim() !== '' && customization.letterStyle.id !== '' && customization.charmType.id !== ''
+      case 3: {
+        const baseRequirements = customization.petName.trim() !== '' && customization.letterStyle.id !== '' && customization.charmType.id !== ''
+        // For combined design (design 3), also require second collar to have a name
+        if (customization.designType?.id === 3) {
+          return baseRequirements && customization.secondCollar.petName.trim() !== ''
+        }
+        return baseRequirements
+      }
       case 4: return customization.size.id !== ''
       default: return false
     }
@@ -410,8 +478,19 @@ DETALLES DEL DISEÑO:
     }
 
     message += `
-- Color: ${customization.color.label || 'No seleccionado'}
-- Nombre: ${customization.petName || 'No definido'}
+- Color: ${customization.color.label || 'No seleccionado'}`
+
+    // Para diseño combinado, mostrar ambos collares
+    if (customization.designType?.id === 3) {
+      message += `
+- PRIMER COLLAR: ${customization.petName || 'No definido'}
+- SEGUNDO COLLAR: ${customization.secondCollar.petName || 'No definido'}`
+    } else {
+      message += `
+- Nombre: ${customization.petName || 'No definido'}`
+    }
+
+    message += `
 - Estilo de letra: ${customization.letterStyle.name || 'No seleccionado'}
 - Charms: ${customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'}
 - Tamaño: ${customization.size.name || 'No seleccionado'}
@@ -601,6 +680,11 @@ DETALLES DEL DISEÑO:
           <div>
             <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
               Personaliza las Letras
+              {customization.designType?.id === 3 && (
+                <span className="block text-base font-normal text-gray-600 mt-2">
+                  Diseño Combinado - Dos Collares
+                </span>
+              )}
             </h3>
             <div className="space-y-8">
               
@@ -767,6 +851,56 @@ DETALLES DEL DISEÑO:
                       </div>
                     </div>
                   </div>
+
+                  {/* Segundo Collar (solo para diseño combinado) */}
+                  {customization.designType?.id === 3 && (
+                    <div className="mt-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <label className="block text-lg font-semibold text-gray-700">
+                        Segundo Collar
+                      </label>
+                      <button
+                        onClick={handleClearSecondCollarName}
+                        className="text-sm text-gray-500 hover:text-purple-500 underline"
+                      >
+                        Limpiar
+                      </button>
+                    </div>
+                    
+                    {/* Área de construcción del segundo collar */}
+                    <div
+                      className="w-full min-h-[80px] p-4 border-2 border-dashed border-purple-300 rounded-xl bg-purple-50 mb-4 flex items-center justify-center flex-wrap gap-2"
+                      onDragOver={handleDragOver}
+                      onDrop={handleDropOnSecondCollar}
+                    >
+                      {Array.from(customization.secondCollar.petName).length === 0 ? (
+                        <span className="text-gray-400 text-lg">
+                          Arrastra letras y colores aquí
+                        </span>
+                      ) : (
+                        Array.from(customization.secondCollar.petName).map((char, index) => (
+                          <div
+                            key={`second-${char}-${index}`}
+                            className={`relative bg-white border-2 border-purple-300 rounded-lg px-3 py-2 text-2xl font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                              /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                            }`}
+                            onClick={() => handleRemoveSecondCollarLetter(index)}
+                            title="Clic para eliminar"
+                          >
+                            {char}
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                              ×
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    
+                    <p className="text-sm text-gray-500 mb-6">
+                      Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
+                    </p>
+                  </div>
+                  )}
                 </div>
               )}
             </div>
@@ -996,7 +1130,8 @@ DETALLES DEL DISEÑO:
                 Vista Previa en Vivo
               </h3>
               <div className="text-center">
-                <div className="inline-block bg-gray-100 rounded-lg p-8">
+                {/* Primera imagen del collar */}
+                <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6">
                   <PatitasImage
                     src={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
                          customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : 
@@ -1010,13 +1145,44 @@ DETALLES DEL DISEÑO:
                     className="rounded-lg"
                   />
                 </div>
+
+                {/* Segundo collar solo para diseño combinado */}
+                {customization.designType?.id === 3 && (
+                  <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6 ml-4">
+                    <PatitasImage
+                      src={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
+                           getImageSrc('featured', 'collar-1').src}
+                      fallback={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).fallback :
+                               getImageSrc('featured', 'collar-1').fallback}
+                      alt="Preview del segundo collar"
+                      width={300}
+                      height={200}
+                      className="rounded-lg"
+                    />
+                  </div>
+                )}
                 
                 {/* Preview details */}
                 <div className="mt-6 space-y-2">
-                  <h4 className={`text-xl font-semibold text-gray-800 ${customization.letterStyle.style}`}>
-                    {customization.petName || 'Nombre de tu Mascota'}
-                  </h4>
-                  <div className="text-gray-600 space-y-1">
+                  <div className="grid grid-cols-1 gap-4 max-w-2xl mx-auto">
+                    {/* Primer collar */}
+                    <div className="bg-pink-50 rounded-lg p-4">
+                      <h4 className={`text-lg font-semibold text-gray-800 ${customization.letterStyle.style}`}>
+                        {customization.designType?.id === 3 ? 'Primer Collar:' : ''} {customization.petName || 'Nombre de tu Mascota'}
+                      </h4>
+                    </div>
+                    
+                    {/* Segundo collar solo para diseño combinado */}
+                    {customization.designType?.id === 3 && (
+                      <div className="bg-purple-50 rounded-lg p-4">
+                        <h4 className={`text-lg font-semibold text-gray-800 ${customization.letterStyle.style}`}>
+                          Segundo Collar: {customization.secondCollar.petName || 'Sin nombre'}
+                        </h4>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="text-gray-600 space-y-1 mt-4">
                     <p><strong>Diseño:</strong> {customization.designType?.name || 'No seleccionado'}</p>
                     {requiresEmbroidery() && (
                       <p><strong>Bordado:</strong> {customization.embroideryType?.name || 'No seleccionado'}</p>
