@@ -9,6 +9,9 @@ import { getImageSrc } from '@/lib/images'
 interface CollarCustomization {
   designType: null | { id: number; name: string; imageKey: string; description: string }
   embroideryType: null | { id: string; name: string; imageKey: string; description: string }
+  // Bordados separados para diseño combinado
+  embroideryDesign1: null | { id: string; name: string; imageKey: string; description: string }
+  embroideryDesign2: null | { id: string; name: string; imageKey: string; description: string }
   color: { id: string; label: string; value: string }
   petName: string
   letterStyle: { id: string; name: string; style: string }
@@ -133,14 +136,14 @@ const charmTypes = [
 ]
 
 const typicalColors = [
-  { id: 'red', label: '🔴', color: '#DC2626' },
-  { id: 'blue', label: '🔵', color: '#3B82F6' },
-  { id: 'green', label: '🟢', color: '#10B981' },
-  { id: 'yellow', label: '🟡', color: '#F59E0B' },
-  { id: 'purple', label: '🟣', color: '#7C3AED' },
-  { id: 'orange', label: '🟠', color: '#EA580C' },
-  { id: 'pink', label: '🩷', color: '#EC4899' },
-  { id: 'black', label: '⚫', color: '#000000' }
+  { id: 'red', label: '🔴', value: '#DC2626' },
+  { id: 'blue', label: '🔵', value: '#3B82F6' },
+  { id: 'green', label: '🟢', value: '#10B981' },
+  { id: 'yellow', label: '🟡', value: '#F59E0B' },
+  { id: 'purple', label: '🟣', value: '#7C3AED' },
+  { id: 'orange', label: '🟠', value: '#EA580C' },
+  { id: 'pink', label: '🩷', value: '#EC4899' },
+  { id: 'black', label: '⚫', value: '#000000' }
 ]
 
 const charmItems = [
@@ -151,6 +154,41 @@ const charmItems = [
   { id: 'crown', label: 'Corona', icon: '👑' },
   { id: 'bell', label: 'Campanita', icon: '🔔' }
 ]
+
+// Bordados específicos para cada diseño
+const embroideryTypesDesign1 = [
+  { id: 'emb1-d1', name: 'Bordado Clásico D1', imageKey: 'design1-emb1', description: 'Diseño elegante tradicional para Diseño 1' },
+  { id: 'emb2-d1', name: 'Bordado Floral D1', imageKey: 'design1-emb2', description: 'Diseño con motivos florales para Diseño 1' },
+  { id: 'emb3-d1', name: 'Bordado Geométrico D1', imageKey: 'design1-emb3', description: 'Patrones geométricos para Diseño 1' },
+  { id: 'emb4-d1', name: 'Bordado Vintage D1', imageKey: 'design1-emb4', description: 'Estilo vintage para Diseño 1' },
+  { id: 'emb5-d1', name: 'Bordado Artesanal D1', imageKey: 'design1-emb5', description: 'Hecho a mano para Diseño 1' }
+]
+
+const embroideryTypesDesign2 = [
+  { id: 'emb1-d2', name: 'Bordado Moderno D2', imageKey: 'design2-emb1', description: 'Diseño moderno específico para Diseño 2' },
+  { id: 'emb2-d2', name: 'Bordado Urbano D2', imageKey: 'design2-emb2', description: 'Estilo urbano para Diseño 2' },
+  { id: 'emb3-d2', name: 'Bordado Minimalista D2', imageKey: 'design2-emb3', description: 'Diseño minimalista para Diseño 2' },
+  { id: 'emb4-d2', name: 'Bordado Contemporáneo D2', imageKey: 'design2-emb4', description: 'Estilo contemporáneo para Diseño 2' },
+  { id: 'emb5-d2', name: 'Bordado Elegante D2', imageKey: 'design2-emb5', description: 'Diseño elegante para Diseño 2' }
+]
+
+const embroideryTypesDesign3 = [
+  { id: 'emb1-d3', name: 'Bordado Combinado A', imageKey: 'design3-emb1', description: 'Primer estilo para diseño combinado' },
+  { id: 'emb2-d3', name: 'Bordado Combinado B', imageKey: 'design3-emb2', description: 'Segundo estilo para diseño combinado' },
+  { id: 'emb3-d3', name: 'Bordado Combinado C', imageKey: 'design3-emb3', description: 'Tercer estilo para diseño combinado' },
+  { id: 'emb4-d3', name: 'Bordado Combinado D', imageKey: 'design3-emb4', description: 'Cuarto estilo para diseño combinado' },
+  { id: 'emb5-d3', name: 'Bordado Combinado E', imageKey: 'design3-emb5', description: 'Quinto estilo para diseño combinado' }
+]
+
+// Función para obtener los bordados según el diseño seleccionado
+const getEmbroideryTypesForDesign = (designId: number) => {
+  switch (designId) {
+    case 1: return embroideryTypesDesign1
+    case 2: return embroideryTypesDesign2
+    case 3: return embroideryTypesDesign3
+    default: return embroideryTypesDesign1
+  }
+}
 
 const embroideryTypes = [
   { id: 'emb1', name: 'Bordado Clásico', imageKey: 'design1', description: 'Diseño elegante tradicional' },
@@ -177,6 +215,8 @@ export default function CollarCustomizer() {
   const [customization, setCustomization] = useState<CollarCustomization>({
     designType: null,
     embroideryType: null,
+    embroideryDesign1: null,
+    embroideryDesign2: null,
     color: { id: '', label: '', value: '' },
     petName: '',
     letterStyle: { id: '', name: '', style: '' },
@@ -205,14 +245,31 @@ export default function CollarCustomizer() {
     setCustomization(prev => ({
       ...prev,
       designType: design,
-      embroideryType: null // Reset embroidery when changing design type
+      embroideryType: null, // Reset embroidery when changing design type
+      embroideryDesign1: null, // Reset diseño combinado bordados
+      embroideryDesign2: null
     }))
   }
 
-  const handleEmbroideryTypeSelect = (embroidery: typeof embroideryTypes[0]) => {
+  const handleEmbroideryTypeSelect = (embroidery: typeof embroideryTypesDesign1[0] | typeof embroideryTypesDesign2[0] | typeof embroideryTypesDesign3[0]) => {
     setCustomization(prev => ({
       ...prev,
       embroideryType: embroidery
+    }))
+  }
+
+  // Handlers específicos para diseño combinado
+  const handleEmbroideryDesign1Select = (embroidery: typeof embroideryTypesDesign1[0]) => {
+    setCustomization(prev => ({
+      ...prev,
+      embroideryDesign1: embroidery
+    }))
+  }
+
+  const handleEmbroideryDesign2Select = (embroidery: typeof embroideryTypesDesign2[0]) => {
+    setCustomization(prev => ({
+      ...prev,
+      embroideryDesign2: embroidery
     }))
   }
 
@@ -341,12 +398,13 @@ export default function CollarCustomizer() {
         }))
       } else if (draggedColor) {
         const colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
+        const selectedColor = typicalColors.find(c => c.id === draggedColor)
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
             petName: prev.secondCollar.petName + colorEmoji,
-            color: typicalColors.find(c => c.id === draggedColor) || prev.secondCollar.color
+            color: selectedColor || { id: '', label: '', value: '' }
           }
         }))
       }
@@ -399,32 +457,46 @@ export default function CollarCustomizer() {
     }))
   }
 
+  // Check if current design type requires color selection
+  const requiresColor = () => {
+    return customization.designType && customization.designType.id !== 2
+  }
+
   const getActiveStepLabel = () => {
-    if (currentStep === 1 && !requiresEmbroidery()) {
-      return steps[2] // Show color step instead of embroidery
+    // For Diseño2, skip color step in display
+    if (customization.designType?.id === 2 && currentStep === 2) {
+      return steps[3] // Show letters step instead of color
     }
     return steps[currentStep]
   }
 
   const getActiveStepNumber = () => {
-    if (requiresEmbroidery()) {
-      return currentStep + 1
-    } else {
-      // For Diseño2, skip step 1 in the display
-      return currentStep === 0 ? 1 : currentStep
+    // For Diseño2, adjust step numbers when color is skipped
+    if (customization.designType?.id === 2) {
+      if (currentStep <= 1) return currentStep + 1
+      if (currentStep === 3) return 3 // Letters step shows as step 3
+      if (currentStep === 4) return 4 // Size step shows as step 4
     }
+    return currentStep + 1
   }
 
   // Check if current design type requires embroidery selection
   const requiresEmbroidery = () => {
-    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 3)
+    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 2 || customization.designType.id === 3)
   }
 
   const canProceed = () => {
     switch(currentStep) {
       case 0: return customization.designType !== null
-      case 1: return !requiresEmbroidery() || customization.embroideryType !== null
-      case 2: return customization.color.id !== ''
+      case 1: {
+        if (!requiresEmbroidery()) return true
+        // Para diseño combinado, requiere ambos bordados
+        if (customization.designType?.id === 3) {
+          return customization.embroideryDesign1 !== null && customization.embroideryDesign2 !== null
+        }
+        return customization.embroideryType !== null
+      }
+      case 2: return !requiresColor() || customization.color.id !== ''
       case 3: {
         const baseRequirements = customization.petName.trim() !== '' && customization.letterStyle.id !== '' && customization.charmType.id !== ''
         // For combined design (design 3), also require second collar to have a name
@@ -442,9 +514,9 @@ export default function CollarCustomizer() {
     if (currentStep < steps.length - 1 && canProceed()) {
       let nextStepIndex = currentStep + 1
       
-      // Skip embroidery step if Diseño2 is selected
-      if (currentStep === 0 && customization.designType?.id === 2) {
-        nextStepIndex = 2 // Skip step 1 (embroidery) and go to step 2 (color)
+      // Skip color step if Diseño2 is selected (go directly from embroidery to letters)
+      if (currentStep === 1 && customization.designType?.id === 2) {
+        nextStepIndex = 3 // Skip step 2 (color) and go to step 3 (letters)
       }
       
       setCurrentStep(nextStepIndex)
@@ -455,9 +527,9 @@ export default function CollarCustomizer() {
     if (currentStep > 0) {
       let prevStepIndex = currentStep - 1
       
-      // Skip embroidery step when going back if Diseño2 is selected
-      if (currentStep === 2 && customization.designType?.id === 2) {
-        prevStepIndex = 0 // Skip step 1 (embroidery) and go back to step 0 (design type)
+      // Skip color step when going back if Diseño2 is selected
+      if (currentStep === 3 && customization.designType?.id === 2) {
+        prevStepIndex = 1 // Skip step 2 (color) and go back to step 1 (embroidery)
       }
       
       setCurrentStep(prevStepIndex)
@@ -472,7 +544,14 @@ export default function CollarCustomizer() {
 DETALLES DEL DISEÑO:
 - Tipo de Diseño: ${customization.designType?.name || 'No seleccionado'}`
 
-    if (requiresEmbroidery() && customization.embroideryType) {
+    // Mostrar bordados según el tipo de diseño
+    if (customization.designType?.id === 3) {
+      // Diseño combinado - mostrar ambos bordados
+      message += `
+- Bordado Diseño 1: ${customization.embroideryDesign1?.name || 'No seleccionado'}
+- Bordado Diseño 2: ${customization.embroideryDesign2?.name || 'No seleccionado'}`
+    } else if (requiresEmbroidery() && customization.embroideryType) {
+      // Otros diseños que requieren bordado
       message += `
 - Tipo de Bordado: ${customization.embroideryType.name}`
     }
@@ -552,17 +631,115 @@ DETALLES DEL DISEÑO:
         )
       
       case 1:
-        // Only show embroidery step for Diseño1 and Combinado
+        // Only show embroidery step for Designo1, Design2 and Combinado
         if (!requiresEmbroidery()) {
           return null
         }
+        
+        // Para diseño combinado (Opción B): mostrar ambos grupos en una sola pantalla
+        if (customization.designType?.id === 3) {
+          return (
+            <div>
+              <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                Selecciona los Bordados para el Diseño Combinado
+              </h3>
+              <p className="text-center text-gray-600 mb-8">
+                Elige un bordado del Diseño 1 y uno del Diseño 2
+              </p>
+              
+              <div className="space-y-12">
+                {/* Bordados Diseño 1 */}
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-700 mb-6 text-center">
+                    Bordados Diseño 1 {customization.embroideryDesign1 && '(✓ Seleccionado)'}
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {embroideryTypesDesign1.map((embroidery) => (
+                      <div
+                        key={embroidery.id}
+                        className={`relative overflow-hidden rounded-xl border-3 transition-all duration-300 cursor-pointer ${
+                          customization.embroideryDesign1?.id === embroidery.id
+                            ? 'border-pink-400 bg-pink-50 shadow-lg scale-[1.02]'
+                            : 'border-gray-200 hover:border-pink-200 hover:shadow-md'
+                        }`}
+                        onClick={() => handleEmbroideryDesign1Select(embroidery)}
+                      >
+                        <div className="p-3 text-center">
+                          <div className="w-full h-64 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
+                            <PatitasImage
+                              src={getImageSrc('featured', embroidery.imageKey).src}
+                              fallback={getImageSrc('featured', embroidery.imageKey).fallback}
+                              alt={embroidery.name}
+                              width={400}
+                              height={400}
+                              className="w-full h-full object-contain absolute inset-0 p-2"
+                            />
+                          </div>
+                          <h5 className="text-sm font-bold text-gray-800 mb-2">{embroidery.name}</h5>
+                          <p className="text-xs text-gray-600 mb-3">{embroidery.description}</p>
+                          {customization.embroideryDesign1?.id === embroidery.id && (
+                            <span className="inline-block bg-pink-500 text-white px-2 py-1 rounded-full text-xs">
+                              ✓ Seleccionado
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Bordados Diseño 2 */}
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-700 mb-6 text-center">
+                    Bordados Diseño 2 {customization.embroideryDesign2 && '(✓ Seleccionado)'}
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {embroideryTypesDesign2.map((embroidery) => (
+                      <div
+                        key={embroidery.id}
+                        className={`relative overflow-hidden rounded-xl border-3 transition-all duration-300 cursor-pointer ${
+                          customization.embroideryDesign2?.id === embroidery.id
+                            ? 'border-purple-400 bg-purple-50 shadow-lg scale-[1.02]'
+                            : 'border-gray-200 hover:border-purple-200 hover:shadow-md'
+                        }`}
+                        onClick={() => handleEmbroideryDesign2Select(embroidery)}
+                      >
+                        <div className="p-3 text-center">
+                          <div className="w-full h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
+                            <PatitasImage
+                              src={getImageSrc('featured', embroidery.imageKey).src}
+                              fallback={getImageSrc('featured', embroidery.imageKey).fallback}
+                              alt={embroidery.name}
+                              width={400}
+                              height={400}
+                              className="w-full h-full object-contain absolute inset-0 p-2"
+                            />
+                          </div>
+                          <h5 className="text-sm font-bold text-gray-800 mb-2">{embroidery.name}</h5>
+                          <p className="text-xs text-gray-600 mb-3">{embroidery.description}</p>
+                          {customization.embroideryDesign2?.id === embroidery.id && (
+                            <span className="inline-block bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
+                              ✓ Seleccionado
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+        
+        // Para otros diseños, mostrar bordados normalmente
         return (
           <div>
             <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
               Selecciona el Tipo de Bordado
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {embroideryTypes.map((embroidery) => (
+              {getEmbroideryTypesForDesign(customization.designType?.id || 1).map((embroidery) => (
                 <div
                   key={embroidery.id}
                   className={`relative overflow-hidden rounded-xl border-3 transition-all duration-300 cursor-pointer ${
@@ -1081,7 +1258,7 @@ DETALLES DEL DISEÑO:
             </div>
           </div>
           <p className="text-center text-gray-600 font-medium">
-            Paso {getActiveStepNumber()} de {requiresEmbroidery() ? steps.length : steps.length - 1}: {getActiveStepLabel()}
+            Paso {getActiveStepNumber()} de {requiresColor() ? steps.length : steps.length - 1}: {getActiveStepLabel()}
           </p>
         </div>
 
@@ -1133,10 +1310,14 @@ DETALLES DEL DISEÑO:
                 {/* Primera imagen del collar */}
                 <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6">
                   <PatitasImage
-                    src={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
+                    src={customization.designType?.id === 3 && customization.embroideryDesign1 ?
+                         getImageSrc('featured', customization.embroideryDesign1.imageKey).src :
+                         customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
                          customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : 
                          getImageSrc('featured', 'collar-1').src}
-                    fallback={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).fallback :
+                    fallback={customization.designType?.id === 3 && customization.embroideryDesign1 ?
+                             getImageSrc('featured', customization.embroideryDesign1.imageKey).fallback :
+                             customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).fallback :
                              customization.designType ? getImageSrc('featured', customization.designType.imageKey).fallback : 
                              getImageSrc('featured', 'collar-1').fallback}
                     alt="Preview del collar"
@@ -1144,21 +1325,25 @@ DETALLES DEL DISEÑO:
                     height={200}
                     className="rounded-lg"
                   />
+                  {customization.designType?.id === 3 && (
+                    <p className="text-sm text-gray-600 mt-2">Collar con {customization.embroideryDesign1?.name || 'Bordado 1'}</p>
+                  )}
                 </div>
 
                 {/* Segundo collar solo para diseño combinado */}
                 {customization.designType?.id === 3 && (
                   <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6 ml-4">
                     <PatitasImage
-                      src={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
+                      src={customization.embroideryDesign2 ? getImageSrc('featured', customization.embroideryDesign2.imageKey).src :
                            getImageSrc('featured', 'collar-1').src}
-                      fallback={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).fallback :
+                      fallback={customization.embroideryDesign2 ? getImageSrc('featured', customization.embroideryDesign2.imageKey).fallback :
                                getImageSrc('featured', 'collar-1').fallback}
                       alt="Preview del segundo collar"
                       width={300}
                       height={200}
                       className="rounded-lg"
                     />
+                    <p className="text-sm text-gray-600 mt-2">Collar con {customization.embroideryDesign2?.name || 'Bordado 2'}</p>
                   </div>
                 )}
                 
@@ -1184,8 +1369,17 @@ DETALLES DEL DISEÑO:
                   
                   <div className="text-gray-600 space-y-1 mt-4">
                     <p><strong>Diseño:</strong> {customization.designType?.name || 'No seleccionado'}</p>
-                    {requiresEmbroidery() && (
-                      <p><strong>Bordado:</strong> {customization.embroideryType?.name || 'No seleccionado'}</p>
+                    
+                    {/* Mostrar bordados según tipo de diseño */}
+                    {customization.designType?.id === 3 ? (
+                      <>
+                        <p><strong>Bordado Diseño 1:</strong> {customization.embroideryDesign1?.name || 'No seleccionado'}</p>
+                        <p><strong>Bordado Diseño 2:</strong> {customization.embroideryDesign2?.name || 'No seleccionado'}</p>
+                      </>
+                    ) : (
+                      requiresEmbroidery() && (
+                        <p><strong>Bordado:</strong> {customization.embroideryType?.name || 'No seleccionado'}</p>
+                      )
                     )}
                     <p><strong>Color:</strong> {customization.color.label || 'No seleccionado'}</p>
                     <p><strong>Estilo:</strong> {customization.letterStyle.name || 'No seleccionado'}</p>
@@ -1202,12 +1396,16 @@ DETALLES DEL DISEÑO:
         <DesignPreviewModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          imageUrl={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src : 
+          imageUrl={customization.designType?.id === 3 && customization.embroideryDesign1 ?
+                   getImageSrc('featured', customization.embroideryDesign1.imageKey).src :
+                   customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src : 
                    customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : ''}
           designDetails={{
             color: customization.color.label || 'No seleccionado',
             font: customization.letterStyle.name || 'No seleccionado',
-            petName: customization.petName || 'Nombre no definido',
+            petName: customization.designType?.id === 3 ?
+                     `Collar 1: ${customization.petName || 'Sin nombre'} | Collar 2: ${customization.secondCollar.petName || 'Sin nombre'}` :
+                     customization.petName || 'Nombre no definido',
             charm: customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'
           }}
           onConfirmOrder={handleConfirmOrder}
