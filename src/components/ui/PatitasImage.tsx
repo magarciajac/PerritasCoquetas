@@ -27,12 +27,15 @@ export default function PatitasImage({
   const [imageError, setImageError] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
 
+  // Detectar si debe usar fill responsive (cuando está absolute inset-0)
+  const shouldFill = className.includes('absolute') && className.includes('inset-0')
+
   // Si no hay src o hubo error, mostrar fallback
   if (!src || imageError) {
     return (
       <div 
         className={`flex items-center justify-center bg-gradient-to-br from-stone-100 to-orange-50 ${className}`}
-        style={{ width: `${width}px`, height: `${height}px` }}
+        style={shouldFill ? {} : { width: `${width}px`, height: `${height}px` }}
       >
         <span 
           className="text-6xl opacity-80"
@@ -46,7 +49,7 @@ export default function PatitasImage({
   }
 
   return (
-    <div className={`relative overflow-hidden ${className}`} style={{ width: `${width}px`, height: `${height}px` }}>
+    <div className={`relative overflow-hidden ${shouldFill ? className : ''}`} style={shouldFill ? {} : { width: `${width}px`, height: `${height}px` }}>
       {/* Fallback mientras carga */}
       {!imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone-100 to-orange-50">
@@ -61,18 +64,32 @@ export default function PatitasImage({
       )}
       
       {/* Imagen real */}
-      <Image
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        priority={priority}
-        sizes={sizes}
-        className={`transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-        onLoad={() => setImageLoaded(true)}
-        onError={() => setImageError(true)}
-        style={{ objectFit: 'cover' }}
-      />
+      {shouldFill ? (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes={sizes || "100%"}
+          className={`transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          priority={priority}
+          sizes={sizes}
+          className={`transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
+      )}
     </div>
   )
 }

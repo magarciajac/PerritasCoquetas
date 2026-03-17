@@ -30,7 +30,7 @@ export const images = {
       alt: 'Collar personalizado especial PatitasCoquetas'
     },
     design2: {
-      path: '/images/material%20/Diseno5.jpg',
+      path: '/images/material%20/Diseno_1.jpg',
       fallback: '🐕‍🦺',
       alt: 'Collar personalizado PatitasCoquetas'
     },
@@ -152,6 +152,64 @@ export const images = {
     }
   },
 
+  // Bordados específicos para Diseño 1
+  design1Embroidery: {
+    'design1-emb1': {
+      path: '/images/material%20/diseno.jpg',
+      fallback: '🧵',
+      alt: 'Bordado Clásico D1 - Diseño elegante tradicional'
+    },
+    'design1-emb2': {
+      path: '/images/material%20/diseno2.jpg',
+      fallback: '🌸',
+      alt: 'Bordado Floral D1 - Motivos florales'
+    },
+    'design1-emb3': {
+      path: '/images/material%20/diseno3.jpg',
+      fallback: '📐',
+      alt: 'Bordado Geométrico D1 - Patrones geométricos'
+    },
+    'design1-emb4': {
+      path: '/images/material%20/diseno4.jpg',
+      fallback: '⚱️',
+      alt: 'Bordado Vintage D1 - Estilo vintage'
+    },
+    'design1-emb5': {
+      path: '/images/material%20/Diseno5.jpg',
+      fallback: '✋',
+      alt: 'Bordado Artesanal D1 - Hecho a mano'
+    }
+  },
+
+  // Bordados específicos para Diseño 2
+  design2Embroidery: {
+    'design2-emb1': {
+      path: '/images/material%20/Diseno_1.jpg',
+      fallback: '🎨',
+      alt: 'Bordado Moderno D2 - Diseño moderno específico'
+    },
+    'design2-emb2': {
+      path: '/images/material%20/diseno_2.jpg',
+      fallback: '🏙️',
+      alt: 'Bordado Urbano D2 - Estilo urbano'
+    },
+    'design2-emb3': {
+      path: '/images/material%20/diseno_3.jpg',
+      fallback: '⭕',
+      alt: 'Bordado Minimalista D2 - Diseño minimalista'
+    },
+    'design2-emb4': {
+      path: '/images/material%20/diseno_4.jpg',
+      fallback: '🔶',
+      alt: 'Bordado Contemporáneo D2 - Estilo contemporáneo'
+    },
+    'design2-emb5': {
+      path: '/images/material%20/DisenoC1.jpg',
+      fallback: '💫',
+      alt: 'Bordado Elegante D2 - Diseño elegante'
+    }
+  },
+
   // Otros elementos
   logo: {
     main: {
@@ -183,6 +241,30 @@ export function getImageSrc(category: keyof typeof images, item: string): {
   fallback: string;
   alt: string;
 } {
+  // Para bordados de diseño 1, buscar en la sección específica
+  if (item.startsWith('design1-emb')) {
+    const embroideryData = (images.design1Embroidery as any)?.[item]
+    if (embroideryData) {
+      return {
+        src: embroideryData.path || '',
+        fallback: embroideryData.fallback,
+        alt: embroideryData.alt
+      }
+    }
+  }
+  
+  // Para bordados de diseño 2, buscar en la sección específica
+  if (item.startsWith('design2-emb')) {
+    const embroideryData = (images.design2Embroidery as any)?.[item]
+    if (embroideryData) {
+      return {
+        src: embroideryData.path || '',
+        fallback: embroideryData.fallback,
+        alt: embroideryData.alt
+      }
+    }
+  }
+  
   const imageData = (images[category] as any)?.[item]
   
   if (!imageData) {

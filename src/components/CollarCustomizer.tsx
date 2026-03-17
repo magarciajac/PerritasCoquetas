@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Button } from './ui/Button'
 import DesignPreviewModal from './DesignPreviewModal'
+import ImageZoomModal from './ImageZoomModal'
 import PatitasImage from './ui/PatitasImage'
 import { getImageSrc } from '@/lib/images'
 
@@ -212,6 +213,8 @@ export default function CollarCustomizer() {
   const [draggedColor, setDraggedColor] = useState<string | null>(null)
   const [isLetterTypeModalOpen, setIsLetterTypeModalOpen] = useState(false)
   const [isCharmTypeModalOpen, setIsCharmTypeModalOpen] = useState(false)
+  const [isImageZoomOpen, setIsImageZoomOpen] = useState(false)
+  const [zoomImageData, setZoomImageData] = useState<{ src: string; fallback: string; alt: string; title?: string } | null>(null)
   const [customization, setCustomization] = useState<CollarCustomization>({
     designType: null,
     embroideryType: null,
@@ -317,6 +320,17 @@ export default function CollarCustomizer() {
       charmType: charmStyleMapping[charmType.id] || charmStyleMapping['charm1']
     }))
     setIsCharmTypeModalOpen(false)
+  }
+
+  const handleZoomImage = (embroidery: any, title: string) => {
+    const imageData = getImageSrc('featured', embroidery.imageKey)
+    setZoomImageData({
+      src: imageData.src,
+      fallback: imageData.fallback,
+      alt: imageData.alt,
+      title: `${title} - ${embroidery.name}`
+    })
+    setIsImageZoomOpen(true)
   }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, letter: string) => {
@@ -665,15 +679,28 @@ DETALLES DEL DISEÑO:
                         onClick={() => handleEmbroideryDesign1Select(embroidery)}
                       >
                         <div className="p-3 text-center">
-                          <div className="w-full h-64 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
+                          <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative group">
                             <PatitasImage
                               src={getImageSrc('featured', embroidery.imageKey).src}
                               fallback={getImageSrc('featured', embroidery.imageKey).fallback}
                               alt={embroidery.name}
                               width={400}
                               height={400}
-                              className="w-full h-full object-contain absolute inset-0 p-2"
+                              className="w-full h-full absolute inset-0"
                             />
+                            {/* Botón de zoom */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleZoomImage(embroidery, 'Bordados Diseño 1')
+                              }}
+                              className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                              aria-label="Ver imagen ampliada"
+                            >
+                              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </button>
                           </div>
                           <h5 className="text-sm font-bold text-gray-800 mb-2">{embroidery.name}</h5>
                           <p className="text-xs text-gray-600 mb-3">{embroidery.description}</p>
@@ -705,15 +732,28 @@ DETALLES DEL DISEÑO:
                         onClick={() => handleEmbroideryDesign2Select(embroidery)}
                       >
                         <div className="p-3 text-center">
-                          <div className="w-full h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
+                          <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative group">
                             <PatitasImage
                               src={getImageSrc('featured', embroidery.imageKey).src}
                               fallback={getImageSrc('featured', embroidery.imageKey).fallback}
                               alt={embroidery.name}
                               width={400}
                               height={400}
-                              className="w-full h-full object-contain absolute inset-0 p-2"
+                              className="w-full h-full absolute inset-0"
                             />
+                            {/* Botón de zoom */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleZoomImage(embroidery, 'Bordados Diseño 2')
+                              }}
+                              className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                              aria-label="Ver imagen ampliada"
+                            >
+                              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </button>
                           </div>
                           <h5 className="text-sm font-bold text-gray-800 mb-2">{embroidery.name}</h5>
                           <p className="text-xs text-gray-600 mb-3">{embroidery.description}</p>
@@ -750,15 +790,28 @@ DETALLES DEL DISEÑO:
                   onClick={() => handleEmbroideryTypeSelect(embroidery)}
                 >
                     <div className="p-3 text-center">
-                      <div className="w-full h-96 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
+                      <div className="w-full h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative group">
                         <PatitasImage
                           src={getImageSrc('featured', embroidery.imageKey).src}
                           fallback={getImageSrc('featured', embroidery.imageKey).fallback}
                           alt={embroidery.name}
                           width={500}
                           height={600}
-                          className="w-full h-full object-contain absolute inset-0 p-2"
+                          className="w-full h-full absolute inset-0"
                         />
+                        {/* Botón de zoom */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleZoomImage(embroidery, 'Bordados')
+                          }}
+                          className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                          aria-label="Ver imagen ampliada"
+                        >
+                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                          </svg>
+                        </button>
                       </div>
                       <h4 className="text-lg font-bold text-gray-800 mb-2">{embroidery.name}</h4>
                       <p className="text-sm text-gray-600 mb-3">{embroidery.description}</p>
@@ -1410,6 +1463,13 @@ DETALLES DEL DISEÑO:
           }}
           onConfirmOrder={handleConfirmOrder}
           onDownload={handleDownload}
+        />
+
+        {/* Modal de vista ampliada de imágenes */}
+        <ImageZoomModal
+          isOpen={isImageZoomOpen}
+          onClose={() => setIsImageZoomOpen(false)}
+          imageData={zoomImageData || { src: '', fallback: '', alt: '' }}
         />
       </div>
     </section>
