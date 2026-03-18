@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from './ui/Button'
+import Image from 'next/image'
 
 export default function Hero() {
 
@@ -21,15 +22,37 @@ export default function Hero() {
   return (
     <section 
       id="inicio" 
-      className="relative bg-gradient-to-br from-stone-50 to-orange-50/30 py-24 md:py-32 min-h-[80vh] flex items-center overflow-hidden"
+      className="relative bg-gradient-to-br from-stone-50 to-orange-50/30 pt-8 pb-24 min-h-[80vh] flex items-center overflow-hidden"
     >
+      {/* Franja rosa de portada que se extiende por toda la pantalla */}
+      <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-r from-pink-100 via-pink-200 to-pink-100 shadow-lg"></div>
+      
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="text-center space-y-12">
+        <div className="text-center space-y-7">
+          
+          {/* Logo Central en la franja rosa */}
+          <div className="flex justify-center pt-7 pb-4">
+            <div className="relative transform hover:scale-105 transition-transform duration-300">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-pink-300/50">
+                <Image
+                  src="/images/logo/Logo.jpg"
+                  alt="PatitasCoquetas - Collares Personalizados"
+                  width={380}
+                  height={285}
+                  className="object-contain rounded-xl"
+                  priority
+                />
+              </div>
+              {/* Decoraciones elegantes */}
+              <div className="absolute -top-6 -left-6 w-12 h-12 bg-pink-300/60 rounded-full blur-sm"></div>
+              <div className="absolute -bottom-6 -right-6 w-8 h-8 bg-orange-300/60 rounded-full blur-sm"></div>
+              <div className="absolute top-1/2 -left-8 w-4 h-4 bg-yellow-300/60 rounded-full blur-sm"></div>
+              <div className="absolute top-1/4 -right-8 w-6 h-6 bg-purple-300/60 rounded-full blur-sm"></div>
+            </div>
+          </div>
+
           {/* Main Title */}
           <div className="space-y-6">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-gray-800">
-              <span className="text-orange-300">✨</span> PatitasCoquetas <span className="text-orange-300">✨</span>
-            </h1>
             <div className="space-y-4">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-light text-gray-700">
                 Collares Personalizados para Perros,

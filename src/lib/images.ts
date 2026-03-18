@@ -2,6 +2,13 @@
 // Agrega tus imágenes a las carpetas correspondientes y actualiza las rutas aquí
 
 export const images = {
+  // Logo de la marca
+  logo: {
+    path: '/images/logo/Logo.jpg',
+    fallback: '✨ PatitasCoquetas ✨',
+    alt: 'Logo PatitasCoquetas'
+  },
+
   // Materiales del collar
   materials: {
     dorado: {
@@ -56,47 +63,47 @@ export const images = {
     charm1: {
       path: '/images/material%20/Charm1.jpg',
       fallback: '💖',
-      alt: 'Charm tipo 1'
+      alt: 'Charm Corazón - Dije de corazón elegante'
     },
     charm2: {
       path: '/images/material%20/Charm2.jpg',
       fallback: '⭐',
-      alt: 'Charm tipo 2'
+      alt: 'Charm Estrella - Dije de estrella brillante'
     },
     charm3: {
       path: '/images/material%20/Charm3.jpg',
       fallback: '🌸',
-      alt: 'Charm tipo 3'
+      alt: 'Charm Flor - Dije de flor delicada'
     },
     charm4: {
       path: '/images/material%20/Charm4.jpg',
       fallback: '🎀',
-      alt: 'Charm tipo 4'
+      alt: 'Charm Moño - Dije de moño elegante'
     },
     charm5: {
       path: '/images/material%20/Charm5.jpg',
       fallback: '👑',
-      alt: 'Charm tipo 5'
+      alt: 'Charm Corona - Dije de corona real'
     },
     charm6: {
       path: '/images/material%20/Charm6.jpg',
       fallback: '🌙',
-      alt: 'Charm tipo 6'
+      alt: 'Charm Luna - Dije de luna mágica'
     },
     charm7: {
       path: '/images/material%20/Charm7.jpg',
       fallback: '💎',
-      alt: 'Charm tipo 7'
+      alt: 'Charm Diamante - Dije de diamante premium'
     },
     charm8: {
       path: '/images/material%20/Charm8.jpg',
       fallback: '🦋',
-      alt: 'Charm tipo 8'
+      alt: 'Charm Mariposa - Dije de mariposa colorida'
     },
     charm9: {
       path: '/images/material%20/Charm9.jpg',
       fallback: '✨',
-      alt: 'Charm tipo 9'
+      alt: 'Charm Brillante - Dije brillante especial'
     }
   },
 
@@ -105,22 +112,22 @@ export const images = {
     style1: {
       path: '/images/material%20/Letras1.jpg',
       fallback: 'A',
-      alt: 'Estilo de letra 1'
+      alt: 'Tipo Elegante - Letras elegantes con serifs'
     },
     style2: {
       path: '/images/material%20/Letras2.jpg',
       fallback: 'B',
-      alt: 'Estilo de letra 2'
+      alt: 'Tipo Moderno - Letras modernas sans-serif'
     },
     style3: {
       path: '/images/material%20/Letras3.jpg',
       fallback: 'C',
-      alt: 'Estilo de letra 3'
+      alt: 'Tipo Cursivo - Letras cursivas y estilizadas'
     },
     style4: {
       path: '/images/material%20/Letras4.jpg',
       fallback: 'D',
-      alt: 'Estilo de letra 4'
+      alt: 'Tipo Bold - Letras gruesas y llamativas'
     }
   },
 
@@ -207,14 +214,6 @@ export const images = {
       path: '/images/material%20/DisenoC1.jpg',
       fallback: '💫',
       alt: 'Bordado Elegante D2 - Diseño elegante'
-    }
-  },
-
-  // Otros elementos
-  logo: {
-    main: {
-      fallback: '✨',
-      alt: 'Logo PatitasCoquetas'
     }
   },
 

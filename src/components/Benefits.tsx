@@ -54,29 +54,6 @@ export default function Benefits() {
             </div>
           ))}
         </div>
-
-        {/* Additional CTA */}
-        <div className="text-center mt-16">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl mx-auto shadow-sm">
-            <h3 className="text-2xl font-light text-gray-800 mb-4">
-              ¿Lista para crear algo especial?
-            </h3>
-            <p className="text-gray-600 font-light mb-6">
-              Tu mascota merece un collar tan único como ella. Diseñemos algo hermoso juntas.
-            </p>
-            <button 
-              onClick={() => {
-                const customizerSection = document.getElementById('personalizar')
-                if (customizerSection) {
-                  customizerSection.scrollIntoView({ behavior: 'smooth' })
-                }
-              }}
-              className="inline-flex items-center px-8 py-4 bg-orange-200 text-gray-800 rounded-full hover:bg-orange-300 transition-colors font-light"
-            >
-              ✨ Empezar Diseño
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   )

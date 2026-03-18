@@ -86,54 +86,39 @@ const letterTypes = [
   { 
     id: 'type1', 
     name: 'Tipo Elegante', 
-    imageKey: 'letter-type-1',
+    imageKey: 'style1',
     description: 'Letras elegantes con serifs'
   },
   { 
     id: 'type2', 
     name: 'Tipo Moderno', 
-    imageKey: 'letter-type-2',
+    imageKey: 'style2',
     description: 'Letras modernas sans-serif'
   },
   { 
     id: 'type3', 
     name: 'Tipo Cursivo', 
-    imageKey: 'letter-type-3',
+    imageKey: 'style3',
     description: 'Letras cursivas y estilizadas'
   },
   { 
     id: 'type4', 
     name: 'Tipo Bold', 
-    imageKey: 'letter-type-4',
+    imageKey: 'style4',
     description: 'Letras gruesas y llamativas'
   }
 ]
 
 const charmTypes = [
-  { 
-    id: 'charm1', 
-    name: 'Charms Básicos', 
-    imageKey: 'charm-type-1',
-    description: 'Charms sencillos y elegantes'
-  },
-  { 
-    id: 'charm2', 
-    name: 'Charms Coloridos', 
-    imageKey: 'charm-type-2',
-    description: 'Charms vibrantes y alegres'
-  },
-  { 
-    id: 'charm3', 
-    name: 'Charms Metálicos', 
-    imageKey: 'charm-type-3',
-    description: 'Charms con acabados metálicos'
-  },
-  { 
-    id: 'charm4', 
-    name: 'Charms Premium', 
-    imageKey: 'charm-type-4',
-    description: 'Charms exclusivos y especiales'
-  }
+  { id: 'charm1', name: 'Charm Corazón', imageKey: 'charm1', description: 'Dije de corazón elegante' },
+  { id: 'charm2', name: 'Charm Estrella', imageKey: 'charm2', description: 'Dije de estrella brillante' },
+  { id: 'charm3', name: 'Charm Flor', imageKey: 'charm3', description: 'Dije de flor delicada' },
+  { id: 'charm4', name: 'Charm Moño', imageKey: 'charm4', description: 'Dije de moño elegante' },
+  { id: 'charm5', name: 'Charm Corona', imageKey: 'charm5', description: 'Dije de corona real' },
+  { id: 'charm6', name: 'Charm Luna', imageKey: 'charm6', description: 'Dije de luna mágica' },
+  { id: 'charm7', name: 'Charm Diamante', imageKey: 'charm7', description: 'Dije de diamante premium' },
+  { id: 'charm8', name: 'Charm Mariposa', imageKey: 'charm8', description: 'Dije de mariposa colorida' },
+  { id: 'charm9', name: 'Charm Brillante', imageKey: 'charm9', description: 'Dije brillante especial' }
 ]
 
 const typicalColors = [
@@ -333,6 +318,39 @@ export default function CollarCustomizer() {
     setIsImageZoomOpen(true)
   }
 
+  const handleZoomDesignImage = (design: any) => {
+    const imageData = getImageSrc('featured', design.imageKey)
+    setZoomImageData({
+      src: imageData.src,
+      fallback: imageData.fallback,
+      alt: imageData.alt,
+      title: `${design.name} - ${design.description}`
+    })
+    setIsImageZoomOpen(true)
+  }
+
+  const handleZoomLetterImage = (letterType: any) => {
+    const imageData = getImageSrc('letterStyles', letterType.imageKey)
+    setZoomImageData({
+      src: imageData.src,
+      fallback: imageData.fallback,
+      alt: imageData.alt,
+      title: `${letterType.name} - ${letterType.description}`
+    })
+    setIsImageZoomOpen(true)
+  }
+
+  const handleZoomCharmImage = (charmType: any) => {
+    const imageData = getImageSrc('charmPhotos', charmType.imageKey)
+    setZoomImageData({
+      src: imageData.src,
+      fallback: imageData.fallback,
+      alt: imageData.alt,
+      title: `${charmType.name} - ${charmType.description}`
+    })
+    setIsImageZoomOpen(true)
+  }
+
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, letter: string) => {
     // Solo permitir drag si ya se seleccionaron ambos tipos
     if (!customization.letterStyle.id || !customization.charmType.id) {
@@ -473,6 +491,8 @@ export default function CollarCustomizer() {
 
   // Check if current design type requires color selection
   const requiresColor = () => {
+    // Show color step by default until a design type is selected
+    if (!customization.designType) return true
     return customization.designType && customization.designType.id !== 2
   }
 
@@ -491,11 +511,14 @@ export default function CollarCustomizer() {
       if (currentStep === 3) return 3 // Letters step shows as step 3
       if (currentStep === 4) return 4 // Size step shows as step 4
     }
+    // Default: show step numbers normally (1-5)
     return currentStep + 1
   }
 
   // Check if current design type requires embroidery selection
   const requiresEmbroidery = () => {
+    // Show embroidery step by default until a design type is selected
+    if (!customization.designType) return true
     return customization.designType && (customization.designType.id === 1 || customization.designType.id === 2 || customization.designType.id === 3)
   }
 
@@ -619,17 +642,61 @@ DETALLES DEL DISEÑO:
                   }`}
                   onClick={() => handleDesignTypeSelect(design)}
                 >
-                  <div className="p-3 text-center">
-                    <div className="w-full h-96 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-inner mb-3 overflow-hidden relative">
-                      <PatitasImage
-                        src={getImageSrc('featured', design.imageKey).src}
-                        fallback={getImageSrc('featured', design.imageKey).fallback}
-                        alt={design.name}
-                        width={500}
-                        height={600}
-                        className="w-full h-full object-contain absolute inset-0 p-2"
-                      />
+                  <div className="p-4 text-center">
+                    {/* Contenedor de imagen con tratamiento de doble capa */}
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] bg-neutral-100 mb-4">
+                      {/* Imagen de fondo borrosa */}
+                      <div className="absolute inset-0">
+                        <PatitasImage
+                          src={getImageSrc('featured', design.imageKey).src}
+                          fallback={getImageSrc('featured', design.imageKey).fallback}
+                          alt={design.name}
+                          width={400}
+                          height={300}
+                          className="w-full h-full object-cover scale-110 blur-sm opacity-30"
+                        />
+                      </div>
+
+                      {/* Overlay suave para unificar */}
+                      <div className="absolute inset-0 bg-white/20" />
+
+                      {/* Imagen principal completa */}
+                      <div className="relative z-10 w-full h-full p-4 flex items-center justify-center">
+                        <PatitasImage
+                          src={getImageSrc('featured', design.imageKey).src}
+                          fallback={getImageSrc('featured', design.imageKey).fallback}
+                          alt={design.name}
+                          width={300}
+                          height={225}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+
+                      {/* Marco interno sutil */}
+                      <div className="pointer-events-none absolute inset-2 rounded-[20px] border border-white/50 z-20" />
+                      
+                      {/* Indicador de seleccionado */}
+                      {customization.designType?.id === design.id && (
+                        <div className="absolute top-3 right-3 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center shadow-lg z-30">
+                          <span className="text-white text-sm font-bold">✓</span>
+                        </div>
+                      )}
+
+                      {/* Botón de zoom */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleZoomDesignImage(design)
+                        }}
+                        className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 z-30 group"
+                        aria-label={`Ver imagen ampliada de ${design.name}`}
+                      >
+                        <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </button>
                     </div>
+                    
                     <h4 className="text-lg font-bold text-gray-800 mb-2">{design.name}</h4>
                     <p className="text-sm text-gray-600 mb-3">{design.description}</p>
                     {customization.designType?.id === design.id && (
@@ -694,10 +761,10 @@ DETALLES DEL DISEÑO:
                                 e.stopPropagation()
                                 handleZoomImage(embroidery, 'Bordados Diseño 1')
                               }}
-                              className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                              className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 group"
                               aria-label="Ver imagen ampliada"
                             >
-                              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                               </svg>
                             </button>
@@ -747,10 +814,10 @@ DETALLES DEL DISEÑO:
                                 e.stopPropagation()
                                 handleZoomImage(embroidery, 'Bordados Diseño 2')
                               }}
-                              className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                              className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 group"
                               aria-label="Ver imagen ampliada"
                             >
-                              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                               </svg>
                             </button>
@@ -805,10 +872,10 @@ DETALLES DEL DISEÑO:
                             e.stopPropagation()
                             handleZoomImage(embroidery, 'Bordados')
                           }}
-                          className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 transform hover:scale-110"
+                          className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 group"
                           aria-label="Ver imagen ampliada"
                         >
-                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                           </svg>
                         </button>
@@ -918,70 +985,68 @@ DETALLES DEL DISEÑO:
             </h3>
             <div className="space-y-8">
               
-              {/* Selección de Tipos - 50/50 Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Selección de Tipos - Layout horizontal compacto */}
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
                 
                 {/* Tipo de Letra - 50% */}
-                <div>
-                  <label className="block text-lg font-semibold text-gray-700 mb-4">
-                    Tipo de Letra
-                  </label>
-                  <div className="text-center">
-                    {customization.letterStyle.id ? (
-                      <div className="bg-green-50 border-2 border-green-300 rounded-xl p-4">
-                        <div className="flex items-center justify-center space-x-2 mb-2">
-                          <span className="text-green-500 text-xl">✓</span>
-                          <span className="text-sm font-semibold text-gray-800">
-                            {customization.letterStyle.name}
-                          </span>
-                        </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
+                      <label className="text-md font-semibold text-gray-700">
+                        Tipo de Letra
+                      </label>
+                      {customization.letterStyle.id ? (
                         <button
                           onClick={() => setIsLetterTypeModalOpen(true)}
-                          className="text-pink-500 hover:text-pink-600 underline text-sm"
+                          className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-all"
                         >
-                          Cambiar
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">✓</span>
+                          </div>
+                          <span className="text-xs font-semibold text-green-700">
+                            {customization.letterStyle.name}
+                          </span>
                         </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setIsLetterTypeModalOpen(true)}
-                        className="w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-lg hover:shadow-xl"
-                      >
-                        Seleccionar Tipo de Letra
-                      </button>
-                    )}
+                      ) : (
+                        <button
+                          onClick={() => setIsLetterTypeModalOpen(true)}
+                          className="w-8 h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
+                        >
+                          <span className="text-white text-lg font-bold">+</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Tipo de Charm - 50% */}
-                <div>
-                  <label className="block text-lg font-semibold text-gray-700 mb-4">
-                    Tipo de Charm
-                  </label>
-                  <div className="text-center">
-                    {customization.charmType.id ? (
-                      <div className="bg-green-50 border-2 border-green-300 rounded-xl p-4">
-                        <div className="flex items-center justify-center space-x-2 mb-2">
-                          <span className="text-green-500 text-xl">✓</span>
-                          <span className="text-sm font-semibold text-gray-800">
-                            {customization.charmType.name}
-                          </span>
-                        </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
+                      <label className="text-md font-semibold text-gray-700">
+                        Tipo de Charm
+                      </label>
+                      {customization.charmType.id ? (
                         <button
                           onClick={() => setIsCharmTypeModalOpen(true)}
-                          className="text-pink-500 hover:text-pink-600 underline text-sm"
+                          className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-all"
                         >
-                          Cambiar
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">✓</span>
+                          </div>
+                          <span className="text-xs font-semibold text-green-700">
+                            {customization.charmType.name}
+                          </span>
                         </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setIsCharmTypeModalOpen(true)}
-                        className="w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-lg hover:shadow-xl"
-                      >
-                        Seleccionar Tipo de Charm
-                      </button>
-                    )}
+                      ) : (
+                        <button
+                          onClick={() => setIsCharmTypeModalOpen(true)}
+                          className="w-8 h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
+                        >
+                          <span className="text-white text-lg font-bold">+</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -989,13 +1054,13 @@ DETALLES DEL DISEÑO:
               {/* Nombre de la Mascota - Drag & Drop (solo si ambos tipos están seleccionados) */}
               {customization.letterStyle.id && customization.charmType.id && (
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <label className="block text-lg font-semibold text-gray-700">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-md font-semibold text-gray-700">
                       Nombre de tu Mascota
                     </label>
                     <button
                       onClick={handleClearName}
-                      className="text-sm text-gray-500 hover:text-pink-500 underline"
+                      className="text-xs text-gray-500 hover:text-pink-500 underline"
                     >
                       Limpiar
                     </button>
@@ -1003,26 +1068,26 @@ DETALLES DEL DISEÑO:
                   
                   {/* Área de construcción del nombre */}
                   <div
-                    className="w-full min-h-[80px] p-4 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 mb-4 flex items-center justify-center flex-wrap gap-2"
+                    className="w-full min-h-[60px] p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-3 flex items-center justify-center flex-wrap gap-1"
                     onDragOver={handleDragOver}
                     onDrop={handleDropOnName}
                   >
                     {Array.from(customization.petName).length === 0 ? (
-                      <span className="text-gray-400 text-lg">
+                      <span className="text-gray-400 text-md">
                         Arrastra letras y colores aquí
                       </span>
                     ) : (
                       Array.from(customization.petName).map((char, index) => (
                         <div
                           key={`${char}-${index}`}
-                          className={`relative bg-white border-2 border-pink-300 rounded-lg px-3 py-2 text-2xl font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                          className={`relative bg-white border-2 border-pink-300 rounded px-2 py-1 text-lg font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
                             /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                           }`}
                           onClick={() => handleRemoveLetter(index)}
                           title="Clic para eliminar"
                         >
                           {char}
-                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                             ×
                           </span>
                         </div>
@@ -1030,7 +1095,7 @@ DETALLES DEL DISEÑO:
                     )}
                   </div>
                   
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="text-xs text-gray-500 mb-4">
                     Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.petName).length}/12
                   </p>
 
@@ -1084,14 +1149,14 @@ DETALLES DEL DISEÑO:
 
                   {/* Segundo Collar (solo para diseño combinado) */}
                   {customization.designType?.id === 3 && (
-                    <div className="mt-8">
-                      <div className="flex items-center justify-between mb-4">
-                        <label className="block text-lg font-semibold text-gray-700">
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="block text-md font-semibold text-gray-700">
                         Segundo Collar
                       </label>
                       <button
                         onClick={handleClearSecondCollarName}
-                        className="text-sm text-gray-500 hover:text-purple-500 underline"
+                        className="text-xs text-gray-500 hover:text-purple-500 underline"
                       >
                         Limpiar
                       </button>
@@ -1099,26 +1164,26 @@ DETALLES DEL DISEÑO:
                     
                     {/* Área de construcción del segundo collar */}
                     <div
-                      className="w-full min-h-[80px] p-4 border-2 border-dashed border-purple-300 rounded-xl bg-purple-50 mb-4 flex items-center justify-center flex-wrap gap-2"
+                      className="w-full min-h-[60px] p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-3 flex items-center justify-center flex-wrap gap-1"
                       onDragOver={handleDragOver}
                       onDrop={handleDropOnSecondCollar}
                     >
                       {Array.from(customization.secondCollar.petName).length === 0 ? (
-                        <span className="text-gray-400 text-lg">
+                        <span className="text-gray-400 text-md">
                           Arrastra letras y colores aquí
                         </span>
                       ) : (
                         Array.from(customization.secondCollar.petName).map((char, index) => (
                           <div
                             key={`second-${char}-${index}`}
-                            className={`relative bg-white border-2 border-purple-300 rounded-lg px-3 py-2 text-2xl font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                            className={`relative bg-white border-2 border-purple-300 rounded px-2 py-1 text-lg font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
                               /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                             }`}
                             onClick={() => handleRemoveSecondCollarLetter(index)}
                             title="Clic para eliminar"
                           >
                             {char}
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                               ×
                             </span>
                           </div>
@@ -1126,7 +1191,7 @@ DETALLES DEL DISEÑO:
                       )}
                     </div>
                     
-                    <p className="text-sm text-gray-500 mb-6">
+                    <p className="text-xs text-gray-500 mb-4">
                       Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
                     </p>
                   </div>
@@ -1137,7 +1202,7 @@ DETALLES DEL DISEÑO:
 
             {/* Modal para selección de tipo de letra */}
             {isLetterTypeModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
@@ -1156,18 +1221,31 @@ DETALLES DEL DISEÑO:
                       {letterTypes.map((letterType) => (
                         <div
                           key={letterType.id}
-                          className="border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-pink-300 hover:shadow-lg transition-all"
+                          className="cursor-pointer hover:scale-105 transition-all relative"
                           onClick={() => handleLetterTypeSelect(letterType)}
                         >
-                          <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-4 flex items-center justify-center">
+                          <div className="w-full h-48 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden">
                             <PatitasImage
-                              src={getImageSrc('materials', letterType.imageKey).src}
-                              fallback={getImageSrc('materials', letterType.imageKey).fallback}
+                              src={getImageSrc('letterStyles', letterType.imageKey).src}
+                              fallback={getImageSrc('letterStyles', letterType.imageKey).fallback}
                               alt={letterType.name}
                               width={300}
                               height={200}
                               className="w-full h-full object-contain rounded-xl"
                             />
+                            {/* Botón de zoom */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleZoomLetterImage(letterType)
+                              }}
+                              className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 group"
+                              aria-label={`Ver imagen ampliada de ${letterType.name}`}
+                            >
+                              <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </button>
                           </div>
                           <h4 className="text-lg font-bold text-gray-800 mb-2">{letterType.name}</h4>
                           <p className="text-sm text-gray-600">{letterType.description}</p>
@@ -1181,7 +1259,7 @@ DETALLES DEL DISEÑO:
 
             {/* Modal para selección de tipo de charm */}
             {isCharmTypeModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
@@ -1200,18 +1278,31 @@ DETALLES DEL DISEÑO:
                       {charmTypes.map((charmType) => (
                         <div
                           key={charmType.id}
-                          className="border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-purple-300 hover:shadow-lg transition-all"
+                          className="cursor-pointer hover:scale-105 transition-all relative"
                           onClick={() => handleCharmTypeSelect(charmType)}
                         >
-                          <div className="w-full h-48 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl mb-4 flex items-center justify-center">
+                          <div className="w-full h-48 rounded-xl mb-4 flex items-center justify-center p-3 relative overflow-hidden">
                             <PatitasImage
-                              src={getImageSrc('charms', charmType.imageKey).src}
-                              fallback={getImageSrc('charms', charmType.imageKey).fallback}
+                              src={getImageSrc('charmPhotos', charmType.imageKey).src}
+                              fallback={getImageSrc('charmPhotos', charmType.imageKey).fallback}
                               alt={charmType.name}
                               width={300}
                               height={200}
-                              className="w-full h-full object-contain rounded-xl"
+                              className="max-w-full max-h-full object-contain rounded-xl"
                             />
+                            {/* Botón de zoom */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleZoomCharmImage(charmType)
+                              }}
+                              className="absolute bottom-3 right-3 w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 group"
+                              aria-label={`Ver imagen ampliada de ${charmType.name}`}
+                            >
+                              <svg className="w-4 h-4 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </button>
                           </div>
                           <h4 className="text-lg font-bold text-gray-800 mb-2">{charmType.name}</h4>
                           <p className="text-sm text-gray-600">{charmType.description}</p>
@@ -1311,7 +1402,7 @@ DETALLES DEL DISEÑO:
             </div>
           </div>
           <p className="text-center text-gray-600 font-medium">
-            Paso {getActiveStepNumber()} de {requiresColor() ? steps.length : steps.length - 1}: {getActiveStepLabel()}
+            Paso {getActiveStepNumber()} de {steps.length}: {getActiveStepLabel()}
           </p>
         </div>
 
@@ -1360,43 +1451,64 @@ DETALLES DEL DISEÑO:
                 Vista Previa en Vivo
               </h3>
               <div className="text-center">
-                {/* Primera imagen del collar */}
-                <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6">
-                  <PatitasImage
-                    src={customization.designType?.id === 3 && customization.embroideryDesign1 ?
-                         getImageSrc('featured', customization.embroideryDesign1.imageKey).src :
-                         customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
-                         customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : 
-                         getImageSrc('featured', 'collar-1').src}
-                    fallback={customization.designType?.id === 3 && customization.embroideryDesign1 ?
-                             getImageSrc('featured', customization.embroideryDesign1.imageKey).fallback :
-                             customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).fallback :
-                             customization.designType ? getImageSrc('featured', customization.designType.imageKey).fallback : 
-                             getImageSrc('featured', 'collar-1').fallback}
-                    alt="Preview del collar"
-                    width={300}
-                    height={200}
-                    className="rounded-lg"
-                  />
-                  {customization.designType?.id === 3 && (
-                    <p className="text-sm text-gray-600 mt-2">Collar con {customization.embroideryDesign1?.name || 'Bordado 1'}</p>
-                  )}
-                </div>
-
-                {/* Segundo collar solo para diseño combinado */}
-                {customization.designType?.id === 3 && (
-                  <div className="inline-block bg-gray-100 rounded-lg p-8 mb-6 ml-4">
-                    <PatitasImage
-                      src={customization.embroideryDesign2 ? getImageSrc('featured', customization.embroideryDesign2.imageKey).src :
-                           getImageSrc('featured', 'collar-1').src}
-                      fallback={customization.embroideryDesign2 ? getImageSrc('featured', customization.embroideryDesign2.imageKey).fallback :
-                               getImageSrc('featured', 'collar-1').fallback}
-                      alt="Preview del segundo collar"
-                      width={300}
-                      height={200}
-                      className="rounded-lg"
-                    />
-                    <p className="text-sm text-gray-600 mt-2">Collar con {customization.embroideryDesign2?.name || 'Bordado 2'}</p>
+                {/* Imágenes del collar - Layout adaptativo */}
+                {customization.designType?.id === 3 ? (
+                  /* Diseño combinado - Layout horizontal compacto */
+                  <div className="flex flex-wrap justify-center gap-4 mb-6">
+                    {/* Primera imagen */}
+                    <div className="bg-gray-100 rounded-xl p-4">
+                      <div className="w-60 h-40 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <img
+                          src={customization.embroideryDesign1 ?
+                               getImageSrc('featured', customization.embroideryDesign1.imageKey).src :
+                               getImageSrc('featured', 'collar-1').src}
+                          alt="Preview del primer collar"
+                          style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            objectFit: 'contain'
+                          }}
+                          className="rounded"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-600 mt-2">Collar con {customization.embroideryDesign1?.name || 'Bordado 1'}</p>
+                    </div>
+                    
+                    {/* Segunda imagen */}
+                    <div className="bg-gray-100 rounded-xl p-4">
+                      <div className="w-60 h-40 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <img
+                          src={customization.embroideryDesign2 ? getImageSrc('featured', customization.embroideryDesign2.imageKey).src :
+                               getImageSrc('featured', 'collar-1').src}
+                          alt="Preview del segundo collar"
+                          style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            objectFit: 'contain'
+                          }}
+                          className="rounded"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-600 mt-2">Collar con {customization.embroideryDesign2?.name || 'Bordado 2'}</p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Diseño simple - Layout normal */
+                  <div className="inline-block bg-gray-100 rounded-2xl p-6 mb-6">
+                    <div className="w-80 h-60 bg-gray-200 rounded-xl flex items-center justify-center">
+                      <img
+                        src={customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src :
+                             customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : 
+                             getImageSrc('featured', 'collar-1').src}
+                        alt="Preview del collar"
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain'
+                        }}
+                        className="rounded-lg"
+                      />
+                    </div>
                   </div>
                 )}
                 

@@ -3,12 +3,9 @@ import Hero from '@/components/Hero'
 import FeaturedDesigns from '@/components/FeaturedDesigns'
 import CollarCustomizer from '@/components/CollarCustomizer'
 import PricingSection from '@/components/PricingSection'
-import BorderTypes from '@/components/BorderTypes'
-import PremiumDetails from '@/components/PremiumDetails'
 import HowItWorks from '@/components/HowItWorks'
 import Benefits from '@/components/Benefits'
 import FAQ from '@/components/FAQ'
-import FinalCTA from '@/components/FinalCTA'
 import Footer from '@/components/Footer'
 
 export default function Home() {
@@ -20,12 +17,9 @@ export default function Home() {
         <FeaturedDesigns />
         <CollarCustomizer />
         <PricingSection />
-        <BorderTypes />
-        <PremiumDetails />
         <HowItWorks />
         <Benefits />
         <FAQ />
-        <FinalCTA />
       </main>
       <Footer />
     </div>

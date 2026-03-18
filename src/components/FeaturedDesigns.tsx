@@ -1,10 +1,43 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import PatitasImage from './ui/PatitasImage'
 import { getImageSrc } from '@/lib/images'
 import { baseDesigns } from '@/lib/baseDesigns'
 
 export default function FeaturedDesigns() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  // Auto-rotate carousel cada 5 segundos
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => 
+        prevIndex === baseDesigns.length - 1 ? 0 : prevIndex + 1
+      )
+    }, 5000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? baseDesigns.length - 1 : prevIndex - 1
+    )
+  }
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === baseDesigns.length - 1 ? 0 : prevIndex + 1
+    )
+  }
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index)
+  }
+
+  const currentDesign = baseDesigns[currentIndex]
+  const { src, fallback, alt } = getImageSrc('featured', currentDesign.imageKey)
+
   return (
     <section id="disenos" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,36 +51,75 @@ export default function FeaturedDesigns() {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {baseDesigns.map((design) => {
-            const { src, fallback, alt } = getImageSrc('featured', design.imageKey)
-            
-            return (
-              <div key={design.id} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 to-stone-100 aspect-square flex items-center justify-center hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
-                  {/* Imagen o fallback */}
-                  <PatitasImage
-                    src={src}
-                    fallback={fallback}
-                    alt={alt}
-                    width={500}
-                    height={500}
-                    className="w-full h-full object-contain p-4"
-                  />
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
-                  
-                  {/* Description overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-2xl p-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <p className="text-sm text-gray-700 font-light">
-                      {design.description}
-                    </p>
-                  </div>
-                </div>
+        {/* Carrusel */}
+        <div className="relative max-w-4xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 to-stone-100 aspect-[4/3] flex items-center justify-center shadow-xl">
+            {/* Imagen principal */}
+            <div className="w-full h-full relative">
+              <PatitasImage
+                src={src}
+                fallback={fallback}
+                alt={alt}
+                width={800}
+                height={600}
+                className="w-full h-full object-contain p-8"
+              />
+              
+              {/* Descripción overlay */}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {currentDesign.name}
+                </h3>
+                <p className="text-gray-600 font-light">
+                  {currentDesign.description}
+                </p>
               </div>
-            )
-          })}
+            </div>
+
+            {/* Botón anterior */}
+            <button
+              onClick={goToPrevious}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Botón siguiente */}
+            <button
+              onClick={goToNext}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Indicadores (bolitas) */}
+          <div className="flex justify-center items-center mt-6 space-x-4">
+            {baseDesigns.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`flex items-center justify-center transition-all duration-300 ${
+                  index === currentIndex
+                    ? 'w-8 h-8 bg-orange-500 text-white rounded-full shadow-lg font-semibold text-sm'
+                    : 'w-6 h-6 bg-gray-300 hover:bg-gray-400 rounded-full'
+                }`}
+              >
+                {index === currentIndex && (index + 1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Contador */}
+          <div className="text-center mt-4">
+            <span className="text-sm text-gray-500 font-medium">
+              {currentIndex + 1} de {baseDesigns.length}
+            </span>
+          </div>
         </div>
         
         <div className="text-center mt-12">

@@ -36,14 +36,14 @@ export default function ImageZoomModal({ isOpen, onClose, imageData }: ImageZoom
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xl"
       onClick={onClose}
     >
-      <div className="relative max-w-4xl max-h-[90vh] w-full mx-4">
+      <div className="relative max-w-3xl max-h-[80vh] w-full mx-4 flex items-center justify-center">
         {/* Botón cerrar */}
         <button
           onClick={onClose}
-          className="absolute -top-12 right-0 z-10 p-2 text-white hover:text-gray-300 transition-colors"
+          className="absolute -top-14 -right-2 z-30 p-3 bg-white text-gray-800 hover:bg-gray-100 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 border-2 border-gray-300"
           aria-label="Cerrar vista ampliada"
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,7 +53,7 @@ export default function ImageZoomModal({ isOpen, onClose, imageData }: ImageZoom
 
         {/* Contenedor de imagen */}
         <div 
-          className="relative bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 max-w-2xl w-full"
           onClick={(e) => e.stopPropagation()} // Evitar cerrar al hacer clic en la imagen
         >
           {/* Header con título si existe */}
@@ -64,15 +64,15 @@ export default function ImageZoomModal({ isOpen, onClose, imageData }: ImageZoom
           )}
 
           {/* Imagen ampliada */}
-          <div className="p-6 flex justify-center">
-            <div className="relative w-full max-w-2xl aspect-auto">
+          <div className="flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+            <div className="flex items-center justify-center w-full">
               <PatitasImage
                 src={imageData.src}
                 fallback={imageData.fallback}
                 alt={imageData.alt}
-                width={800}
-                height={600}
-                className="w-full h-auto max-h-[70vh] object-contain rounded-lg shadow-lg"
+                width={600}
+                height={500}
+                className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-md"
                 priority={true}
               />
             </div>
