@@ -105,10 +105,10 @@ const colors = [
 ]
 
 const letterStyles = [
-  { id: 'classic', name: 'Clásica', style: 'font-serif text-2xl' },
-  { id: 'modern', name: 'Moderna', style: 'font-sans text-2xl font-bold' },
-  { id: 'script', name: 'Cursiva', style: 'font-script text-2xl italic' },
-  { id: 'bold', name: 'Negrita', style: 'font-sans text-2xl font-extrabold' }
+  { id: 'classic', name: 'Clásica', style: 'font-serif text-2xl', imageKey: 'style1' },
+  { id: 'modern', name: 'Moderna', style: 'font-sans text-2xl font-bold', imageKey: 'style2' },
+  { id: 'script', name: 'Cursiva', style: 'font-script text-2xl italic', imageKey: 'style3' },
+  { id: 'bold', name: 'Negrita', style: 'font-sans text-2xl font-extrabold', imageKey: 'style4' }
 ]
 
 const letterTypes = [
@@ -688,11 +688,11 @@ export default function CollarCustomizer() {
           embroideryDesign2: null,
           color: { id: '', label: '', value: '' },
           petName: '',
-          letterStyle: { id: '', name: '', style: '' },
+          letterStyle: { id: '', name: '', style: '', imageKey: '' },
           letterColor: { id: 'green', label: 'Verde', value: '#10B981' },
-          charmType: { id: '', name: '', style: '' },
+          charmType: { id: '', name: '', style: '', imageKey: '' },
           charms: [],
-          size: { id: '', name: '', description: '' },
+          size: { id: '', name: '', description: '', price: 0 },
           secondCollar: {
             petName: '',
             color: { id: '', label: '', value: '' }
@@ -1085,15 +1085,15 @@ DETALLES DEL DISEÑO:
                   {colors.filter(color => color.type === 'solid').map((color) => (
                     <div
                       key={color.id}
-                      draggable={customization.charmType.id && Array.from(customization.petName).length < 12}
+                      draggable={!!(customization.charmType.id && Array.from(customization.petName).length < 12)}
                       onDragStart={(e) => handleParacordColorDragStart(e, color)}
                       className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
                         customization.color.id === color.id
                           ? 'border-pink-500 bg-pink-50 shadow-lg'
                           : 'border-gray-200 hover:border-pink-300'
-                      } ${customization.charmType.id && Array.from(customization.petName).length < 12 ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                      } ${!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => handleColorSelect(color)}
-                      title={customization.charmType.id && Array.from(customization.petName).length < 12 ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
+                      title={!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
                     >
                       <div className="text-center">
                         <div 
@@ -1122,15 +1122,15 @@ DETALLES DEL DISEÑO:
                   {colors.filter(color => color.type === 'multicolor').map((color) => (
                     <div
                       key={color.id}
-                      draggable={customization.charmType.id && Array.from(customization.petName).length < 12}
+                      draggable={!!(customization.charmType.id && Array.from(customization.petName).length < 12)}
                       onDragStart={(e) => handleParacordColorDragStart(e, color)}
                       className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
                         customization.color.id === color.id
                           ? 'border-pink-500 bg-pink-50 shadow-lg'
                           : 'border-gray-200 hover:border-pink-300'
-                      } ${customization.charmType.id && Array.from(customization.petName).length < 12 ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                      } ${!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => handleColorSelect(color)}
-                      title={customization.charmType.id && Array.from(customization.petName).length < 12 ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
+                      title={!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
                     >
                       <div className="text-center">
                         <div 
