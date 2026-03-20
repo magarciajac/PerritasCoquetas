@@ -3,36 +3,55 @@
 import { Button } from './ui/Button'
 
 export default function Header() {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId)
+    if (section) {
+      const headerOffset = 100 // Compensar header sticky + margen extra
+      const elementPosition = section.offsetTop
+      const offsetPosition = elementPosition - headerOffset
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  const handlePersonalizarClick = () => {
+    scrollToSection('personalizar')
+  }
+
+  const handleDisenosClick = () => {
+    scrollToSection('disenos')
+  }
+
+  const handleInicioClick = () => {
+    scrollToSection('inicio')
+  }
+
+  const handleComoFuncionaClick = () => {
+    scrollToSection('como-funciona')
+  }
+
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
-          <nav className="hidden md:flex space-x-12 flex-1 justify-center">
-            <a href="#inicio" className="text-gray-600 hover:text-orange-300 transition-colors text-lg font-medium">
+          <nav className="hidden md:flex space-x-12 justify-center flex-1">
+            <button onClick={handleInicioClick} className="text-gray-600 hover:text-green-500 transition-colors text-lg font-medium">
               Inicio
-            </a>
-            <a href="#disenos" className="text-gray-600 hover:text-orange-300 transition-colors text-lg font-medium">
+            </button>
+            <button onClick={handleDisenosClick} className="text-gray-600 hover:text-green-500 transition-colors text-lg font-medium">
               Diseños
-            </a>
-            <a href="#personalizar" className="text-gray-600 hover:text-orange-300 transition-colors text-lg font-medium">
+            </button>
+            <button onClick={handlePersonalizarClick} className="text-gray-600 hover:text-green-500 transition-colors text-lg font-medium">
               Personalizar
-            </a>
-            <a href="#como-funciona" className="text-gray-600 hover:text-orange-300 transition-colors text-lg font-medium">
+            </button>
+            <button onClick={handleComoFuncionaClick} className="text-gray-600 hover:text-green-500 transition-colors text-lg font-medium">
               Cómo Funciona
-            </a>
+            </button>
           </nav>
-          
-          <div className="flex items-center">
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => window.open('https://wa.me/526143663694?text=Hola! Me interesa conocer más sobre los collares personalizados', '_blank')}
-              className="border-orange-200 text-orange-300 hover:bg-orange-50 px-6 py-3 text-lg font-medium"
-            >
-              Mensaje por WhatsApp
-            </Button>
-          </div>
           
           {/* Mobile menu button */}
           <div className="md:hidden">

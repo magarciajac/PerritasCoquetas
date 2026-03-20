@@ -42,7 +42,7 @@ npm start
 
 ## 📱 WhatsApp Integration
 
-Número configurado: **526143663694**
+Número configurado: **5261444620906**
 
 Los pedidos incluyen:
 - Diseño base seleccionado

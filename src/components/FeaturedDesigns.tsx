@@ -1,23 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PatitasImage from './ui/PatitasImage'
 import { getImageSrc } from '@/lib/images'
 import { baseDesigns } from '@/lib/baseDesigns'
 
 export default function FeaturedDesigns() {
   const [currentIndex, setCurrentIndex] = useState(0)
-
-  // Auto-rotate carousel cada 5 segundos
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
-        prevIndex === baseDesigns.length - 1 ? 0 : prevIndex + 1
-      )
-    }, 5000)
-
-    return () => clearInterval(timer)
-  }, [])
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => 
@@ -39,10 +28,10 @@ export default function FeaturedDesigns() {
   const { src, fallback, alt } = getImageSrc('featured', currentDesign.imageKey)
 
   return (
-    <section id="disenos" className="py-20 bg-white">
+    <section id="disenos" className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-800 mb-6">
+        <div className="text-center mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-800 mb-3">
             Diseños Destacados
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
@@ -98,7 +87,7 @@ export default function FeaturedDesigns() {
           </div>
 
           {/* Indicadores (bolitas) */}
-          <div className="flex justify-center items-center mt-6 space-x-4">
+          <div className="flex justify-center items-center mt-4 space-x-4">
             {baseDesigns.map((_, index) => (
               <button
                 key={index}
@@ -115,28 +104,11 @@ export default function FeaturedDesigns() {
           </div>
 
           {/* Contador */}
-          <div className="text-center mt-4">
+          <div className="text-center mt-2">
             <span className="text-sm text-gray-500 font-medium">
               {currentIndex + 1} de {baseDesigns.length}
             </span>
           </div>
-        </div>
-        
-        <div className="text-center mt-12">
-          <p className="text-gray-500 font-light mb-6">
-            ¿No encuentras el diseño perfecto?
-          </p>
-          <button 
-            onClick={() => {
-              const customizerSection = document.getElementById('personalizar')
-              if (customizerSection) {
-                customizerSection.scrollIntoView({ behavior: 'smooth' })
-              }
-            }}
-            className="inline-flex items-center px-6 py-3 bg-orange-100 text-orange-600 rounded-full hover:bg-orange-200 transition-colors font-light"
-          >
-            ✨ Crea tu propio diseño
-          </button>
         </div>
       </div>
     </section>

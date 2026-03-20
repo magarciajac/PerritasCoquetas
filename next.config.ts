@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Deshabilitar completamente indicadores de desarrollo
+  devIndicators: {
+    buildActivity: false,
+  },
+  
+  // Deshabilitar overlays de desarrollo
+  productionBrowserSourceMaps: false,
+  
   // Habilitar optimizaciones de producción
   compress: true,
   

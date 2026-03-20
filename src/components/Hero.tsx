@@ -15,7 +15,14 @@ export default function Hero() {
   const handleDesignClick = () => {
     const customizerSection = document.getElementById('personalizar')
     if (customizerSection) {
-      customizerSection.scrollIntoView({ behavior: 'smooth' })
+      const headerOffset = 100 // Compensar header sticky + margen extra
+      const elementPosition = customizerSection.offsetTop
+      const offsetPosition = elementPosition - headerOffset
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
     }
   }
 
@@ -77,14 +84,6 @@ export default function Hero() {
               className="bg-gray-800 hover:bg-gray-900 text-white px-8 py-4 text-lg font-light rounded-full shadow-lg hover:shadow-xl transition-all"
             >
               Diseña el Tuyo
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={handleWhatsAppClick}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 text-lg font-light rounded-full"
-            >
-              🔍 Mensaje por WhatsApp
             </Button>
           </div>
         </div>

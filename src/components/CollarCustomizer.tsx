@@ -15,10 +15,11 @@ interface CollarCustomization {
   embroideryDesign2: null | { id: string; name: string; imageKey: string; description: string }
   color: { id: string; label: string; value: string }
   petName: string
-  letterStyle: { id: string; name: string; style: string }
-  charmType: { id: string; name: string; style: string }
+  letterStyle: { id: string; name: string; style: string; imageKey: string }
+  letterColor: { id: string; label: string; value: string }
+  charmType: { id: string; name: string; style: string; imageKey: string }
   charms: { id: string; label: string; icon: string }[]
-  size: { id: string; name: string; description: string }
+  size: { id: string; name: string; description: string; price: number }
   // Second collar for combined design
   secondCollar: {
     petName: string
@@ -29,25 +30,26 @@ interface CollarCustomization {
 const designTypes = [
   { 
     id: 1, 
-    name: 'Diseño1', 
+    name: 'Bordado', 
     imageKey: 'design1',
-    description: 'Diseño simple y elegante'
+    description: 'Collar con bordado decorativo en la parte inferior'
   },
   { 
     id: 2, 
-    name: 'Diseño2', 
+    name: 'Sin Bordado', 
     imageKey: 'design2', 
-    description: 'Diseño moderno con estilo'
+    description: 'Diseño sencillo y minimalista, sin bordados adicionales'
   },
   { 
     id: 3, 
     name: 'Combinado', 
     imageKey: 'design3', 
-    description: 'Diseño complejo con múltiples elementos'
+    description: 'Dos collares personalizados con diferentes bordados'
   }
 ]
 
 const colors = [
+  // Colores Sólidos - Primera fila
   { id: 'black', label: 'Negro', value: '#000000', type: 'solid' },
   { id: 'brown', label: 'Café', value: '#8B4513', type: 'solid' },
   { id: 'tan', label: 'Beige', value: '#D2B48C', type: 'solid' },
@@ -58,21 +60,48 @@ const colors = [
   { id: 'purple', label: 'Morado', value: '#7C3AED', type: 'solid' },
   { id: 'green', label: 'Verde', value: '#10B981', type: 'solid' },
   { id: 'yellow', label: 'Amarillo', value: '#F59E0B', type: 'solid' },
+  
+  // Colores Sólidos - Segunda fila
   { id: 'orange', label: 'Naranja', value: '#EA580C', type: 'solid' },
   { id: 'white', label: 'Blanco', value: '#FFFFFF', type: 'solid' },
   { id: 'gray', label: 'Gris', value: '#6B7280', type: 'solid' },
   { id: 'teal', label: 'Verde Azulado', value: '#0D9488', type: 'solid' },
-  { id: 'lime', label: 'Verde Limón', value: '#65A30D', type: 'solid' },
-  { id: 'cyan', label: 'Cian', value: '#0891B2', type: 'solid' },
+  { id: 'lime', label: 'Verde Limón', value: '#84CC16', type: 'solid' },
+  { id: 'cyan', label: 'Cian', value: '#06B6D4', type: 'solid' },
   { id: 'indigo', label: 'Índigo', value: '#4338CA', type: 'solid' },
   { id: 'rose', label: 'Rosa Pálido', value: '#F43F5E', type: 'solid' },
-  { id: 'emerald', label: 'Esmeralda', value: '#059669', type: 'solid' },
-  { id: 'amber', label: 'Ámbar', value: '#D97706', type: 'solid' },
+  { id: 'amber', label: 'Ámbar', value: '#F59E0B', type: 'solid' },
+  
+  // Colores Sólidos - Tercera fila
   { id: 'slate', label: 'Pizarra', value: '#475569', type: 'solid' },
-  { id: 'multicolor1', label: 'Multicolor Rosa', value: 'linear-gradient(45deg, #EC4899, #F59E0B, #10B981)', type: 'multicolor' },
-  { id: 'multicolor2', label: 'Multicolor Azul', value: 'linear-gradient(45deg, #3B82F6, #7C3AED, #0D9488)', type: 'multicolor' },
-  { id: 'multicolor3', label: 'Multicolor Arcoíris', value: 'linear-gradient(45deg, #DC2626, #F59E0B, #10B981, #3B82F6, #7C3AED)', type: 'multicolor' },
-  { id: 'camo', label: 'Camuflaje', value: 'linear-gradient(45deg, #4B5563, #065F46, #1F2937)', type: 'multicolor' }
+  
+  // Colores Multicolor - Primera fila
+  { id: 'multi_pink_purple', label: 'Rosa-Púrpura', value: 'linear-gradient(45deg, #EC4899, #A855F7)', type: 'multicolor' },
+  { id: 'multi_red_fire', label: 'Rojo Fuego', value: 'linear-gradient(45deg, #DC2626, #F59E0B)', type: 'multicolor' },
+  { id: 'multi_arcoiris', label: 'Arcoíris', value: 'linear-gradient(45deg, #06B6D4, #10B981, #F59E0B)', type: 'multicolor' },
+  { id: 'multi_lime_yellow', label: 'Lima-Amarillo', value: 'linear-gradient(45deg, #84CC16, #F59E0B)', type: 'multicolor' },
+  { id: 'multi_gray_diamond', label: 'Gris Diamante', value: 'linear-gradient(45deg, #6B7280, #D1D5DB)', type: 'multicolor' },
+  { id: 'multi_blue_electric', label: 'Azul Eléctrico', value: 'linear-gradient(45deg, #1E40AF, #3B82F6)', type: 'multicolor' },
+  { id: 'multi_sky_pattern', label: 'Patrón Cielo', value: 'linear-gradient(45deg, #0EA5E9, #7DD3FC)', type: 'multicolor' },
+  { id: 'multi_purple_galaxy', label: 'Púrpura Galaxia', value: 'linear-gradient(45deg, #581C87, #A855F7)', type: 'multicolor' },
+  { id: 'multi_forest_camo', label: 'Camuflaje Bosque', value: 'linear-gradient(45deg, #1F2937, #065F46)', type: 'multicolor' },
+  { id: 'multi_orange_sunset', label: 'Atardecer Naranja', value: 'linear-gradient(45deg, #EA580C, #F97316)', type: 'multicolor' },
+  
+  // Colores Multicolor - Segunda fila
+  { id: 'multi_mint_fresh', label: 'Menta Fresco', value: 'linear-gradient(45deg, #059669, #6EE7B7)', type: 'multicolor' },
+  { id: 'multi_royal_blue', label: 'Azul Real', value: 'linear-gradient(45deg, #1E3A8A, #3B82F6)', type: 'multicolor' },
+  { id: 'multi_pink_candy', label: 'Rosa Dulce', value: 'linear-gradient(45deg, #EC4899, #F9A8D4)', type: 'multicolor' },
+  { id: 'multi_chocolate_brown', label: 'Café Chocolate', value: 'linear-gradient(45deg, #78350F, #A16207)', type: 'multicolor' },
+  { id: 'multi_turquoise_wave', label: 'Onda Turquesa', value: 'linear-gradient(45deg, #0F766E, #5EEAD4)', type: 'multicolor' },
+  { id: 'multi_neon_mix', label: 'Mezcla Neón', value: 'linear-gradient(45deg, #10B981, #3B82F6)', type: 'multicolor' },
+  { id: 'multi_military_green', label: 'Verde Militar', value: 'linear-gradient(45deg, #1F2937, #047857)', type: 'multicolor' },
+  { id: 'multi_arctic_blue', label: 'Azul Ártico', value: 'linear-gradient(45deg, #075985, #BAE6FD)', type: 'multicolor' },
+  { id: 'multi_purple_pink', label: 'Púrpura-Rosa', value: 'linear-gradient(45deg, #7C3AED, #EC4899)', type: 'multicolor' },
+  { id: 'multi_black_gray', label: 'Negro-Gris', value: 'linear-gradient(45deg, #000000, #6B7280)', type: 'multicolor' },
+  
+  // Colores Multicolor - Tercera fila (parcial)
+  { id: 'multi_azul_blanco', label: 'Azul-Blanco', value: 'linear-gradient(45deg, #3B82F6, #DBEAFE)', type: 'multicolor' },
+  { id: 'multi_verde_amarillo', label: 'Verde-Amarillo', value: 'linear-gradient(45deg, #84CC16, #F59E0B)', type: 'multicolor' }
 ]
 
 const letterStyles = [
@@ -110,7 +139,6 @@ const letterTypes = [
 ]
 
 const charmTypes = [
-  { id: 'charm1', name: 'Charm Corazón', imageKey: 'charm1', description: 'Dije de corazón elegante' },
   { id: 'charm2', name: 'Charm Estrella', imageKey: 'charm2', description: 'Dije de estrella brillante' },
   { id: 'charm3', name: 'Charm Flor', imageKey: 'charm3', description: 'Dije de flor delicada' },
   { id: 'charm4', name: 'Charm Moño', imageKey: 'charm4', description: 'Dije de moño elegante' },
@@ -143,27 +171,27 @@ const charmItems = [
 
 // Bordados específicos para cada diseño
 const embroideryTypesDesign1 = [
-  { id: 'emb1-d1', name: 'Bordado Clásico D1', imageKey: 'design1-emb1', description: 'Diseño elegante tradicional para Diseño 1' },
-  { id: 'emb2-d1', name: 'Bordado Floral D1', imageKey: 'design1-emb2', description: 'Diseño con motivos florales para Diseño 1' },
-  { id: 'emb3-d1', name: 'Bordado Geométrico D1', imageKey: 'design1-emb3', description: 'Patrones geométricos para Diseño 1' },
-  { id: 'emb4-d1', name: 'Bordado Vintage D1', imageKey: 'design1-emb4', description: 'Estilo vintage para Diseño 1' },
-  { id: 'emb5-d1', name: 'Bordado Artesanal D1', imageKey: 'design1-emb5', description: 'Hecho a mano para Diseño 1' }
+  { id: 'emb1-d1', name: 'Trenza Espiral', imageKey: 'design1-emb1', description: '' },
+  { id: 'emb2-d1', name: 'Trenza Forte', imageKey: 'design1-emb2', description: '' },
+  { id: 'emb3-d1', name: 'Trenza Floral', imageKey: 'design1-emb3', description: '' },
+  { id: 'emb4-d1', name: 'Trenza Clásica', imageKey: 'design1-emb4', description: '' },
+  { id: 'emb5-d1', name: 'Nudo Clásico', imageKey: 'design1-emb5', description: '' }
 ]
 
 const embroideryTypesDesign2 = [
-  { id: 'emb1-d2', name: 'Bordado Moderno D2', imageKey: 'design2-emb1', description: 'Diseño moderno específico para Diseño 2' },
-  { id: 'emb2-d2', name: 'Bordado Urbano D2', imageKey: 'design2-emb2', description: 'Estilo urbano para Diseño 2' },
-  { id: 'emb3-d2', name: 'Bordado Minimalista D2', imageKey: 'design2-emb3', description: 'Diseño minimalista para Diseño 2' },
-  { id: 'emb4-d2', name: 'Bordado Contemporáneo D2', imageKey: 'design2-emb4', description: 'Estilo contemporáneo para Diseño 2' },
-  { id: 'emb5-d2', name: 'Bordado Elegante D2', imageKey: 'design2-emb5', description: 'Diseño elegante para Diseño 2' }
+  { id: 'emb1-d2', name: 'Trenza Espiral', imageKey: 'design2-emb1', description: '' },
+  { id: 'emb2-d2', name: 'Trenza Forte', imageKey: 'design2-emb2', description: '' },
+  { id: 'emb3-d2', name: 'Trenza Floral', imageKey: 'design2-emb3', description: '' },
+  { id: 'emb4-d2', name: 'Trenza Clásica', imageKey: 'design2-emb4', description: '' },
+  { id: 'emb5-d2', name: 'Nudo Clásico', imageKey: 'design2-emb5', description: '' }
 ]
 
 const embroideryTypesDesign3 = [
-  { id: 'emb1-d3', name: 'Bordado Combinado A', imageKey: 'design3-emb1', description: 'Primer estilo para diseño combinado' },
-  { id: 'emb2-d3', name: 'Bordado Combinado B', imageKey: 'design3-emb2', description: 'Segundo estilo para diseño combinado' },
-  { id: 'emb3-d3', name: 'Bordado Combinado C', imageKey: 'design3-emb3', description: 'Tercer estilo para diseño combinado' },
-  { id: 'emb4-d3', name: 'Bordado Combinado D', imageKey: 'design3-emb4', description: 'Cuarto estilo para diseño combinado' },
-  { id: 'emb5-d3', name: 'Bordado Combinado E', imageKey: 'design3-emb5', description: 'Quinto estilo para diseño combinado' }
+  { id: 'emb1-d3', name: 'Trenza Espiral', imageKey: 'design3-emb1', description: '' },
+  { id: 'emb2-d3', name: 'Trenza Forte', imageKey: 'design3-emb2', description: '' },
+  { id: 'emb3-d3', name: 'Trenza Floral', imageKey: 'design3-emb3', description: '' },
+  { id: 'emb4-d3', name: 'Trenza Clásica', imageKey: 'design3-emb4', description: '' },
+  { id: 'emb5-d3', name: 'Nudo Clásico', imageKey: 'design3-emb5', description: '' }
 ]
 
 // Función para obtener los bordados según el diseño seleccionado
@@ -177,19 +205,19 @@ const getEmbroideryTypesForDesign = (designId: number) => {
 }
 
 const embroideryTypes = [
-  { id: 'emb1', name: 'Bordado Clásico', imageKey: 'design1', description: 'Diseño elegante tradicional' },
-  { id: 'emb3', name: 'Bordado Floral', imageKey: 'design3', description: 'Diseño con motivos florales' },
-  { id: 'emb4', name: 'Bordado Geométrico', imageKey: 'design4', description: 'Patrones geométricos modernos' },
-  { id: 'emb5', name: 'Bordado Vintage', imageKey: 'design5', description: 'Estilo vintage clásico' },
-  { id: 'emb6', name: 'Bordado Artesanal', imageKey: 'design6', description: 'Hecho a mano con detalles únicos' }
+  { id: 'emb1', name: 'Trenza Espiral', imageKey: 'design1', description: '' },
+  { id: 'emb3', name: 'Trenza Forte', imageKey: 'design3', description: '' },
+  { id: 'emb4', name: 'Trenza Floral', imageKey: 'design4', description: '' },
+  { id: 'emb5', name: 'Trenza Clásica', imageKey: 'design5', description: '' },
+  { id: 'emb6', name: 'Nudo Clásico', imageKey: 'design6', description: '' }
 ]
 
 const sizes = [
-  { id: 'xs', name: 'Extra Pequeño', description: 'Para cachorros y perros muy pequeños (hasta 5 lbs)' },
-  { id: 's', name: 'Pequeño', description: 'Perros pequeños (5-15 lbs)' },
-  { id: 'm', name: 'Mediano', description: 'Perros medianos (15-35 lbs)' },
-  { id: 'l', name: 'Grande', description: 'Perros grandes (35-65 lbs)' },
-  { id: 'xl', name: 'Extra Grande', description: 'Perros extra grandes (65+ lbs)' }
+  { id: 'xs', name: 'Extra Pequeño', description: 'Medida del cuello: 17-29cm', price: 255 },
+  { id: 's', name: 'Pequeño', description: 'Medida del cuello: 25-40cm', price: 290 },
+  { id: 'm', name: 'Mediano', description: 'Medida del cuello: 35-46cm', price: 320 },
+  { id: 'l', name: 'Grande', description: 'Medida del cuello: 40-55cm', price: 500 },
+  { id: 'xl', name: 'Extra Grande', description: 'Medida del cuello: 50-66cm', price: 700 }
 ]
 
 export default function CollarCustomizer() {
@@ -207,10 +235,11 @@ export default function CollarCustomizer() {
     embroideryDesign2: null,
     color: { id: '', label: '', value: '' },
     petName: '',
-    letterStyle: { id: '', name: '', style: '' },
-    charmType: { id: '', name: '', style: '' },
+    letterStyle: { id: '', name: '', style: '', imageKey: '' },
+    letterColor: { id: 'green', label: 'Verde', value: '#10B981' },
+    charmType: { id: '', name: '', style: '', imageKey: '' },
     charms: [],
-    size: { id: '', name: '', description: '' },
+    size: { id: '', name: '', description: '', price: 0 },
     secondCollar: {
       petName: '',
       color: { id: '', label: '', value: '' }
@@ -218,6 +247,7 @@ export default function CollarCustomizer() {
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const stepsRef = useRef<HTMLDivElement>(null)
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
@@ -275,6 +305,13 @@ export default function CollarCustomizer() {
     }))
   }
 
+  const handleLetterColorSelect = (color: typeof colors[0]) => {
+    setCustomization(prev => ({
+      ...prev,
+      letterColor: color
+    }))
+  }
+
   const handleLetterTypeSelect = (letterType: typeof letterTypes[0]) => {
     // Map letter type to style for compatibility
     const styleMapping: { [key: string]: typeof letterStyles[0] } = {
@@ -284,25 +321,29 @@ export default function CollarCustomizer() {
       'type4': letterStyles[3]  // Bold -> Negrita
     }
     
+    const selectedStyle = styleMapping[letterType.id] || letterStyles[0]
     setCustomization(prev => ({
       ...prev,
-      letterStyle: styleMapping[letterType.id] || letterStyles[0]
+      letterStyle: {
+        ...selectedStyle,
+        imageKey: letterType.imageKey // Agregar la imagen del tipo de letra
+      }
     }))
     setIsLetterTypeModalOpen(false)
   }
 
   const handleCharmTypeSelect = (charmType: typeof charmTypes[0]) => {
     // Map charm type to style
-    const charmStyleMapping: { [key: string]: { id: string; name: string; style: string } } = {
-      'charm1': { id: 'charm1', name: 'Básicos', style: 'charm-basic' },
-      'charm2': { id: 'charm2', name: 'Coloridos', style: 'charm-colorful' },
-      'charm3': { id: 'charm3', name: 'Metálicos', style: 'charm-metallic' },
-      'charm4': { id: 'charm4', name: 'Premium', style: 'charm-premium' }
+    const charmStyleMapping: { [key: string]: { id: string; name: string; style: string; imageKey: string } } = {
+      'charm1': { id: 'charm1', name: 'Básicos', style: 'charm-basic', imageKey: charmType.imageKey },
+      'charm2': { id: 'charm2', name: 'Coloridos', style: 'charm-colorful', imageKey: charmType.imageKey },
+      'charm3': { id: 'charm3', name: 'Metálicos', style: 'charm-metallic', imageKey: charmType.imageKey },
+      'charm4': { id: 'charm4', name: 'Premium', style: 'charm-premium', imageKey: charmType.imageKey }
     }
     
     setCustomization(prev => ({
       ...prev,
-      charmType: charmStyleMapping[charmType.id] || charmStyleMapping['charm1']
+      charmType: charmStyleMapping[charmType.id] || { ...charmStyleMapping['charm1'], imageKey: charmType.imageKey }
     }))
     setIsCharmTypeModalOpen(false)
   }
@@ -352,8 +393,8 @@ export default function CollarCustomizer() {
   }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, letter: string) => {
-    // Solo permitir drag si ya se seleccionaron ambos tipos
-    if (!customization.letterStyle.id || !customization.charmType.id) {
+    // Solo permitir drag si se seleccionó tipo de letra
+    if (!customization.letterStyle.id) {
       e.preventDefault()
       return
     }
@@ -365,6 +406,30 @@ export default function CollarCustomizer() {
   const handleColorDragStart = (e: React.DragEvent<HTMLDivElement>, colorId: string) => {
     // Solo permitir drag si ya se seleccionaron ambos tipos
     if (!customization.letterStyle.id || !customization.charmType.id) {
+      e.preventDefault()
+      return
+    }
+    setDraggedColor(colorId)
+    setDraggedLetter(null)
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+
+  const handleParacordColorDragStart = (e: React.DragEvent<HTMLDivElement>, color: any) => {
+    // Permitir arrastrar colores del paracord cuando solo se selecciono charm
+    if (!customization.charmType.id) {
+      e.preventDefault()
+      return
+    }
+    // Crear un ID temporal para el color del paracord
+    const tempColorId = `paracord_${color.id}`
+    setDraggedColor(tempColorId)
+    setDraggedLetter(null)
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+
+  const handleTypicalColorDragStart = (e: React.DragEvent<HTMLDivElement>, colorId: string) => {
+    // Permitir arrastrar colores típicos cuando tienes charm seleccionado
+    if (!customization.charmType.id) {
       e.preventDefault()
       return
     }
@@ -387,7 +452,21 @@ export default function CollarCustomizer() {
           petName: prev.petName + draggedLetter
         }))
       } else if (draggedColor) {
-        const colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
+        let colorEmoji = '🔴' // fallback
+        
+        // Manejar colores del paracord
+        if (draggedColor.startsWith('paracord_')) {
+          const paracordColorId = draggedColor.replace('paracord_', '')
+          const paracordColor = colors.find(c => c.id === paracordColorId)
+          if (paracordColor) {
+            // Usar el label del color si existe, sino usar ● 
+            colorEmoji = paracordColor.label || '●'
+          }
+        } else {
+          // Manejar colores típicos normales
+          colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
+        }
+        
         setCustomization(prev => ({
           ...prev,
           petName: prev.petName + colorEmoji
@@ -429,14 +508,29 @@ export default function CollarCustomizer() {
           }
         }))
       } else if (draggedColor) {
-        const colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
-        const selectedColor = typicalColors.find(c => c.id === draggedColor)
+        let colorEmoji = '🔴' // fallback
+        let selectedColor = { id: '', label: '', value: '' }
+        
+        // Manejar colores del paracord
+        if (draggedColor.startsWith('paracord_')) {
+          const paracordColorId = draggedColor.replace('paracord_', '')
+          const paracordColor = colors.find(c => c.id === paracordColorId)
+          if (paracordColor) {
+            colorEmoji = paracordColor.label || '●'
+            selectedColor = { id: paracordColor.id, label: paracordColor.label, value: paracordColor.value }
+          }
+        } else {
+          // Manejar colores típicos normales
+          colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
+          selectedColor = typicalColors.find(c => c.id === draggedColor) || { id: '', label: '', value: '' }
+        }
+        
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
             petName: prev.secondCollar.petName + colorEmoji,
-            color: selectedColor || { id: '', label: '', value: '' }
+            color: selectedColor
           }
         }))
       }
@@ -519,7 +613,7 @@ export default function CollarCustomizer() {
   const requiresEmbroidery = () => {
     // Show embroidery step by default until a design type is selected
     if (!customization.designType) return true
-    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 2 || customization.designType.id === 3)
+    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 3)
   }
 
   const canProceed = () => {
@@ -531,16 +625,24 @@ export default function CollarCustomizer() {
         if (customization.designType?.id === 3) {
           return customization.embroideryDesign1 !== null && customization.embroideryDesign2 !== null
         }
-        return customization.embroideryType !== null
+        // Para diseño con bordado (tipo 1), requiere embroideryType
+        if (customization.designType?.id === 1) {
+          return customization.embroideryType !== null
+        }
+        // Para diseño sin bordado (tipo 2), no requiere embroideryType
+        return true
       }
       case 2: return !requiresColor() || customization.color.id !== ''
       case 3: {
-        const baseRequirements = customization.petName.trim() !== '' && customization.letterStyle.id !== '' && customization.charmType.id !== ''
-        // For combined design (design 3), also require second collar to have a name
+        // Para diseño combinado, completamente flexible
         if (customization.designType?.id === 3) {
-          return baseRequirements && customization.secondCollar.petName.trim() !== ''
+          // Se puede avanzar siempre - todo es opcional
+          return true
         }
-        return baseRequirements
+        
+        // Para diseño normal, también completamente flexible  
+        // Se puede avanzar siempre - letras y charms son opcionales
+        return true
       }
       case 4: return customization.size.id !== ''
       default: return false
@@ -557,6 +659,14 @@ export default function CollarCustomizer() {
       }
       
       setCurrentStep(nextStepIndex)
+      
+      // Scroll automático a los steps
+      setTimeout(() => {
+        stepsRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        })
+      }, 100)
     }
   }
 
@@ -569,7 +679,36 @@ export default function CollarCustomizer() {
         prevStepIndex = 1 // Skip step 2 (color) and go back to step 1 (embroidery)
       }
       
+      // Resetear datos solo cuando regresa al step 1 (inicio)
+      if (prevStepIndex === 0) {
+        setCustomization({
+          designType: null,
+          embroideryType: null,
+          embroideryDesign1: null,
+          embroideryDesign2: null,
+          color: { id: '', label: '', value: '' },
+          petName: '',
+          letterStyle: { id: '', name: '', style: '' },
+          letterColor: { id: 'green', label: 'Verde', value: '#10B981' },
+          charmType: { id: '', name: '', style: '' },
+          charms: [],
+          size: { id: '', name: '', description: '' },
+          secondCollar: {
+            petName: '',
+            color: { id: '', label: '', value: '' }
+          }
+        })
+      }
+      
       setCurrentStep(prevStepIndex)
+      
+      // Scroll automático a los steps
+      setTimeout(() => {
+        stepsRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        })
+      }, 100)
     }
   }
 
@@ -608,6 +747,7 @@ DETALLES DEL DISEÑO:
 
     message += `
 - Estilo de letra: ${customization.letterStyle.name || 'No seleccionado'}
+- Color de letra: ${customization.letterColor.label || 'Verde'}
 - Charms: ${customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'}
 - Tamaño: ${customization.size.name || 'No seleccionado'}
 
@@ -619,7 +759,6 @@ DETALLES DEL DISEÑO:
   }
 
   const handleDownload = () => {
-    console.log('Download initiated for design:', customization)
     setIsModalOpen(false)
   }
 
@@ -707,6 +846,22 @@ DETALLES DEL DISEÑO:
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Nota informativa */}
+            <div className="mt-8 max-w-4xl mx-auto">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-center">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-blue-700 text-sm font-medium text-center">
+                      ✨ Todos los diseños incluyen letras personalizadas y charms decorativos
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )
@@ -822,7 +977,6 @@ DETALLES DEL DISEÑO:
                               </svg>
                             </button>
                           </div>
-                          <h5 className="text-sm font-bold text-gray-800 mb-2">{embroidery.name}</h5>
                           <p className="text-xs text-gray-600 mb-3">{embroidery.description}</p>
                           {customization.embroideryDesign2?.id === embroidery.id && (
                             <span className="inline-block bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
@@ -845,6 +999,13 @@ DETALLES DEL DISEÑO:
             <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
               Selecciona el Tipo de Bordado
             </h3>
+            {customization.designType?.id === 1 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-center font-medium">
+                  💡 <strong>Guía:</strong> Como elegiste el diseño "Bordado", en este paso solo necesitas seleccionar el tipo de bordado que más te guste para tu collar.
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {getEmbroideryTypesForDesign(customization.designType?.id || 1).map((embroidery) => (
                 <div
@@ -901,6 +1062,21 @@ DETALLES DEL DISEÑO:
               Selecciona el Color del Collar
             </h3>
             
+            {/* Nota informativa para diseño combinado */}
+            {customization.designType?.id === 3 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                <div className="flex items-start space-x-3">
+                  <span className="text-2xl">ℹ️</span>
+                  <div>
+                    <h4 className="font-semibold text-blue-800 mb-1">Diseño Combinado</h4>
+                    <p className="text-blue-700 text-sm">
+                      Este color será para el bordado del primer collar. El segundo collar será sencillo sin bordado.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-8">
               {/* Colores Sólidos */}
               <div>
@@ -909,12 +1085,15 @@ DETALLES DEL DISEÑO:
                   {colors.filter(color => color.type === 'solid').map((color) => (
                     <div
                       key={color.id}
+                      draggable={customization.charmType.id && Array.from(customization.petName).length < 12}
+                      onDragStart={(e) => handleParacordColorDragStart(e, color)}
                       className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
                         customization.color.id === color.id
                           ? 'border-pink-500 bg-pink-50 shadow-lg'
                           : 'border-gray-200 hover:border-pink-300'
-                      }`}
+                      } ${customization.charmType.id && Array.from(customization.petName).length < 12 ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => handleColorSelect(color)}
+                      title={customization.charmType.id && Array.from(customization.petName).length < 12 ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
                     >
                       <div className="text-center">
                         <div 
@@ -924,7 +1103,7 @@ DETALLES DEL DISEÑO:
                             border: color.id === 'white' ? '2px solid #e5e7eb' : '2px solid white'
                           }}
                         ></div>
-                        <h5 className="text-xs font-medium text-gray-800 leading-tight">{color.label}</h5>
+                        <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
                         {customization.color.id === color.id && (
                           <div className="mt-1">
                             <span className="text-pink-500 text-xs font-medium">✓</span>
@@ -939,28 +1118,31 @@ DETALLES DEL DISEÑO:
               {/* Colores Multicolor */}
               <div>
                 <h4 className="text-lg font-semibold text-gray-700 mb-4">Colores Multicolor</h4>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-3 max-w-5xl mx-auto">
                   {colors.filter(color => color.type === 'multicolor').map((color) => (
                     <div
                       key={color.id}
-                      className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                      draggable={customization.charmType.id && Array.from(customization.petName).length < 12}
+                      onDragStart={(e) => handleParacordColorDragStart(e, color)}
+                      className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
                         customization.color.id === color.id
                           ? 'border-pink-500 bg-pink-50 shadow-lg'
                           : 'border-gray-200 hover:border-pink-300'
-                      }`}
+                      } ${customization.charmType.id && Array.from(customization.petName).length < 12 ? 'cursor-grab active:cursor-grabbing' : ''}`}
                       onClick={() => handleColorSelect(color)}
+                      title={customization.charmType.id && Array.from(customization.petName).length < 12 ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
                     >
                       <div className="text-center">
                         <div 
-                          className="w-12 h-12 rounded-full mx-auto mb-3 border-2 border-white shadow-md"
+                          className="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
                           style={{ 
                             background: color.value
                           }}
                         ></div>
-                        <h5 className="text-sm font-medium text-gray-800">{color.label}</h5>
+                        <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
                         {customization.color.id === color.id && (
                           <div className="mt-1">
-                            <span className="text-pink-500 text-sm font-medium">✓ Seleccionado</span>
+                            <span className="text-pink-500 text-xs font-medium">✓</span>
                           </div>
                         )}
                       </div>
@@ -975,7 +1157,7 @@ DETALLES DEL DISEÑO:
       case 3:
         return (
           <div>
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
+            <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
               Personaliza las Letras
               {customization.designType?.id === 3 && (
                 <span className="block text-base font-normal text-gray-600 mt-2">
@@ -983,6 +1165,16 @@ DETALLES DEL DISEÑO:
                 </span>
               )}
             </h3>
+            
+            {/* Instrucciones iniciales */}
+            {!customization.letterStyle.id && !customization.charmType.id && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                <p className="text-blue-800 text-center font-medium">
+                  💡 <strong>¡Comienza aquí!</strong> Haz clic en los botones <span className="bg-pink-500 text-white px-2 py-1 rounded-full text-xs">+</span> de abajo para agregar letras personalizadas o charms decorativos a tu collar
+                </p>
+              </div>
+            )}
+            
             <div className="space-y-8">
               
               {/* Selección de Tipos - Layout horizontal compacto */}
@@ -1011,6 +1203,7 @@ DETALLES DEL DISEÑO:
                         <button
                           onClick={() => setIsLetterTypeModalOpen(true)}
                           className="w-8 h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
+                          title="Haz clic aquí para agregar letras personalizadas"
                         >
                           <span className="text-white text-lg font-bold">+</span>
                         </button>
@@ -1042,6 +1235,7 @@ DETALLES DEL DISEÑO:
                         <button
                           onClick={() => setIsCharmTypeModalOpen(true)}
                           className="w-8 h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
+                          title="Haz clic aquí para agregar charms decorativos"
                         >
                           <span className="text-white text-lg font-bold">+</span>
                         </button>
@@ -1051,8 +1245,25 @@ DETALLES DEL DISEÑO:
                 </div>
               </div>
 
-              {/* Nombre de la Mascota - Drag & Drop (solo si ambos tipos están seleccionados) */}
-              {customization.letterStyle.id && customization.charmType.id && (
+              {/* Mensajes de sugerencia condicionales */}
+              {customization.letterStyle.id && !customization.charmType.id && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                  <p className="text-purple-700 text-sm text-center">
+                    ✨ <strong>Sugerencia:</strong> También puedes agregar un charm decorativo haciendo clic en el botón + violeta
+                  </p>
+                </div>
+              )}
+
+              {customization.charmType.id && !customization.letterStyle.id && (
+                <div className="bg-pink-50 border border-pink-200 rounded-lg p-3">
+                  <p className="text-pink-700 text-sm text-center">
+                    💝 <strong>Sugerencia:</strong> También puedes agregar letras personalizadas haciendo clic en el botón + rosado
+                  </p>
+                </div>
+              )}
+
+              {/* Nombre de la Mascota - Drag & Drop (cuando se selecciona tipo de letra o charm) */}
+              {(customization.letterStyle.id || customization.charmType.id) && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="block text-md font-semibold text-gray-700">
@@ -1080,9 +1291,14 @@ DETALLES DEL DISEÑO:
                       Array.from(customization.petName).map((char, index) => (
                         <div
                           key={`${char}-${index}`}
-                          className={`relative bg-white border-2 border-pink-300 rounded px-2 py-1 text-lg font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                          className={`relative bg-white border-2 border-pink-300 rounded px-2 py-1 text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
                             /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                           }`}
+                          style={{ 
+                            color: /[A-Z]/.test(char) ? 
+                              (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
+                              '#374151'
+                          }}
                           onClick={() => handleRemoveLetter(index)}
                           title="Clic para eliminar"
                         >
@@ -1102,11 +1318,12 @@ DETALLES DEL DISEÑO:
                   {/* Grid de Letras y Colores */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     
-                    {/* Alfabeto para arrastrar */}
-                    <div>
-                      <h4 className="text-md font-semibold text-gray-700 mb-3">
-                        Letras:
-                      </h4>
+                    {/* Alfabeto para arrastrar - Solo si seleccionó tipo de letra */}
+                    {customization.letterStyle.id && (
+                      <div>
+                        <h4 className="text-md font-semibold text-gray-700 mb-3">
+                          Letras:
+                        </h4>
                       <div className="grid grid-cols-6 sm:grid-cols-7 gap-2">
                         {alphabet.map((letter) => (
                           <div
@@ -1116,16 +1333,67 @@ DETALLES DEL DISEÑO:
                             className={`bg-white border-2 border-gray-300 rounded-lg px-2 py-2 text-lg font-bold text-center cursor-grab active:cursor-grabbing hover:bg-pink-50 hover:border-pink-300 transition-all ${
                               Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
                             } ${customization.letterStyle.style}`}
+                            style={{ 
+                              color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value 
+                            }}
                             title={Array.from(customization.petName).length >= 12 ? 'Máximo alcanzado' : `Arrastra ${letter}`}
                           >
                             {letter}
                           </div>
                         ))}
                       </div>
+                      
+                      {/* Color de Letra - Solo mostrar si NO es tipo cursivo */}
+                      {customization.letterStyle.id !== 'script' && (
+                        <div className="mt-4">
+                          <h4 className="text-md font-semibold text-gray-700 mb-3">
+                            Color de Letra:
+                          </h4>
+                          <div className="grid grid-cols-5 gap-2">
+                            {colors.filter(color => ['green', 'purple', 'orange', 'pink', 'blue'].includes(color.id)).map((color) => (
+                              <div
+                                key={color.id}
+                                className={`relative p-1 rounded-lg border-2 cursor-pointer transition-all ${
+                                  customization.letterColor.id === color.id
+                                    ? 'border-pink-500 bg-pink-50 shadow-lg'
+                                    : 'border-gray-200 hover:border-pink-300'
+                                }`}
+                                onClick={() => handleLetterColorSelect(color)}
+                              >
+                                <div className="text-center">
+                                  <div 
+                                    className="w-6 h-6 rounded-full mx-auto border border-white shadow-sm"
+                                    style={{ 
+                                      background: color.value,
+                                      border: color.id === 'white' ? '1px solid #e5e7eb' : '1px solid white'
+                                    }}
+                                  ></div>
+                                  {customization.letterColor.id === color.id && (
+                                    <div className="mt-1">
+                                      <span className="text-pink-500 text-xs font-medium">✓</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Mensaje informativo para tipo cursivo */}
+                      {customization.letterStyle.id === 'script' && (
+                        <div className="mt-4 p-3 bg-gray-100 rounded-lg">
+                          <p className="text-sm text-gray-600 text-center">
+                            ℹ️ Las letras cursivas solo están disponibles en color negro
+                          </p>
+                        </div>
+                      )}
                     </div>
+                    )}
 
-                    {/* Colores típicos para arrastrar */}
-                    <div>
+                    {/* Colores típicos para arrastrar - Solo si seleccionó tipo de charm */}
+                    {customization.charmType.id && (
+                      <div>
                       <h4 className="text-md font-semibold text-gray-700 mb-3">
                         Colores:
                       </h4>
@@ -1134,7 +1402,7 @@ DETALLES DEL DISEÑO:
                           <div
                             key={colorItem.id}
                             draggable={Array.from(customization.petName).length < 12}
-                            onDragStart={(e) => handleColorDragStart(e, colorItem.id)}
+                            onDragStart={(e) => handleTypicalColorDragStart(e, colorItem.id)}
                             className={`bg-white border-2 border-gray-300 rounded-lg px-3 py-3 text-2xl text-center cursor-grab active:cursor-grabbing hover:bg-purple-50 hover:border-purple-300 transition-all ${
                               Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
@@ -1144,9 +1412,10 @@ DETALLES DEL DISEÑO:
                           </div>
                         ))}
                       </div>
-                    </div>
+                      </div>
+                    )}
                   </div>
-
+                  
                   {/* Segundo Collar (solo para diseño combinado) */}
                   {customization.designType?.id === 3 && (
                     <div className="mt-6">
@@ -1176,9 +1445,14 @@ DETALLES DEL DISEÑO:
                         Array.from(customization.secondCollar.petName).map((char, index) => (
                           <div
                             key={`second-${char}-${index}`}
-                            className={`relative bg-white border-2 border-purple-300 rounded px-2 py-1 text-lg font-bold text-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                            className={`relative bg-white border-2 border-purple-300 rounded px-2 py-1 text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
                               /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                             }`}
+                            style={{ 
+                              color: /[A-Z]/.test(char) ? 
+                                (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
+                                '#374151'
+                            }}
                             onClick={() => handleRemoveSecondCollarLetter(index)}
                             title="Clic para eliminar"
                           >
@@ -1247,7 +1521,6 @@ DETALLES DEL DISEÑO:
                               </svg>
                             </button>
                           </div>
-                          <h4 className="text-lg font-bold text-gray-800 mb-2">{letterType.name}</h4>
                           <p className="text-sm text-gray-600">{letterType.description}</p>
                         </div>
                       ))}
@@ -1334,16 +1607,50 @@ DETALLES DEL DISEÑO:
                   onClick={() => handleSizeSelect(size)}
                 >
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h4 className="text-lg font-semibold text-gray-800">{size.name}</h4>
                       <p className="text-gray-600">{size.description}</p>
                     </div>
-                    {customization.size.id === size.id && (
-                      <span className="text-pink-500 text-xl">✓</span>
-                    )}
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="text-xl font-bold text-pink-600">${size.price} MXN</p>
+                        <p className="text-xs text-gray-500">Precio base aprox.</p>
+                      </div>
+                      {customization.size.id === size.id && (
+                        <span className="text-pink-500 text-xl">✓</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Información sobre precios */}
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <span className="text-2xl">💰</span>
+                <div>
+                  <h4 className="font-semibold text-blue-800 mb-2">Información sobre precios</h4>
+                  {customization.designType?.id === 3 ? (
+                    <div>
+                      <p className="text-blue-700 text-sm mb-2">
+                        <strong>Diseño Combinado:</strong> El precio mostrado es por cada collar individual. 
+                        Tu pedido incluirá 2 collares personalizados. 🐕+🐕
+                      </p>
+                      <p className="text-blue-700 text-sm">
+                        El precio final se confirmará por WhatsApp incluyendo todas las personalizaciones. ✨
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-blue-700 text-sm">
+                      Los precios mostrados son aproximados y corresponden al costo base del collar. 
+                      El precio final incluirá todas las personalizaciones que hayas elegido 
+                      (letras, charms, bordados especiales, etc.) y te será confirmado por nuestro 
+                      equipo cuando envíes tu diseño por WhatsApp. 😊✨
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )
@@ -1354,10 +1661,10 @@ DETALLES DEL DISEÑO:
   }
 
   return (
-    <section ref={sectionRef} className="py-20 bg-gradient-to-br from-pink-50 to-purple-100">
+    <section ref={sectionRef} id="personalizar" className="py-12 bg-gradient-to-br from-pink-50 to-purple-100">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">
             Diseña Tu Collar Personalizado
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -1366,7 +1673,7 @@ DETALLES DEL DISEÑO:
         </div>
 
         {/* Progress indicator */}
-        <div className="mb-12">
+        <div ref={stepsRef} className="mb-12">
           <div className="flex justify-center mb-4">
             <div className="flex items-center space-x-2">
               {steps.map((step, index) => {
@@ -1548,6 +1855,7 @@ DETALLES DEL DISEÑO:
                     )}
                     <p><strong>Color:</strong> {customization.color.label || 'No seleccionado'}</p>
                     <p><strong>Estilo:</strong> {customization.letterStyle.name || 'No seleccionado'}</p>
+                    <p><strong>Color de Letra:</strong> {customization.letterColor.label || 'Verde'}</p>
                     <p><strong>Charms:</strong> {customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'}</p>
                     <p><strong>Tamaño:</strong> {customization.size.name || 'No seleccionado'}</p>
                   </div>
@@ -1565,16 +1873,32 @@ DETALLES DEL DISEÑO:
                    getImageSrc('featured', customization.embroideryDesign1.imageKey).src :
                    customization.embroideryType ? getImageSrc('featured', customization.embroideryType.imageKey).src : 
                    customization.designType ? getImageSrc('featured', customization.designType.imageKey).src : ''}
+          secondImageUrl={customization.designType?.id === 3 && customization.embroideryDesign2 ?
+                          getImageSrc('featured', customization.embroideryDesign2.imageKey).src : undefined}
           designDetails={{
+            // 1. Tipo de diseño
+            designType: customization.designType?.name || 'No seleccionado',
+            // 2. Tipo de bordado
+            embroideryType: customization.designType?.id === 3 ? 
+              `${customization.embroideryDesign1?.name || 'Collar personalizado'} + Collar personalizado` :
+              customization.embroideryType?.name || (customization.designType?.id === 2 ? 'Sin bordado' : 'No seleccionado'),
+            // 3. Color del paracord
             color: customization.color.label || 'No seleccionado',
-            font: customization.letterStyle.name || 'No seleccionado',
+            // 4. Letras y charms
+            letterStyle: customization.letterStyle.name || 'Sin letras',
+            letterStyleImage: customization.letterStyle.imageKey ? 
+              getImageSrc('letterStyles', customization.letterStyle.imageKey).src : undefined,
+            letterColor: customization.letterColor.label || 'Verde',
+            charmType: customization.charmType.name || 'Sin charm',
+            charmTypeImage: customization.charmType.imageKey ? 
+              getImageSrc('charmPhotos', customization.charmType.imageKey).src : undefined,
             petName: customization.designType?.id === 3 ?
-                     `Collar 1: ${customization.petName || 'Sin nombre'} | Collar 2: ${customization.secondCollar.petName || 'Sin nombre'}` :
-                     customization.petName || 'Nombre no definido',
-            charm: customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'
+                     { collar1: customization.petName || 'Sin contenido', collar2: customization.secondCollar.petName || 'Sin contenido' } :
+                     customization.petName || 'Sin contenido',
+            // 5. Tamaño
+            size: customization.size.name || 'No seleccionado'
           }}
           onConfirmOrder={handleConfirmOrder}
-          onDownload={handleDownload}
         />
 
         {/* Modal de vista ampliada de imágenes */}

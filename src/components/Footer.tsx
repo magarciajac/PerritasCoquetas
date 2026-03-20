@@ -26,9 +26,8 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-lg font-light text-gray-800">Contáctanos</h4>
             <div className="space-y-2 text-gray-600 font-light">
-              <p>📧 hola@patitascoquetas.com</p>
-              <p>📱 WhatsApp: +52 123 456 7890</p>
-              <p>📍 Ciudad de México, México</p>
+              <p> WhatsApp: +52 614 462 0906</p>
+              <p>📍 Chihuahua, Chih.</p>
             </div>
           </div>
 
