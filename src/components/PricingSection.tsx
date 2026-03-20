@@ -13,7 +13,7 @@ export default function PricingSection() {
   ]
 
   const handleWhatsAppContact = () => {
-    const phoneNumber = '526143663694'
+    const phoneNumber = '526144620906'
     const message = `Hola! Me interesa conocer más sobre los precios de los collares personalizados. ¿Podrían brindarme más información?`
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, '_blank')

@@ -37,7 +37,7 @@ export default function PremiumDetails() {
   ]
 
   const handleWhatsAppContact = () => {
-    const phoneNumber = '526143663694'
+    const phoneNumber = '526144620906'
     const message = `Hola! Me encantan los detalles premium de sus collares. ¿Podrían mostrarme más ejemplos de la calidad?`
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, '_blank')

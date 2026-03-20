@@ -2,7 +2,7 @@
 
 export default function FinalCTA() {
   const handleWhatsAppClick = () => {
-    const phoneNumber = '526143663694'
+    const phoneNumber = '526144620906'
     const message = 'Hola! ✨ Estoy lista para crear un collar especial para mi mascota. ¿Podrían ayudarme con el proceso?'
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')

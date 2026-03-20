@@ -104,7 +104,7 @@ export default function FAQ() {
             ¿Tienes otra pregunta que no está aquí?
           </p>
           <button 
-            onClick={() => window.open('https://wa.me/526143663694?text=Hola! Tengo una pregunta sobre los collares personalizados', '_blank')}
+            onClick={() => window.open('https://wa.me/526144620906?text=Hola! Tengo una pregunta sobre los collares personalizados', '_blank')}
             className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors font-light"
           >
             💬 Pregúntanos por WhatsApp

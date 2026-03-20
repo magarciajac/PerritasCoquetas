@@ -6,7 +6,7 @@ import Image from 'next/image'
 export default function Hero() {
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = '526143663694' // Número de WhatsApp configurado
+    const phoneNumber = '526144620906' // Número de WhatsApp configurado
     const message = 'Hola! Me interesa crear un collar personalizado para mi mascota'
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
     window.open(url, '_blank')

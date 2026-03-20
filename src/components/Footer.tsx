@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/526143663694?text=Hola! Me gustaría obtener más información sobre PatitasCoquetas', '_blank')
+    window.open('https://wa.me/526144620906?text=Hola! Me gustaría obtener más información sobre PatitasCoquetas', '_blank')
   }
 
   return (

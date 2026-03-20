@@ -713,7 +713,7 @@ export default function CollarCustomizer() {
   }
 
   const handleConfirmOrder = () => {
-    const phoneNumber = '526143663694'
+    const phoneNumber = '526144620906'
     
     let message = `Hola! Quiero ordenar un collar personalizado para mi mascota:
 
