@@ -55,6 +55,56 @@ export const images = {
       path: '/images/material%20/Diseno8.jpg',
       fallback: '🐾',
       alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design6: {
+      path: '/images/material%20/Diseno_2.jpg',
+      fallback: '🎀',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design7: {
+      path: '/images/material%20/Diseno_3.jpg',
+      fallback: '💝',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design8: {
+      path: '/images/material%20/Diseno_4.jpg',
+      fallback: '🌟',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design9: {
+      path: '/images/material%20/Diseno5.jpg',
+      fallback: '💖',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design10: {
+      path: '/images/material%20/Diseno9.jpg',
+      fallback: '🦄',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design11: {
+      path: '/images/material%20/diseno2.jpg',
+      fallback: '🌺',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design12: {
+      path: '/images/material%20/diseno3.jpg',
+      fallback: '🎨',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design13: {
+      path: '/images/material%20/diseno4.jpg',
+      fallback: '🌈',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design14: {
+      path: '/images/material%20/Diseno10.jpg',
+      fallback: '✨',
+      alt: 'Collar personalizado PatitasCoquetas'
+    },
+    design15: {
+      path: '/images/material%20/DisenoC1.jpg',
+      fallback: '💫',
+      alt: 'Collar personalizado PatitasCoquetas'
     }
   },
 

@@ -171,27 +171,27 @@ const charmItems = [
 
 // Bordados específicos para cada diseño
 const embroideryTypesDesign1 = [
-  { id: 'emb1-d1', name: 'Trenza Espiral', imageKey: 'design1-emb1', description: '' },
-  { id: 'emb2-d1', name: 'Trenza Forte', imageKey: 'design1-emb2', description: '' },
-  { id: 'emb3-d1', name: 'Trenza Floral', imageKey: 'design1-emb3', description: '' },
-  { id: 'emb4-d1', name: 'Trenza Clásica', imageKey: 'design1-emb4', description: '' },
-  { id: 'emb5-d1', name: 'Nudo Clásico', imageKey: 'design1-emb5', description: '' }
+  { id: 'emb1-d1', name: 'Trenza Espiral', imageKey: 'design1', description: '' },
+  { id: 'emb2-d1', name: 'Trenza Forte', imageKey: 'design2', description: '' },
+  { id: 'emb3-d1', name: 'Trenza Floral', imageKey: 'design3', description: '' },
+  { id: 'emb4-d1', name: 'Trenza Clásica', imageKey: 'design4', description: '' },
+  { id: 'emb5-d1', name: 'Nudo Clásico', imageKey: 'design5', description: '' }
 ]
 
 const embroideryTypesDesign2 = [
-  { id: 'emb1-d2', name: 'Trenza Espiral', imageKey: 'design2-emb1', description: '' },
-  { id: 'emb2-d2', name: 'Trenza Forte', imageKey: 'design2-emb2', description: '' },
-  { id: 'emb3-d2', name: 'Trenza Floral', imageKey: 'design2-emb3', description: '' },
-  { id: 'emb4-d2', name: 'Trenza Clásica', imageKey: 'design2-emb4', description: '' },
-  { id: 'emb5-d2', name: 'Nudo Clásico', imageKey: 'design2-emb5', description: '' }
+  { id: 'emb1-d2', name: 'Trenza Espiral', imageKey: 'design6', description: '' },
+  { id: 'emb2-d2', name: 'Trenza Forte', imageKey: 'design7', description: '' },
+  { id: 'emb3-d2', name: 'Trenza Floral', imageKey: 'design8', description: '' },
+  { id: 'emb4-d2', name: 'Trenza Clásica', imageKey: 'design9', description: '' },
+  { id: 'emb5-d2', name: 'Nudo Clásico', imageKey: 'design10', description: '' }
 ]
 
 const embroideryTypesDesign3 = [
-  { id: 'emb1-d3', name: 'Trenza Espiral', imageKey: 'design3-emb1', description: '' },
-  { id: 'emb2-d3', name: 'Trenza Forte', imageKey: 'design3-emb2', description: '' },
-  { id: 'emb3-d3', name: 'Trenza Floral', imageKey: 'design3-emb3', description: '' },
-  { id: 'emb4-d3', name: 'Trenza Clásica', imageKey: 'design3-emb4', description: '' },
-  { id: 'emb5-d3', name: 'Nudo Clásico', imageKey: 'design3-emb5', description: '' }
+  { id: 'emb1-d3', name: 'Trenza Espiral', imageKey: 'design11', description: '' },
+  { id: 'emb2-d3', name: 'Trenza Forte', imageKey: 'design12', description: '' },
+  { id: 'emb3-d3', name: 'Trenza Floral', imageKey: 'design13', description: '' },
+  { id: 'emb4-d3', name: 'Trenza Clásica', imageKey: 'design14', description: '' },
+  { id: 'emb5-d3', name: 'Nudo Clásico', imageKey: 'design15', description: '' }
 ]
 
 // Función para obtener los bordados según el diseño seleccionado
@@ -613,7 +613,8 @@ export default function CollarCustomizer() {
   const requiresEmbroidery = () => {
     // Show embroidery step by default until a design type is selected
     if (!customization.designType) return true
-    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 3)
+    // Todos los diseños tienen bordados, solo son diferentes tipos
+    return customization.designType && (customization.designType.id === 1 || customization.designType.id === 2 || customization.designType.id === 3)
   }
 
   const canProceed = () => {
@@ -867,11 +868,6 @@ DETALLES DEL DISEÑO:
         )
       
       case 1:
-        // Only show embroidery step for Designo1, Design2 and Combinado
-        if (!requiresEmbroidery()) {
-          return null
-        }
-        
         // Para diseño combinado (Opción B): mostrar ambos grupos en una sola pantalla
         if (customization.designType?.id === 3) {
           return (
@@ -1003,6 +999,13 @@ DETALLES DEL DISEÑO:
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <p className="text-blue-800 text-center font-medium">
                   💡 <strong>Guía:</strong> Como elegiste el diseño "Bordado", en este paso solo necesitas seleccionar el tipo de bordado que más te guste para tu collar.
+                </p>
+              </div>
+            )}
+            {customization.designType?.id === 2 && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <p className="text-green-800 text-center font-medium">
+                  💡 <strong>Guía:</strong> Como elegiste el diseño "Sin Bordado", estos son estilos minimalistas que se enfocan en resaltar las letras personalizadas de tu mascota.
                 </p>
               </div>
             )}
