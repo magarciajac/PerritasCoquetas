@@ -1267,7 +1267,7 @@ DETALLES DEL DISEÑO:
 
       case 3:
         return (
-          <div className="w-full">
+          <div className="w-full max-w-full min-w-0 overflow-x-hidden box-border">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-center text-gray-800 mb-3 sm:mb-4 lg:mb-6">
               Personaliza las Letras
               {customization.designType?.id === 3 && (
@@ -1279,39 +1279,39 @@ DETALLES DEL DISEÑO:
             
             {/* Instrucciones iniciales */}
             {!customization.letterStyle.id && !customization.charmType.id && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3 lg:p-4 mb-4 sm:mb-6 lg:mb-8">
-                <p className="text-blue-800 text-center font-medium text-xs sm:text-sm lg:text-base leading-relaxed">
-                  💡 <strong>¡Comienza aquí!</strong> Haz clic en los botones <span className="bg-pink-500 text-white px-1 sm:px-1.5 lg:px-2 py-0.5 sm:py-0.5 lg:py-1 rounded-full text-[9px] sm:text-[10px] lg:text-xs">+</span> de abajo para agregar letras personalizadas o charms decorativos a tu collar
+              <div className="w-full max-w-full overflow-x-hidden box-border bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3 lg:p-4 mb-4 sm:mb-6 lg:mb-8">
+                <p className="text-blue-800 text-center font-medium text-xs sm:text-sm lg:text-base leading-relaxed break-words whitespace-normal" style={{ overflowWrap: 'anywhere' }}>
+                  💡 <strong>¡Comienza aquí!</strong> Haz clic en los botones <span className="inline-flex items-center justify-center bg-pink-500 text-white w-4 h-4 sm:w-5 sm:h-5 rounded-full text-[9px] sm:text-[10px] lg:text-xs leading-none">+</span> de abajo para agregar letras personalizadas o charms decorativos a tu collar
                 </p>
               </div>
             )}
             
-            <div className="space-y-3 sm:space-y-4 lg:space-y-8">
+            <div className="w-full max-w-full min-w-0 space-y-3 sm:space-y-4 lg:space-y-8 box-border">
               
               {/* Selección de Tipos */}
-              <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="w-full max-w-full min-w-0 flex flex-col gap-3 sm:gap-4">
                 
                 {/* Tipo de Letra */}
-                <div className="w-full flex items-center justify-between gap-2">
-                  <label className="text-xs sm:text-sm lg:text-md font-semibold text-gray-700 min-w-0">
+                <div className="w-full min-w-0 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+                  <label className="flex-1 min-w-0 text-xs sm:text-sm lg:text-md font-semibold text-gray-700 break-words">
                     Tipo de Letra
                   </label>
                   {customization.letterStyle.id ? (
                     <button
                       onClick={() => setIsLetterTypeModalOpen(true)}
-                      className="flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all flex-shrink-0"
+                      className="min-w-0 max-w-full sm:max-w-[60%] flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all shrink-0"
                     >
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center shrink-0">
                         <span className="text-white text-[8px] sm:text-xs font-bold">✓</span>
                       </div>
-                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate">
+                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate min-w-0">
                         {customization.letterStyle.name}
                       </span>
                     </button>
                   ) : (
                     <button
                       onClick={() => setIsLetterTypeModalOpen(true)}
-                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg flex-shrink-0"
+                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg shrink-0"
                       title="Haz clic aquí para agregar letras personalizadas"
                     >
                       <span className="text-white text-sm sm:text-base lg:text-lg font-bold">+</span>
@@ -1320,26 +1320,26 @@ DETALLES DEL DISEÑO:
                 </div>
 
                 {/* Tipo de Charm */}
-                <div className="w-full flex items-center justify-between gap-2">
-                  <label className="text-xs sm:text-sm lg:text-md font-semibold text-gray-700 min-w-0">
+                <div className="w-full min-w-0 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+                  <label className="flex-1 min-w-0 text-xs sm:text-sm lg:text-md font-semibold text-gray-700 break-words">
                     Tipo de Charm
                   </label>
                   {customization.charmType.id ? (
                     <button
                       onClick={() => setIsCharmTypeModalOpen(true)}
-                      className="flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all flex-shrink-0"
+                      className="min-w-0 max-w-full sm:max-w-[60%] flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all shrink-0"
                     >
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center shrink-0">
                         <span className="text-white text-[8px] sm:text-xs font-bold">✓</span>
                       </div>
-                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate">
+                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate min-w-0">
                         {customization.charmType.name}
                       </span>
                     </button>
                   ) : (
                     <button
                       onClick={() => setIsCharmTypeModalOpen(true)}
-                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg flex-shrink-0"
+                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg shrink-0"
                       title="Haz clic aquí para agregar charms decorativos"
                     >
                       <span className="text-white text-sm sm:text-base lg:text-lg font-bold">+</span>
@@ -1350,16 +1350,16 @@ DETALLES DEL DISEÑO:
 
               {/* Mensajes de sugerencia condicionales */}
               {customization.letterStyle.id && !customization.charmType.id && (
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 sm:p-3">
-                  <p className="text-purple-700 text-xs sm:text-sm text-center">
+                <div className="w-full max-w-full box-border bg-purple-50 border border-purple-200 rounded-lg p-2 sm:p-3">
+                  <p className="text-purple-700 text-xs sm:text-sm text-center break-words whitespace-normal">
                     ✨ <strong>Sugerencia:</strong> También puedes agregar un charm decorativo haciendo clic en el botón + violeta
                   </p>
                 </div>
               )}
 
               {customization.charmType.id && !customization.letterStyle.id && (
-                <div className="bg-pink-50 border border-pink-200 rounded-lg p-2 sm:p-3">
-                  <p className="text-pink-700 text-xs sm:text-sm text-center">
+                <div className="w-full max-w-full box-border bg-pink-50 border border-pink-200 rounded-lg p-2 sm:p-3">
+                  <p className="text-pink-700 text-xs sm:text-sm text-center break-words whitespace-normal">
                     💝 <strong>Sugerencia:</strong> También puedes agregar letras personalizadas haciendo clic en el botón + rosado
                   </p>
                 </div>
@@ -1367,14 +1367,14 @@ DETALLES DEL DISEÑO:
 
               {/* Nombre de la Mascota */}
               {(customization.letterStyle.id || customization.charmType.id) && (
-                <div className="w-full">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
-                    <label className="text-sm sm:text-md lg:text-lg font-semibold text-gray-700">
+                <div className="w-full max-w-full min-w-0 box-border">
+                  <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
+                    <label className="text-sm sm:text-md lg:text-lg font-semibold text-gray-700 min-w-0 break-words">
                       Nombre de tu Mascota
                     </label>
                     <button
                       onClick={handleClearName}
-                      className="text-xs text-gray-500 hover:text-pink-500 underline self-start sm:self-auto"
+                      className="text-xs text-gray-500 hover:text-pink-500 underline self-start sm:self-auto shrink-0"
                     >
                       Limpiar
                     </button>
@@ -1382,19 +1382,19 @@ DETALLES DEL DISEÑO:
                   
                   {/* Área de construcción del nombre */}
                   <div
-                    className="w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1"
+                    className="w-full max-w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
                     onDragOver={handleDragOver}
                     onDrop={handleDropOnName}
                   >
                     {Array.from(customization.petName).length === 0 ? (
-                      <span className="text-gray-400 text-sm sm:text-lg text-center px-2">
+                      <span className="text-gray-400 text-sm sm:text-lg text-center px-2 break-words">
                         Usa los botones + para agregar letras y colores al collar
                       </span>
                     ) : (
                       Array.from(customization.petName).map((char, index) => (
                         <div
                           key={`${char}-${index}`}
-                          className={`relative bg-white border-2 border-pink-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                          className={`relative bg-white border-2 border-pink-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
                             /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                           }`}
                           style={{ 
@@ -1414,7 +1414,7 @@ DETALLES DEL DISEÑO:
                     )}
                   </div>
                   
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4">
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
                     {isTouchDevice() ? 
                       'Máximo 12 caracteres • Toca + para agregar • Toca letra para eliminar' : 
                       'Máximo 12 caracteres • Arrastra o clic para agregar • Clic para eliminar'
@@ -1422,19 +1422,19 @@ DETALLES DEL DISEÑO:
                   </p>
 
                   {/* Layout de Letras y Colores */}
-                  <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
+                  <div className="w-full max-w-full min-w-0 space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8 box-border">
                     
                     {/* Alfabeto - Solo si seleccionó tipo de letra */}
                     {customization.letterStyle.id && (
-                      <div className="w-full">
+                      <div className="w-full max-w-full min-w-0">
                         <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
                           Letras: Toca + para agregar
                         </h4>
-                        <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2">
+                        <div className="w-full grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2">
                           {alphabet.map((letter) => (
                             <div
                               key={letter}
-                              className="flex flex-col"
+                              className="flex flex-col min-w-0"
                             >
                               <div
                                 className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-1 sm:px-2 py-2 sm:py-3 text-sm sm:text-xl font-bold text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
@@ -1462,7 +1462,7 @@ DETALLES DEL DISEÑO:
                         
                         {/* Color de Letra - Solo mostrar si NO es tipo cursivo */}
                         {customization.letterStyle.id !== 'script' && (
-                          <div className="mt-3 sm:mt-4">
+                          <div className="w-full max-w-full mt-3 sm:mt-4 box-border">
                             <h4 className="text-xs sm:text-md font-semibold text-gray-700 mb-2 sm:mb-3">
                               Color de Letra:
                             </h4>
@@ -1499,8 +1499,8 @@ DETALLES DEL DISEÑO:
                         
                         {/* Mensaje informativo para tipo cursivo */}
                         {customization.letterStyle.id === 'script' && (
-                          <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-100 rounded-lg">
-                            <p className="text-xs sm:text-sm text-gray-600 text-center">
+                          <div className="w-full max-w-full mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-100 rounded-lg box-border">
+                            <p className="text-xs sm:text-sm text-gray-600 text-center break-words">
                               ℹ️ Las letras cursivas solo están disponibles en color negro
                             </p>
                           </div>
@@ -1510,15 +1510,15 @@ DETALLES DEL DISEÑO:
 
                     {/* Colores típicos - Solo si seleccionó tipo de charm */}
                     {customization.charmType.id && (
-                      <div className="w-full">
+                      <div className="w-full max-w-full min-w-0">
                         <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
                           Colores: Toca + para agregar
                         </h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
+                        <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
                           {typicalColors.map((colorItem) => (
                             <div
                               key={colorItem.id}
-                              className="flex flex-col"
+                              className="flex flex-col min-w-0"
                             >
                               <div
                                 className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-2 sm:px-3 py-2 sm:py-3 text-lg sm:text-2xl text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
@@ -1546,14 +1546,14 @@ DETALLES DEL DISEÑO:
                   
                   {/* Segundo Collar (solo para diseño combinado) */}
                   {customization.designType?.id === 3 && (
-                    <div className="mt-4 sm:mt-6 w-full">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
-                        <label className="text-sm sm:text-md font-semibold text-gray-700">
+                    <div className="w-full max-w-full min-w-0 mt-4 sm:mt-6 box-border">
+                      <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
+                        <label className="text-sm sm:text-md font-semibold text-gray-700 min-w-0 break-words">
                           Segundo Collar
                         </label>
                         <button
                           onClick={handleClearSecondCollarName}
-                          className="text-xs text-gray-500 hover:text-purple-500 underline self-start sm:self-auto"
+                          className="text-xs text-gray-500 hover:text-purple-500 underline self-start sm:self-auto shrink-0"
                         >
                           Limpiar
                         </button>
@@ -1561,19 +1561,19 @@ DETALLES DEL DISEÑO:
                       
                       {/* Área de construcción del segundo collar */}
                       <div
-                        className="w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1"
+                        className="w-full max-w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
                         onDragOver={handleDragOver}
                         onDrop={handleDropOnSecondCollar}
                       >
                         {Array.from(customization.secondCollar.petName).length === 0 ? (
-                          <span className="text-gray-400 text-sm sm:text-lg text-center px-2">
+                          <span className="text-gray-400 text-sm sm:text-lg text-center px-2 break-words">
                             Usa los botones + para agregar letras y colores
                           </span>
                         ) : (
                           Array.from(customization.secondCollar.petName).map((char, index) => (
                             <div
                               key={`second-${char}-${index}`}
-                              className={`relative bg-white border-2 border-purple-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                              className={`relative bg-white border-2 border-purple-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
                                 /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                               }`}
                               style={{ 
@@ -1593,7 +1593,7 @@ DETALLES DEL DISEÑO:
                         )}
                       </div>
                       
-                      <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4">
+                      <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
                         Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
                       </p>
                     </div>
@@ -1842,9 +1842,9 @@ DETALLES DEL DISEÑO:
           </p>
         </div>
 
-        <div className={`grid gap-8 ${currentStep >= 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
+        <div className={`grid gap-8 min-w-0 ${currentStep >= 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
           {/* Step content */}
-          <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="w-full max-w-full min-w-0 overflow-x-hidden box-border bg-white rounded-2xl shadow-xl p-6">
             {renderStepContent()}
             
             {/* Navigation buttons */}
@@ -1882,7 +1882,7 @@ DETALLES DEL DISEÑO:
 
           {/* Live preview - only show from colors step onward */}
           {currentStep >= 2 && (
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="w-full max-w-full min-w-0 overflow-x-hidden box-border bg-white rounded-2xl shadow-xl p-8">
               <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
                 Vista Previa en Vivo
               </h3>
