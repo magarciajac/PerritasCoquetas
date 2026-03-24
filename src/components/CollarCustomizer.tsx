@@ -8,6 +8,17 @@ import ImageZoomModal from './ImageZoomModal'
 import PatitasImage from './ui/PatitasImage'
 import { getImageSrc } from '@/lib/images'
 
+type CollarCharacterItem = {
+  id: string
+  type: 'letter' | 'charmColor'
+  value: string
+  color?: string
+  label?: string
+}
+
+let _itemIdCounter = 0
+const nextItemId = () => `item-${++_itemIdCounter}-${Date.now()}`
+
 interface CollarCustomization {
   designType: null | { id: number; name: string; imageKey: string; description: string }
   embroideryType: null | { id: string; name: string; imageKey: string; description: string }
@@ -16,6 +27,7 @@ interface CollarCustomization {
   embroideryDesign2: null | { id: string; name: string; imageKey: string; description: string }
   color: { id: string; label: string; value: string }
   petName: string
+  petNameItems: CollarCharacterItem[]
   letterStyle: { id: string; name: string; style: string; imageKey: string }
   letterColor: { id: string; label: string; value: string }
   charmType: { id: string; name: string; style: string; imageKey: string }
@@ -24,6 +36,7 @@ interface CollarCustomization {
   // Second collar for combined design
   secondCollar: {
     petName: string
+    nameItems: CollarCharacterItem[]
     color: { id: string; label: string; value: string }
   }
 }
@@ -236,6 +249,7 @@ export default function CollarCustomizer() {
     embroideryDesign2: null,
     color: { id: '', label: '', value: '' },
     petName: '',
+    petNameItems: [],
     letterStyle: { id: '', name: '', style: '', imageKey: '' },
     letterColor: { id: 'green', label: 'Verde', value: '#10B981' },
     charmType: { id: '', name: '', style: '', imageKey: '' },
@@ -243,6 +257,7 @@ export default function CollarCustomizer() {
     size: { id: '', name: '', description: '', price: 0 },
     secondCollar: {
       petName: '',
+      nameItems: [],
       color: { id: '', label: '', value: '' }
     }
   })
@@ -402,21 +417,29 @@ export default function CollarCustomizer() {
   const handleAddLetter = (letter: string) => {
     const isCombined = customization.designType?.id === 3
     const targetIsSecond = isCombined && activeCollarTarget === 'second'
-    const currentName = targetIsSecond ? customization.secondCollar.petName : customization.petName
+    const currentItems = targetIsSecond ? customization.secondCollar.nameItems : customization.petNameItems
 
-    if (Array.from(currentName).length < 12 && customization.letterStyle.id) {
+    if (currentItems.length < 12 && customization.letterStyle.id) {
+      const newItem: CollarCharacterItem = {
+        id: nextItemId(),
+        type: 'letter',
+        value: letter,
+        color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value
+      }
       if (targetIsSecond) {
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
-            petName: prev.secondCollar.petName + letter
+            nameItems: [...prev.secondCollar.nameItems, newItem],
+            petName: prev.secondCollar.nameItems.map(i => i.value).join('') + letter
           }
         }))
       } else {
         setCustomization(prev => ({
           ...prev,
-          petName: prev.petName + letter
+          petNameItems: [...prev.petNameItems, newItem],
+          petName: prev.petNameItems.map(i => i.value).join('') + letter
         }))
       }
       scrollToNextButton()
@@ -425,15 +448,13 @@ export default function CollarCustomizer() {
 
   const handleAddColor = (colorId: string, toSecondCollar?: boolean) => {
     const isCombined = customization.designType?.id === 3
-    // If explicit target passed, use it; otherwise route by activeCollarTarget for combined
     const targetIsSecond = toSecondCollar ?? (isCombined && activeCollarTarget === 'second')
-    const currentName = targetIsSecond ? customization.secondCollar.petName : customization.petName
+    const currentItems = targetIsSecond ? customization.secondCollar.nameItems : customization.petNameItems
 
-    if (Array.from(currentName).length < 12 && customization.charmType.id) {
-      let colorEmoji = '🔴' // fallback
+    if (currentItems.length < 12 && customization.charmType.id) {
+      let colorEmoji = '🔴'
       let selectedColor = { id: '', label: '', value: '' }
       
-      // Buscar el color en typicalColors o colors
       const typicalColor = typicalColors.find(c => c.id === colorId)
       const paracordColor = colors.find(c => c.id === colorId)
       
@@ -444,20 +465,29 @@ export default function CollarCustomizer() {
         colorEmoji = paracordColor.label || '●'
         selectedColor = { id: paracordColor.id, label: paracordColor.label, value: paracordColor.value }
       }
+
+      const newItem: CollarCharacterItem = {
+        id: nextItemId(),
+        type: 'charmColor',
+        value: colorEmoji,
+        label: selectedColor.label
+      }
       
       if (targetIsSecond) {
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
-            petName: prev.secondCollar.petName + colorEmoji,
+            nameItems: [...prev.secondCollar.nameItems, newItem],
+            petName: prev.secondCollar.nameItems.map(i => i.value).join('') + colorEmoji,
             color: selectedColor
           }
         }))
       } else {
         setCustomization(prev => ({
           ...prev,
-          petName: prev.petName + colorEmoji
+          petNameItems: [...prev.petNameItems, newItem],
+          petName: prev.petNameItems.map(i => i.value).join('') + colorEmoji
         }))
       }
       scrollToNextButton()
@@ -543,31 +573,33 @@ export default function CollarCustomizer() {
 
   const handleDropOnName = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    if (Array.from(customization.petName).length < 12) {
-      if (draggedLetter) {
+    if (customization.petNameItems.length < 12) {
+      if (draggedLetter && customization.letterStyle.id) {
+        const newItem: CollarCharacterItem = {
+          id: nextItemId(),
+          type: 'letter',
+          value: draggedLetter,
+          color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value
+        }
         setCustomization(prev => ({
           ...prev,
-          petName: prev.petName + draggedLetter
+          petNameItems: [...prev.petNameItems, newItem],
+          petName: prev.petNameItems.map(i => i.value).join('') + draggedLetter
         }))
-      } else if (draggedColor) {
-        let colorEmoji = '🔴' // fallback
-        
-        // Manejar colores del paracord
+      } else if (draggedColor && customization.charmType.id) {
+        let colorEmoji = '🔴'
         if (draggedColor.startsWith('paracord_')) {
           const paracordColorId = draggedColor.replace('paracord_', '')
           const paracordColor = colors.find(c => c.id === paracordColorId)
-          if (paracordColor) {
-            // Usar el label del color si existe, sino usar ● 
-            colorEmoji = paracordColor.label || '●'
-          }
+          if (paracordColor) colorEmoji = paracordColor.label || '●'
         } else {
-          // Manejar colores típicos normales
           colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
         }
-        
+        const newItem: CollarCharacterItem = { id: nextItemId(), type: 'charmColor', value: colorEmoji }
         setCustomization(prev => ({
           ...prev,
-          petName: prev.petName + colorEmoji
+          petNameItems: [...prev.petNameItems, newItem],
+          petName: prev.petNameItems.map(i => i.value).join('') + colorEmoji
         }))
       }
     }
@@ -577,11 +609,12 @@ export default function CollarCustomizer() {
 
   const handleRemoveLetter = (index: number) => {
     setCustomization(prev => {
-      const characters = Array.from(prev.petName)
-      characters.splice(index, 1)
+      const newItems = [...prev.petNameItems]
+      newItems.splice(index, 1)
       return {
         ...prev,
-        petName: characters.join('')
+        petNameItems: newItems,
+        petName: newItems.map(i => i.value).join('')
       }
     })
   }
@@ -589,27 +622,33 @@ export default function CollarCustomizer() {
   const handleClearName = () => {
     setCustomization(prev => ({
       ...prev,
-      petName: ''
+      petName: '',
+      petNameItems: []
     }))
   }
 
   // Second collar handlers for combined design
   const handleDropOnSecondCollar = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    if (Array.from(customization.secondCollar.petName).length < 12) {
-      if (draggedLetter) {
+    if (customization.secondCollar.nameItems.length < 12) {
+      if (draggedLetter && customization.letterStyle.id) {
+        const newItem: CollarCharacterItem = {
+          id: nextItemId(),
+          type: 'letter',
+          value: draggedLetter,
+          color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value
+        }
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
-            petName: prev.secondCollar.petName + draggedLetter
+            nameItems: [...prev.secondCollar.nameItems, newItem],
+            petName: prev.secondCollar.nameItems.map(i => i.value).join('') + draggedLetter
           }
         }))
-      } else if (draggedColor) {
-        let colorEmoji = '🔴' // fallback
+      } else if (draggedColor && customization.charmType.id) {
+        let colorEmoji = '🔴'
         let selectedColor = { id: '', label: '', value: '' }
-        
-        // Manejar colores del paracord
         if (draggedColor.startsWith('paracord_')) {
           const paracordColorId = draggedColor.replace('paracord_', '')
           const paracordColor = colors.find(c => c.id === paracordColorId)
@@ -618,16 +657,16 @@ export default function CollarCustomizer() {
             selectedColor = { id: paracordColor.id, label: paracordColor.label, value: paracordColor.value }
           }
         } else {
-          // Manejar colores típicos normales
           colorEmoji = typicalColors.find(c => c.id === draggedColor)?.label || '🔴'
           selectedColor = typicalColors.find(c => c.id === draggedColor) || { id: '', label: '', value: '' }
         }
-        
+        const newItem: CollarCharacterItem = { id: nextItemId(), type: 'charmColor', value: colorEmoji }
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
             ...prev.secondCollar,
-            petName: prev.secondCollar.petName + colorEmoji,
+            nameItems: [...prev.secondCollar.nameItems, newItem],
+            petName: prev.secondCollar.nameItems.map(i => i.value).join('') + colorEmoji,
             color: selectedColor
           }
         }))
@@ -639,13 +678,14 @@ export default function CollarCustomizer() {
 
   const handleRemoveSecondCollarLetter = (index: number) => {
     setCustomization(prev => {
-      const characters = Array.from(prev.secondCollar.petName)
-      characters.splice(index, 1)
+      const newItems = [...prev.secondCollar.nameItems]
+      newItems.splice(index, 1)
       return {
         ...prev,
         secondCollar: {
           ...prev.secondCollar,
-          petName: characters.join('')
+          nameItems: newItems,
+          petName: newItems.map(i => i.value).join('')
         }
       }
     })
@@ -656,7 +696,8 @@ export default function CollarCustomizer() {
       ...prev,
       secondCollar: {
         ...prev.secondCollar,
-        petName: ''
+        petName: '',
+        nameItems: []
       }
     }))
   }
@@ -787,6 +828,7 @@ export default function CollarCustomizer() {
           embroideryDesign2: null,
           color: { id: '', label: '', value: '' },
           petName: '',
+          petNameItems: [],
           letterStyle: { id: '', name: '', style: '', imageKey: '' },
           letterColor: { id: 'green', label: 'Verde', value: '#10B981' },
           charmType: { id: '', name: '', style: '', imageKey: '' },
@@ -794,6 +836,7 @@ export default function CollarCustomizer() {
           size: { id: '', name: '', description: '', price: 0 },
           secondCollar: {
             petName: '',
+            nameItems: [],
             color: { id: '', label: '', value: '' }
           }
         })
@@ -1217,7 +1260,7 @@ DETALLES DEL DISEÑO:
                       </div>
                       
                       {/* Botón + para móviles */}
-                      {isTouchDevice() && customization.charmType.id && Array.from(customization.petName).length < 12 && (
+                      {isTouchDevice() && customization.charmType.id && customization.petNameItems.length < 12 && (
                         <button
                           onClick={() => handleAddColor(`paracord_${color.id}`)}
                           className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
@@ -1268,7 +1311,7 @@ DETALLES DEL DISEÑO:
                       </div>
                       
                       {/* Botón + para móviles */}
-                      {isTouchDevice() && customization.charmType.id && Array.from(customization.petName).length < 12 && (
+                      {isTouchDevice() && customization.charmType.id && customization.petNameItems.length < 12 && (
                         <button
                           onClick={() => handleAddColor(`paracord_${color.id}`)}
                           className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
@@ -1288,8 +1331,8 @@ DETALLES DEL DISEÑO:
       case 3: {
         const isCombined = customization.designType?.id === 3
         const activeTarget = isCombined ? activeCollarTarget : 'first'
-        const activePetName = activeTarget === 'second' ? customization.secondCollar.petName : customization.petName
-        const activeCharCount = Array.from(activePetName).length
+        const activeItems = activeTarget === 'second' ? customization.secondCollar.nameItems : customization.petNameItems
+        const activeCharCount = activeItems.length
 
         return (
           <div className="w-full max-w-full min-w-0 overflow-x-hidden box-border">
@@ -1433,32 +1476,30 @@ DETALLES DEL DISEÑO:
                           onDragOver={handleDragOver}
                           onDrop={handleDropOnName}
                         >
-                          {Array.from(customization.petName).length === 0 ? (
+                          {customization.petNameItems.length === 0 ? (
                             <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
                               {activeTarget === 'first' ? 'Toca letras abajo para agregar' : 'Toca aquí para editar este collar'}
                             </span>
                           ) : (
-                            Array.from(customization.petName).map((char, index) => (
+                            customization.petNameItems.map((item, index) => (
                               <div
-                                key={`first-${char}-${index}`}
+                                key={item.id}
                                 className={`relative bg-white border-2 border-pink-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
-                                  /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                                  item.type === 'letter' ? customization.letterStyle.style : ''
                                 }`}
                                 style={{
-                                  color: /[A-Z]/.test(char)
-                                    ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
-                                    : '#374151'
+                                  color: item.type === 'letter' ? (item.color || '#374151') : '#374151'
                                 }}
                                 onClick={(e) => { e.stopPropagation(); handleRemoveLetter(index) }}
                                 title="Clic para eliminar"
                               >
-                                {char}
+                                {item.value}
                               </div>
                             ))
                           )}
                         </div>
                         <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1 break-words">
-                          {Array.from(customization.petName).length}/12 caracteres
+                          {customization.petNameItems.length}/12 caracteres
                         </p>
                       </div>
 
@@ -1487,32 +1528,30 @@ DETALLES DEL DISEÑO:
                           onDragOver={handleDragOver}
                           onDrop={handleDropOnSecondCollar}
                         >
-                          {Array.from(customization.secondCollar.petName).length === 0 ? (
+                          {customization.secondCollar.nameItems.length === 0 ? (
                             <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
                               {activeTarget === 'second' ? 'Toca letras abajo para agregar' : 'Toca aquí para editar este collar'}
                             </span>
                           ) : (
-                            Array.from(customization.secondCollar.petName).map((char, index) => (
+                            customization.secondCollar.nameItems.map((item, index) => (
                               <div
-                                key={`second-${char}-${index}`}
+                                key={item.id}
                                 className={`relative bg-white border-2 border-purple-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
-                                  /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                                  item.type === 'letter' ? customization.letterStyle.style : ''
                                 }`}
                                 style={{
-                                  color: /[A-Z]/.test(char)
-                                    ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
-                                    : '#374151'
+                                  color: item.type === 'letter' ? (item.color || '#374151') : '#374151'
                                 }}
                                 onClick={(e) => { e.stopPropagation(); handleRemoveSecondCollarLetter(index) }}
                                 title="Clic para eliminar"
                               >
-                                {char}
+                                {item.value}
                               </div>
                             ))
                           )}
                         </div>
                         <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1 break-words">
-                          {Array.from(customization.secondCollar.petName).length}/12 caracteres
+                          {customization.secondCollar.nameItems.length}/12 caracteres
                         </p>
                       </div>
                     </div>
@@ -1536,33 +1575,31 @@ DETALLES DEL DISEÑO:
                         onDragOver={handleDragOver}
                         onDrop={handleDropOnName}
                       >
-                        {Array.from(customization.petName).length === 0 ? (
+                        {customization.petNameItems.length === 0 ? (
                           <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
                             Toca las letras de abajo para agregar al collar
                           </span>
                         ) : (
-                          Array.from(customization.petName).map((char, index) => (
+                          customization.petNameItems.map((item, index) => (
                             <div
-                              key={`${char}-${index}`}
+                              key={item.id}
                               className={`relative bg-white border-2 border-pink-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
-                                /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                                item.type === 'letter' ? customization.letterStyle.style : ''
                               }`}
                               style={{
-                                color: /[A-Z]/.test(char)
-                                  ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
-                                  : '#374151'
+                                color: item.type === 'letter' ? (item.color || '#374151') : '#374151'
                               }}
                               onClick={() => handleRemoveLetter(index)}
                               title="Clic para eliminar"
                             >
-                              {char}
+                              {item.value}
                             </div>
                           ))
                         )}
                       </div>
                       
                       <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
-                        Máximo 12 caracteres • Toca para agregar • Toca letra para eliminar • {Array.from(customization.petName).length}/12
+                        Máximo 12 caracteres • Toca para agregar • Toca letra para eliminar • {customization.petNameItems.length}/12
                       </p>
                     </div>
                   )}
@@ -1644,19 +1681,19 @@ DETALLES DEL DISEÑO:
                       </div>
                     )}
 
-                    {/* Colores típicos - Solo si seleccionó tipo de charm */}
+                    {/* Colores de charms - Solo si seleccionó tipo de charm */}
                     {customization.charmType.id && (
                       <div className="w-full max-w-full min-w-0">
                         <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-3">
-                          Colores {isCombined && <span className="text-[10px] sm:text-xs font-normal text-gray-500">(se agregan a {activeTarget === 'first' ? 'Collar 1' : 'Collar 2'})</span>}
+                          Colores de charms {isCombined && <span className="text-[10px] sm:text-xs font-normal text-gray-500">(se agregan a {activeTarget === 'first' ? 'Collar 1' : 'Collar 2'})</span>}
                         </h4>
-                        <div className="w-full grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-4 gap-1.5 sm:gap-2">
+                        <div className="w-full grid grid-cols-7 sm:grid-cols-8 lg:grid-cols-8 gap-1 sm:gap-1.5">
                           {typicalColors.map((colorItem) => (
                             <button
                               key={colorItem.id}
                               onClick={() => handleAddColor(colorItem.id)}
                               disabled={activeCharCount >= 12}
-                              className={`w-full aspect-square flex items-center justify-center rounded sm:rounded-lg text-base sm:text-xl bg-white border border-gray-300 hover:bg-purple-50 hover:border-purple-400 active:bg-purple-100 transition-all touch-manipulation ${
+                              className={`w-full aspect-square flex items-center justify-center rounded sm:rounded-lg text-xs sm:text-base bg-white border border-gray-300 hover:bg-purple-50 hover:border-purple-400 active:bg-purple-100 transition-all touch-manipulation ${
                                 activeCharCount >= 12 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
                               }`}
                               draggable={!isTouchDevice()}
