@@ -247,6 +247,7 @@ export default function CollarCustomizer() {
     }
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeCollarTarget, setActiveCollarTarget] = useState<'first' | 'second'>('first')
   const sectionRef = useRef<HTMLElement>(null)
   const stepsRef = useRef<HTMLDivElement>(null)
 
@@ -399,17 +400,36 @@ export default function CollarCustomizer() {
 
   // Funciones para móviles (tap to add) - Alternativa al drag & drop
   const handleAddLetter = (letter: string) => {
-    if (Array.from(customization.petName).length < 12 && customization.letterStyle.id) {
-      setCustomization(prev => ({
-        ...prev,
-        petName: prev.petName + letter
-      }))
+    const isCombined = customization.designType?.id === 3
+    const targetIsSecond = isCombined && activeCollarTarget === 'second'
+    const currentName = targetIsSecond ? customization.secondCollar.petName : customization.petName
+
+    if (Array.from(currentName).length < 12 && customization.letterStyle.id) {
+      if (targetIsSecond) {
+        setCustomization(prev => ({
+          ...prev,
+          secondCollar: {
+            ...prev.secondCollar,
+            petName: prev.secondCollar.petName + letter
+          }
+        }))
+      } else {
+        setCustomization(prev => ({
+          ...prev,
+          petName: prev.petName + letter
+        }))
+      }
       scrollToNextButton()
     }
   }
 
-  const handleAddColor = (colorId: string, toSecondCollar: boolean = false) => {
-    if (Array.from(toSecondCollar ? customization.secondCollar.petName : customization.petName).length < 12 && customization.charmType.id) {
+  const handleAddColor = (colorId: string, toSecondCollar?: boolean) => {
+    const isCombined = customization.designType?.id === 3
+    // If explicit target passed, use it; otherwise route by activeCollarTarget for combined
+    const targetIsSecond = toSecondCollar ?? (isCombined && activeCollarTarget === 'second')
+    const currentName = targetIsSecond ? customization.secondCollar.petName : customization.petName
+
+    if (Array.from(currentName).length < 12 && customization.charmType.id) {
       let colorEmoji = '🔴' // fallback
       let selectedColor = { id: '', label: '', value: '' }
       
@@ -425,7 +445,7 @@ export default function CollarCustomizer() {
         selectedColor = { id: paracordColor.id, label: paracordColor.label, value: paracordColor.value }
       }
       
-      if (toSecondCollar) {
+      if (targetIsSecond) {
         setCustomization(prev => ({
           ...prev,
           secondCollar: {
@@ -1265,12 +1285,17 @@ DETALLES DEL DISEÑO:
           </div>
         )
 
-      case 3:
+      case 3: {
+        const isCombined = customization.designType?.id === 3
+        const activeTarget = isCombined ? activeCollarTarget : 'first'
+        const activePetName = activeTarget === 'second' ? customization.secondCollar.petName : customization.petName
+        const activeCharCount = Array.from(activePetName).length
+
         return (
           <div className="w-full max-w-full min-w-0 overflow-x-hidden box-border">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-center text-gray-800 mb-3 sm:mb-4 lg:mb-6">
               Personaliza las Letras
-              {customization.designType?.id === 3 && (
+              {isCombined && (
                 <span className="block text-xs sm:text-sm lg:text-base font-normal text-gray-600 mt-1 sm:mt-2">
                   Diseño Combinado - Dos Collares
                 </span>
@@ -1365,61 +1390,182 @@ DETALLES DEL DISEÑO:
                 </div>
               )}
 
-              {/* Nombre de la Mascota */}
+              {/* Áreas de nombre - visible cuando hay tipo de letra o charm seleccionado */}
               {(customization.letterStyle.id || customization.charmType.id) && (
                 <div className="w-full max-w-full min-w-0 box-border">
-                  <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
-                    <label className="text-sm sm:text-md lg:text-lg font-semibold text-gray-700 min-w-0 break-words">
-                      Nombre de tu Mascota
-                    </label>
-                    <button
-                      onClick={handleClearName}
-                      className="text-xs text-gray-500 hover:text-pink-500 underline self-start sm:self-auto shrink-0"
-                    >
-                      Limpiar
-                    </button>
-                  </div>
-                  
-                  {/* Área de construcción del nombre */}
-                  <div
-                    className="w-full max-w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
-                    onDragOver={handleDragOver}
-                    onDrop={handleDropOnName}
-                  >
-                    {Array.from(customization.petName).length === 0 ? (
-                      <span className="text-gray-400 text-sm sm:text-lg text-center px-2 break-words">
-                        Usa los botones + para agregar letras y colores al collar
-                      </span>
-                    ) : (
-                      Array.from(customization.petName).map((char, index) => (
-                        <div
-                          key={`${char}-${index}`}
-                          className={`relative bg-white border-2 border-pink-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
-                            /[A-Z]/.test(char) ? customization.letterStyle.style : ''
-                          }`}
-                          style={{ 
-                            color: /[A-Z]/.test(char) ? 
-                              (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
-                              '#374151'
-                          }}
-                          onClick={() => handleRemoveLetter(index)}
-                          title="Clic para eliminar"
-                        >
-                          {char}
-                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                            ×
-                          </span>
+
+                  {/* --- Diseño Combinado: dos áreas de nombre --- */}
+                  {isCombined ? (
+                    <div className="w-full space-y-3 sm:space-y-4">
+                      {/* Badge indicando qué collar se edita */}
+                      <div className="w-full text-center">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                          activeTarget === 'first'
+                            ? 'bg-pink-100 text-pink-700 border border-pink-300'
+                            : 'bg-purple-100 text-purple-700 border border-purple-300'
+                        }`}>
+                          ✏️ Editando: {activeTarget === 'first' ? 'Collar 1 (Bordado)' : 'Collar 2 (Sencillo)'}
+                        </span>
+                      </div>
+
+                      {/* Collar 1 */}
+                      <div
+                        onClick={() => setActiveCollarTarget('first')}
+                        className={`w-full max-w-full rounded-lg p-2 sm:p-3 cursor-pointer transition-all box-border ${
+                          activeTarget === 'first'
+                            ? 'border-2 border-pink-400 bg-pink-50 shadow-md'
+                            : 'border-2 border-gray-200 bg-gray-50 opacity-70 hover:opacity-90'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1 sm:mb-2">
+                          <label className="text-xs sm:text-sm font-semibold text-gray-700 min-w-0 break-words">
+                            Collar 1 (Bordado)
+                          </label>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleClearName() }}
+                            className="text-[10px] sm:text-xs text-gray-500 hover:text-pink-500 underline shrink-0"
+                          >
+                            Limpiar
+                          </button>
                         </div>
-                      ))
-                    )}
-                  </div>
-                  
-                  <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
-                    {isTouchDevice() ? 
-                      'Máximo 12 caracteres • Toca + para agregar • Toca letra para eliminar' : 
-                      'Máximo 12 caracteres • Arrastra o clic para agregar • Clic para eliminar'
-                    } • Caracteres: {Array.from(customization.petName).length}/12
-                  </p>
+                        <div
+                          className="w-full max-w-full min-h-[40px] sm:min-h-[50px] p-1.5 sm:p-2 border-2 border-dashed border-pink-300 rounded-lg bg-white flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
+                          onDragOver={handleDragOver}
+                          onDrop={handleDropOnName}
+                        >
+                          {Array.from(customization.petName).length === 0 ? (
+                            <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
+                              {activeTarget === 'first' ? 'Toca letras abajo para agregar' : 'Toca aquí para editar este collar'}
+                            </span>
+                          ) : (
+                            Array.from(customization.petName).map((char, index) => (
+                              <div
+                                key={`first-${char}-${index}`}
+                                className={`relative bg-white border-2 border-pink-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
+                                  /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                                }`}
+                                style={{
+                                  color: /[A-Z]/.test(char)
+                                    ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
+                                    : '#374151'
+                                }}
+                                onClick={(e) => { e.stopPropagation(); handleRemoveLetter(index) }}
+                                title="Clic para eliminar"
+                              >
+                                {char}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1 break-words">
+                          {Array.from(customization.petName).length}/12 caracteres
+                        </p>
+                      </div>
+
+                      {/* Collar 2 */}
+                      <div
+                        onClick={() => setActiveCollarTarget('second')}
+                        className={`w-full max-w-full rounded-lg p-2 sm:p-3 cursor-pointer transition-all box-border ${
+                          activeTarget === 'second'
+                            ? 'border-2 border-purple-400 bg-purple-50 shadow-md'
+                            : 'border-2 border-gray-200 bg-gray-50 opacity-70 hover:opacity-90'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1 sm:mb-2">
+                          <label className="text-xs sm:text-sm font-semibold text-gray-700 min-w-0 break-words">
+                            Collar 2 (Sencillo)
+                          </label>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleClearSecondCollarName() }}
+                            className="text-[10px] sm:text-xs text-gray-500 hover:text-purple-500 underline shrink-0"
+                          >
+                            Limpiar
+                          </button>
+                        </div>
+                        <div
+                          className="w-full max-w-full min-h-[40px] sm:min-h-[50px] p-1.5 sm:p-2 border-2 border-dashed border-purple-300 rounded-lg bg-white flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
+                          onDragOver={handleDragOver}
+                          onDrop={handleDropOnSecondCollar}
+                        >
+                          {Array.from(customization.secondCollar.petName).length === 0 ? (
+                            <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
+                              {activeTarget === 'second' ? 'Toca letras abajo para agregar' : 'Toca aquí para editar este collar'}
+                            </span>
+                          ) : (
+                            Array.from(customization.secondCollar.petName).map((char, index) => (
+                              <div
+                                key={`second-${char}-${index}`}
+                                className={`relative bg-white border-2 border-purple-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
+                                  /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                                }`}
+                                style={{
+                                  color: /[A-Z]/.test(char)
+                                    ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
+                                    : '#374151'
+                                }}
+                                onClick={(e) => { e.stopPropagation(); handleRemoveSecondCollarLetter(index) }}
+                                title="Clic para eliminar"
+                              >
+                                {char}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1 break-words">
+                          {Array.from(customization.secondCollar.petName).length}/12 caracteres
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    /* --- Diseño Normal: un solo constructor de nombre --- */
+                    <div className="w-full">
+                      <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
+                        <label className="text-sm sm:text-md lg:text-lg font-semibold text-gray-700 min-w-0 break-words">
+                          Nombre de tu Mascota
+                        </label>
+                        <button
+                          onClick={handleClearName}
+                          className="text-xs text-gray-500 hover:text-pink-500 underline self-start sm:self-auto shrink-0"
+                        >
+                          Limpiar
+                        </button>
+                      </div>
+                      
+                      <div
+                        className="w-full max-w-full min-h-[40px] sm:min-h-[50px] p-2 sm:p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
+                        onDragOver={handleDragOver}
+                        onDrop={handleDropOnName}
+                      >
+                        {Array.from(customization.petName).length === 0 ? (
+                          <span className="text-gray-400 text-xs sm:text-sm text-center px-2 break-words">
+                            Toca las letras de abajo para agregar al collar
+                          </span>
+                        ) : (
+                          Array.from(customization.petName).map((char, index) => (
+                            <div
+                              key={`${char}-${index}`}
+                              className={`relative bg-white border-2 border-pink-300 rounded px-1 sm:px-1.5 py-0.5 sm:py-1 text-xs sm:text-base font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
+                                /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                              }`}
+                              style={{
+                                color: /[A-Z]/.test(char)
+                                  ? (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value)
+                                  : '#374151'
+                              }}
+                              onClick={() => handleRemoveLetter(index)}
+                              title="Clic para eliminar"
+                            >
+                              {char}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      
+                      <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
+                        Máximo 12 caracteres • Toca para agregar • Toca letra para eliminar • {Array.from(customization.petName).length}/12
+                      </p>
+                    </div>
+                  )}
 
                   {/* Layout de Letras y Colores */}
                   <div className="w-full max-w-full min-w-0 space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8 box-border">
@@ -1427,36 +1573,26 @@ DETALLES DEL DISEÑO:
                     {/* Alfabeto - Solo si seleccionó tipo de letra */}
                     {customization.letterStyle.id && (
                       <div className="w-full max-w-full min-w-0">
-                        <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
-                          Letras: Toca + para agregar
+                        <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-3">
+                          Letras {isCombined && <span className="text-[10px] sm:text-xs font-normal text-gray-500">(se agregan a {activeTarget === 'first' ? 'Collar 1' : 'Collar 2'})</span>}
                         </h4>
-                        <div className="w-full grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2">
+                        <div className="w-full grid grid-cols-7 sm:grid-cols-7 lg:grid-cols-7 gap-1 sm:gap-1.5">
                           {alphabet.map((letter) => (
-                            <div
+                            <button
                               key={letter}
-                              className="flex flex-col min-w-0"
+                              onClick={() => handleAddLetter(letter)}
+                              disabled={activeCharCount >= 12}
+                              className={`w-full aspect-square flex items-center justify-center rounded sm:rounded-lg text-xs sm:text-base lg:text-lg font-bold transition-all touch-manipulation bg-white border border-gray-300 hover:bg-purple-50 hover:border-purple-400 active:bg-purple-100 ${
+                                activeCharCount >= 12 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                              } ${customization.letterStyle.style}`}
+                              style={{
+                                color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value
+                              }}
+                              draggable={!isTouchDevice()}
+                              onDragStart={(e) => handleDragStart(e as unknown as React.DragEvent<HTMLDivElement>, letter)}
                             >
-                              <div
-                                className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-1 sm:px-2 py-2 sm:py-3 text-sm sm:text-xl font-bold text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
-                                  Array.from(customization.petName).length >= 12 ? 'opacity-50' : ''
-                                } ${customization.letterStyle.style}`}
-                                style={{ 
-                                  color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value 
-                                }}
-                              >
-                                {letter}
-                              </div>
-                              
-                              {Array.from(customization.petName).length < 12 && (
-                                <button
-                                  onClick={() => handleAddLetter(letter)}
-                                  className="w-full mt-1 h-5 sm:h-6 bg-purple-500 hover:bg-purple-600 text-white text-xs sm:text-sm rounded flex items-center justify-center font-bold transition-all touch-manipulation"
-                                  title={`Agregar ${letter}`}
-                                >
-                                  +
-                                </button>
-                              )}
-                            </div>
+                              {letter}
+                            </button>
                           ))}
                         </div>
                         
@@ -1478,9 +1614,9 @@ DETALLES DEL DISEÑO:
                                   onClick={() => handleLetterColorSelect(color)}
                                 >
                                   <div className="text-center">
-                                    <div 
+                                    <div
                                       className="w-4 h-4 sm:w-6 sm:h-6 rounded-full mx-auto border border-white shadow-sm"
-                                      style={{ 
+                                      style={{
                                         background: color.value,
                                         border: color.id === 'white' ? '1px solid #e5e7eb' : '1px solid white'
                                       }}
@@ -1511,93 +1647,28 @@ DETALLES DEL DISEÑO:
                     {/* Colores típicos - Solo si seleccionó tipo de charm */}
                     {customization.charmType.id && (
                       <div className="w-full max-w-full min-w-0">
-                        <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
-                          Colores: Toca + para agregar
+                        <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-3">
+                          Colores {isCombined && <span className="text-[10px] sm:text-xs font-normal text-gray-500">(se agregan a {activeTarget === 'first' ? 'Collar 1' : 'Collar 2'})</span>}
                         </h4>
-                        <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
+                        <div className="w-full grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-4 gap-1.5 sm:gap-2">
                           {typicalColors.map((colorItem) => (
-                            <div
+                            <button
                               key={colorItem.id}
-                              className="flex flex-col min-w-0"
+                              onClick={() => handleAddColor(colorItem.id)}
+                              disabled={activeCharCount >= 12}
+                              className={`w-full aspect-square flex items-center justify-center rounded sm:rounded-lg text-base sm:text-xl bg-white border border-gray-300 hover:bg-purple-50 hover:border-purple-400 active:bg-purple-100 transition-all touch-manipulation ${
+                                activeCharCount >= 12 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                              }`}
+                              draggable={!isTouchDevice()}
+                              onDragStart={(e) => handleTypicalColorDragStart(e as unknown as React.DragEvent<HTMLDivElement>, colorItem.id)}
                             >
-                              <div
-                                className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-2 sm:px-3 py-2 sm:py-3 text-lg sm:text-2xl text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
-                                  Array.from(customization.petName).length >= 12 ? 'opacity-50' : ''
-                                }`}
-                              >
-                                {colorItem.label}
-                              </div>
-                              
-                              {Array.from(customization.petName).length < 12 && (
-                                <button
-                                  onClick={() => handleAddColor(colorItem.id)}
-                                  className="w-full mt-1 h-5 sm:h-6 bg-purple-500 hover:bg-purple-600 text-white text-xs sm:text-sm rounded flex items-center justify-center font-bold transition-all touch-manipulation"
-                                  title={`Agregar ${colorItem.label}`}
-                                >
-                                  +
-                                </button>
-                              )}
-                            </div>
+                              {colorItem.label}
+                            </button>
                           ))}
                         </div>
                       </div>
                     )}
                   </div>
-                  
-                  {/* Segundo Collar (solo para diseño combinado) */}
-                  {customization.designType?.id === 3 && (
-                    <div className="w-full max-w-full min-w-0 mt-4 sm:mt-6 box-border">
-                      <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
-                        <label className="text-sm sm:text-md font-semibold text-gray-700 min-w-0 break-words">
-                          Segundo Collar
-                        </label>
-                        <button
-                          onClick={handleClearSecondCollarName}
-                          className="text-xs text-gray-500 hover:text-purple-500 underline self-start sm:self-auto shrink-0"
-                        >
-                          Limpiar
-                        </button>
-                      </div>
-                      
-                      {/* Área de construcción del segundo collar */}
-                      <div
-                        className="w-full max-w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1 box-border overflow-x-hidden"
-                        onDragOver={handleDragOver}
-                        onDrop={handleDropOnSecondCollar}
-                      >
-                        {Array.from(customization.secondCollar.petName).length === 0 ? (
-                          <span className="text-gray-400 text-sm sm:text-lg text-center px-2 break-words">
-                            Usa los botones + para agregar letras y colores
-                          </span>
-                        ) : (
-                          Array.from(customization.secondCollar.petName).map((char, index) => (
-                            <div
-                              key={`second-${char}-${index}`}
-                              className={`relative bg-white border-2 border-purple-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer shrink-0 ${
-                                /[A-Z]/.test(char) ? customization.letterStyle.style : ''
-                              }`}
-                              style={{ 
-                                color: /[A-Z]/.test(char) ? 
-                                  (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
-                                  '#374151'
-                              }}
-                              onClick={() => handleRemoveSecondCollarLetter(index)}
-                              title="Clic para eliminar"
-                            >
-                              {char}
-                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                ×
-                              </span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                      
-                      <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 break-words">
-                        Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -1717,6 +1788,7 @@ DETALLES DEL DISEÑO:
             )}
           </div>
         )
+      }
 
       case 4:
         return (
