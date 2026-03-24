@@ -442,7 +442,6 @@ export default function CollarCustomizer() {
           petName: prev.petNameItems.map(i => i.value).join('') + letter
         }))
       }
-      scrollToNextButton()
     }
   }
 
@@ -490,7 +489,6 @@ export default function CollarCustomizer() {
           petName: prev.petNameItems.map(i => i.value).join('') + colorEmoji
         }))
       }
-      scrollToNextButton()
     }
   }
 
@@ -720,6 +718,7 @@ export default function CollarCustomizer() {
       ...prev,
       size: size
     }))
+    scrollToNextButton()
   }
 
   // Check if current design type requires color selection
