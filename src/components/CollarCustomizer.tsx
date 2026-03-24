@@ -1,4 +1,5 @@
 'use client'
+// Fixed JSX errors
 
 import { useState, useRef } from 'react'
 import { Button } from './ui/Button'
@@ -267,6 +268,7 @@ export default function CollarCustomizer() {
       embroideryDesign1: null, // Reset diseño combinado bordados
       embroideryDesign2: null
     }))
+    scrollToNextButton()
   }
 
   const handleEmbroideryTypeSelect = (embroidery: typeof embroideryTypesDesign1[0] | typeof embroideryTypesDesign2[0] | typeof embroideryTypesDesign3[0]) => {
@@ -274,6 +276,7 @@ export default function CollarCustomizer() {
       ...prev,
       embroideryType: embroidery
     }))
+    scrollToNextButton()
   }
 
   // Handlers específicos para diseño combinado
@@ -282,6 +285,7 @@ export default function CollarCustomizer() {
       ...prev,
       embroideryDesign1: embroidery
     }))
+    scrollToNextButton()
   }
 
   const handleEmbroideryDesign2Select = (embroidery: typeof embroideryTypesDesign2[0]) => {
@@ -289,6 +293,7 @@ export default function CollarCustomizer() {
       ...prev,
       embroideryDesign2: embroidery
     }))
+    scrollToNextButton()
   }
 
   const handleColorSelect = (color: typeof colors[0]) => {
@@ -390,6 +395,79 @@ export default function CollarCustomizer() {
       title: `${charmType.name} - ${charmType.description}`
     })
     setIsImageZoomOpen(true)
+  }
+
+  // Funciones para móviles (tap to add) - Alternativa al drag & drop
+  const handleAddLetter = (letter: string) => {
+    if (Array.from(customization.petName).length < 12 && customization.letterStyle.id) {
+      setCustomization(prev => ({
+        ...prev,
+        petName: prev.petName + letter
+      }))
+      scrollToNextButton()
+    }
+  }
+
+  const handleAddColor = (colorId: string, toSecondCollar: boolean = false) => {
+    if (Array.from(toSecondCollar ? customization.secondCollar.petName : customization.petName).length < 12 && customization.charmType.id) {
+      let colorEmoji = '🔴' // fallback
+      let selectedColor = { id: '', label: '', value: '' }
+      
+      // Buscar el color en typicalColors o colors
+      const typicalColor = typicalColors.find(c => c.id === colorId)
+      const paracordColor = colors.find(c => c.id === colorId)
+      
+      if (typicalColor) {
+        colorEmoji = typicalColor.label
+        selectedColor = typicalColor
+      } else if (paracordColor) {
+        colorEmoji = paracordColor.label || '●'
+        selectedColor = { id: paracordColor.id, label: paracordColor.label, value: paracordColor.value }
+      }
+      
+      if (toSecondCollar) {
+        setCustomization(prev => ({
+          ...prev,
+          secondCollar: {
+            ...prev.secondCollar,
+            petName: prev.secondCollar.petName + colorEmoji,
+            color: selectedColor
+          }
+        }))
+      } else {
+        setCustomization(prev => ({
+          ...prev,
+          petName: prev.petName + colorEmoji
+        }))
+      }
+      scrollToNextButton()
+    }
+  }
+
+  // Detectar si es dispositivo táctil
+  const isTouchDevice = () => {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0
+  }
+
+  // Auto-scroll al botón siguiente en móvil
+  const scrollToNextButton = () => {
+    if (isTouchDevice()) {
+      setTimeout(() => {
+        // Buscar el área de botones de navegación
+        const buttonContainer = document.querySelector('.flex.justify-between.mt-8')
+        if (buttonContainer) {
+          const nextButton = buttonContainer.querySelector('button:not([disabled]):last-child') ||
+                            buttonContainer.querySelector('button:last-child')
+          
+          if (nextButton) {
+            nextButton.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'nearest' // Solo desplaza lo mínimo para que sea visible
+            })
+          }
+        }
+      }, 300) // Pequeño delay para que se procese la selección primero
+    }
   }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, letter: string) => {
@@ -1083,36 +1161,51 @@ DETALLES DEL DISEÑO:
             <div className="space-y-8">
               {/* Colores Sólidos */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-700 mb-4">Colores Sólidos</h4>
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-3 max-w-5xl mx-auto">
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">
+                  Colores Sólidos: Toca + para agregar al nombre
+                </h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-5xl mx-auto">
                   {colors.filter(color => color.type === 'solid').map((color) => (
                     <div
                       key={color.id}
-                      draggable={!!(customization.charmType.id && Array.from(customization.petName).length < 12)}
-                      onDragStart={(e) => handleParacordColorDragStart(e, color)}
-                      className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
-                        customization.color.id === color.id
-                          ? 'border-pink-500 bg-pink-50 shadow-lg'
-                          : 'border-gray-200 hover:border-pink-300'
-                      } ${!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                      onClick={() => handleColorSelect(color)}
-                      title={!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
+                      className="relative group"
                     >
-                      <div className="text-center">
-                        <div 
-                          className="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
-                          style={{ 
-                            background: color.value.includes('gradient') ? color.value : color.value,
-                            border: color.id === 'white' ? '2px solid #e5e7eb' : '2px solid white'
-                          }}
-                        ></div>
-                        <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
-                        {customization.color.id === color.id && (
-                          <div className="mt-1">
-                            <span className="text-pink-500 text-xs font-medium">✓</span>
-                          </div>
-                        )}
+                      <div
+                        className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all touch-manipulation ${
+                          customization.color.id === color.id
+                            ? 'border-pink-500 bg-pink-50 shadow-lg'
+                            : 'border-gray-200 hover:border-pink-300'
+                        }`}
+                        onClick={() => handleColorSelect(color)}
+                        title={`Seleccionar color: ${color.label}`}
+                      >
+                        <div className="text-center">
+                          <div 
+                            className="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
+                            style={{ 
+                              background: color.value.includes('gradient') ? color.value : color.value,
+                              border: color.id === 'white' ? '2px solid #e5e7eb' : '2px solid white'
+                            }}
+                          ></div>
+                          <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
+                          {customization.color.id === color.id && (
+                            <div className="mt-1">
+                              <span className="text-pink-500 text-xs font-medium">✓</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
+                      
+                      {/* Botón + para móviles */}
+                      {isTouchDevice() && customization.charmType.id && Array.from(customization.petName).length < 12 && (
+                        <button
+                          onClick={() => handleAddColor(`paracord_${color.id}`)}
+                          className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
+                          title={`Agregar ${color.label} al nombre`}
+                        >
+                          +
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1120,35 +1213,50 @@ DETALLES DEL DISEÑO:
 
               {/* Colores Multicolor */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-700 mb-4">Colores Multicolor</h4>
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-3 max-w-5xl mx-auto">
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">
+                  Colores Multicolor: Toca + para agregar al nombre
+                </h4>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-5xl mx-auto">
                   {colors.filter(color => color.type === 'multicolor').map((color) => (
                     <div
                       key={color.id}
-                      draggable={!!(customization.charmType.id && Array.from(customization.petName).length < 12)}
-                      onDragStart={(e) => handleParacordColorDragStart(e, color)}
-                      className={`relative p-2 rounded-xl border-2 cursor-pointer transition-all ${
-                        customization.color.id === color.id
-                          ? 'border-pink-500 bg-pink-50 shadow-lg'
-                          : 'border-gray-200 hover:border-pink-300'
-                      } ${!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                      onClick={() => handleColorSelect(color)}
-                      title={!!(customization.charmType.id && Array.from(customization.petName).length < 12) ? `Clic para seleccionar o arrastra al collar: ${color.label}` : `Seleccionar color: ${color.label}`}
+                      className="relative group"
                     >
-                      <div className="text-center">
-                        <div 
-                          className="w-10 h-10 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
-                          style={{ 
-                            background: color.value
-                          }}
-                        ></div>
-                        <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
-                        {customization.color.id === color.id && (
-                          <div className="mt-1">
-                            <span className="text-pink-500 text-xs font-medium">✓</span>
-                          </div>
-                        )}
+                      <div
+                        className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all touch-manipulation ${
+                          customization.color.id === color.id
+                            ? 'border-pink-500 bg-pink-50 shadow-lg'
+                            : 'border-gray-200 hover:border-pink-300'
+                        }`}
+                        onClick={() => handleColorSelect(color)}
+                        title={`Seleccionar color: ${color.label}`}
+                      >
+                        <div className="text-center">
+                          <div 
+                            className="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
+                            style={{ 
+                              background: color.value
+                            }}
+                          ></div>
+                          <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
+                          {customization.color.id === color.id && (
+                            <div className="mt-1">
+                              <span className="text-pink-500 text-xs font-medium">✓</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
+                      
+                      {/* Botón + para móviles */}
+                      {isTouchDevice() && customization.charmType.id && Array.from(customization.petName).length < 12 && (
+                        <button
+                          onClick={() => handleAddColor(`paracord_${color.id}`)}
+                          className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
+                          title={`Agregar ${color.label} al nombre`}
+                        >
+                          +
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1159,11 +1267,11 @@ DETALLES DEL DISEÑO:
 
       case 3:
         return (
-          <div>
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          <div className="w-full">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-center text-gray-800 mb-3 sm:mb-4 lg:mb-6">
               Personaliza las Letras
               {customization.designType?.id === 3 && (
-                <span className="block text-base font-normal text-gray-600 mt-2">
+                <span className="block text-xs sm:text-sm lg:text-base font-normal text-gray-600 mt-1 sm:mt-2">
                   Diseño Combinado - Dos Collares
                 </span>
               )}
@@ -1171,110 +1279,102 @@ DETALLES DEL DISEÑO:
             
             {/* Instrucciones iniciales */}
             {!customization.letterStyle.id && !customization.charmType.id && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-                <p className="text-blue-800 text-center font-medium">
-                  💡 <strong>¡Comienza aquí!</strong> Haz clic en los botones <span className="bg-pink-500 text-white px-2 py-1 rounded-full text-xs">+</span> de abajo para agregar letras personalizadas o charms decorativos a tu collar
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3 lg:p-4 mb-4 sm:mb-6 lg:mb-8">
+                <p className="text-blue-800 text-center font-medium text-xs sm:text-sm lg:text-base leading-relaxed">
+                  💡 <strong>¡Comienza aquí!</strong> Haz clic en los botones <span className="bg-pink-500 text-white px-1 sm:px-1.5 lg:px-2 py-0.5 sm:py-0.5 lg:py-1 rounded-full text-[9px] sm:text-[10px] lg:text-xs">+</span> de abajo para agregar letras personalizadas o charms decorativos a tu collar
                 </p>
               </div>
             )}
             
-            <div className="space-y-8">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-8">
               
-              {/* Selección de Tipos - Layout horizontal compacto */}
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
+              {/* Selección de Tipos */}
+              <div className="flex flex-col gap-3 sm:gap-4">
                 
-                {/* Tipo de Letra - 50% */}
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center space-x-2">
-                      <label className="text-md font-semibold text-gray-700">
-                        Tipo de Letra
-                      </label>
-                      {customization.letterStyle.id ? (
-                        <button
-                          onClick={() => setIsLetterTypeModalOpen(true)}
-                          className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-all"
-                        >
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">✓</span>
-                          </div>
-                          <span className="text-xs font-semibold text-green-700">
-                            {customization.letterStyle.name}
-                          </span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setIsLetterTypeModalOpen(true)}
-                          className="w-8 h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
-                          title="Haz clic aquí para agregar letras personalizadas"
-                        >
-                          <span className="text-white text-lg font-bold">+</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                {/* Tipo de Letra */}
+                <div className="w-full flex items-center justify-between gap-2">
+                  <label className="text-xs sm:text-sm lg:text-md font-semibold text-gray-700 min-w-0">
+                    Tipo de Letra
+                  </label>
+                  {customization.letterStyle.id ? (
+                    <button
+                      onClick={() => setIsLetterTypeModalOpen(true)}
+                      className="flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all flex-shrink-0"
+                    >
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-[8px] sm:text-xs font-bold">✓</span>
+                      </div>
+                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate">
+                        {customization.letterStyle.name}
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsLetterTypeModalOpen(true)}
+                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg flex-shrink-0"
+                      title="Haz clic aquí para agregar letras personalizadas"
+                    >
+                      <span className="text-white text-sm sm:text-base lg:text-lg font-bold">+</span>
+                    </button>
+                  )}
                 </div>
 
-                {/* Tipo de Charm - 50% */}
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center space-x-2">
-                      <label className="text-md font-semibold text-gray-700">
-                        Tipo de Charm
-                      </label>
-                      {customization.charmType.id ? (
-                        <button
-                          onClick={() => setIsCharmTypeModalOpen(true)}
-                          className="flex items-center space-x-2 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-all"
-                        >
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">✓</span>
-                          </div>
-                          <span className="text-xs font-semibold text-green-700">
-                            {customization.charmType.name}
-                          </span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setIsCharmTypeModalOpen(true)}
-                          className="w-8 h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg"
-                          title="Haz clic aquí para agregar charms decorativos"
-                        >
-                          <span className="text-white text-lg font-bold">+</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                {/* Tipo de Charm */}
+                <div className="w-full flex items-center justify-between gap-2">
+                  <label className="text-xs sm:text-sm lg:text-md font-semibold text-gray-700 min-w-0">
+                    Tipo de Charm
+                  </label>
+                  {customization.charmType.id ? (
+                    <button
+                      onClick={() => setIsCharmTypeModalOpen(true)}
+                      className="flex items-center space-x-1 sm:space-x-2 bg-green-100 hover:bg-green-200 px-2 sm:px-3 py-1 rounded-full transition-all flex-shrink-0"
+                    >
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-[8px] sm:text-xs font-bold">✓</span>
+                      </div>
+                      <span className="text-[10px] sm:text-xs font-semibold text-green-700 truncate">
+                        {customization.charmType.name}
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsCharmTypeModalOpen(true)}
+                      className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg flex-shrink-0"
+                      title="Haz clic aquí para agregar charms decorativos"
+                    >
+                      <span className="text-white text-sm sm:text-base lg:text-lg font-bold">+</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Mensajes de sugerencia condicionales */}
               {customization.letterStyle.id && !customization.charmType.id && (
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                  <p className="text-purple-700 text-sm text-center">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 sm:p-3">
+                  <p className="text-purple-700 text-xs sm:text-sm text-center">
                     ✨ <strong>Sugerencia:</strong> También puedes agregar un charm decorativo haciendo clic en el botón + violeta
                   </p>
                 </div>
               )}
 
               {customization.charmType.id && !customization.letterStyle.id && (
-                <div className="bg-pink-50 border border-pink-200 rounded-lg p-3">
-                  <p className="text-pink-700 text-sm text-center">
+                <div className="bg-pink-50 border border-pink-200 rounded-lg p-2 sm:p-3">
+                  <p className="text-pink-700 text-xs sm:text-sm text-center">
                     💝 <strong>Sugerencia:</strong> También puedes agregar letras personalizadas haciendo clic en el botón + rosado
                   </p>
                 </div>
               )}
 
-              {/* Nombre de la Mascota - Drag & Drop (cuando se selecciona tipo de letra o charm) */}
+              {/* Nombre de la Mascota */}
               {(customization.letterStyle.id || customization.charmType.id) && (
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-md font-semibold text-gray-700">
+                <div className="w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
+                    <label className="text-sm sm:text-md lg:text-lg font-semibold text-gray-700">
                       Nombre de tu Mascota
                     </label>
                     <button
                       onClick={handleClearName}
-                      className="text-xs text-gray-500 hover:text-pink-500 underline"
+                      className="text-xs text-gray-500 hover:text-pink-500 underline self-start sm:self-auto"
                     >
                       Limpiar
                     </button>
@@ -1282,19 +1382,19 @@ DETALLES DEL DISEÑO:
                   
                   {/* Área de construcción del nombre */}
                   <div
-                    className="w-full min-h-[60px] p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-3 flex items-center justify-center flex-wrap gap-1"
+                    className="w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1"
                     onDragOver={handleDragOver}
                     onDrop={handleDropOnName}
                   >
                     {Array.from(customization.petName).length === 0 ? (
-                      <span className="text-gray-400 text-md">
-                        Arrastra letras y colores aquí
+                      <span className="text-gray-400 text-sm sm:text-lg text-center px-2">
+                        Usa los botones + para agregar letras y colores al collar
                       </span>
                     ) : (
                       Array.from(customization.petName).map((char, index) => (
                         <div
                           key={`${char}-${index}`}
-                          className={`relative bg-white border-2 border-pink-300 rounded px-2 py-1 text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                          className={`relative bg-white border-2 border-pink-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
                             /[A-Z]/.test(char) ? customization.letterStyle.style : ''
                           }`}
                           style={{ 
@@ -1314,164 +1414,189 @@ DETALLES DEL DISEÑO:
                     )}
                   </div>
                   
-                  <p className="text-xs text-gray-500 mb-4">
-                    Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.petName).length}/12
+                  <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4">
+                    {isTouchDevice() ? 
+                      'Máximo 12 caracteres • Toca + para agregar • Toca letra para eliminar' : 
+                      'Máximo 12 caracteres • Arrastra o clic para agregar • Clic para eliminar'
+                    } • Caracteres: {Array.from(customization.petName).length}/12
                   </p>
 
-                  {/* Grid de Letras y Colores */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Layout de Letras y Colores */}
+                  <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
                     
-                    {/* Alfabeto para arrastrar - Solo si seleccionó tipo de letra */}
+                    {/* Alfabeto - Solo si seleccionó tipo de letra */}
                     {customization.letterStyle.id && (
-                      <div>
-                        <h4 className="text-md font-semibold text-gray-700 mb-3">
-                          Letras:
+                      <div className="w-full">
+                        <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
+                          Letras: Toca + para agregar
                         </h4>
-                      <div className="grid grid-cols-6 sm:grid-cols-7 gap-2">
-                        {alphabet.map((letter) => (
-                          <div
-                            key={letter}
-                            draggable={Array.from(customization.petName).length < 12}
-                            onDragStart={(e) => handleDragStart(e, letter)}
-                            className={`bg-white border-2 border-gray-300 rounded-lg px-2 py-2 text-lg font-bold text-center cursor-grab active:cursor-grabbing hover:bg-pink-50 hover:border-pink-300 transition-all ${
-                              Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
-                            } ${customization.letterStyle.style}`}
-                            style={{ 
-                              color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value 
-                            }}
-                            title={Array.from(customization.petName).length >= 12 ? 'Máximo alcanzado' : `Arrastra ${letter}`}
-                          >
-                            {letter}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Color de Letra - Solo mostrar si NO es tipo cursivo */}
-                      {customization.letterStyle.id !== 'script' && (
-                        <div className="mt-4">
-                          <h4 className="text-md font-semibold text-gray-700 mb-3">
-                            Color de Letra:
-                          </h4>
-                          <div className="grid grid-cols-5 gap-2">
-                            {colors.filter(color => ['green', 'purple', 'orange', 'pink', 'blue'].includes(color.id)).map((color) => (
+                        <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2">
+                          {alphabet.map((letter) => (
+                            <div
+                              key={letter}
+                              className="flex flex-col"
+                            >
                               <div
-                                key={color.id}
-                                className={`relative p-1 rounded-lg border-2 cursor-pointer transition-all ${
-                                  customization.letterColor.id === color.id
-                                    ? 'border-pink-500 bg-pink-50 shadow-lg'
-                                    : 'border-gray-200 hover:border-pink-300'
-                                }`}
-                                onClick={() => handleLetterColorSelect(color)}
+                                className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-1 sm:px-2 py-2 sm:py-3 text-sm sm:text-xl font-bold text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
+                                  Array.from(customization.petName).length >= 12 ? 'opacity-50' : ''
+                                } ${customization.letterStyle.style}`}
+                                style={{ 
+                                  color: customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value 
+                                }}
                               >
-                                <div className="text-center">
-                                  <div 
-                                    className="w-6 h-6 rounded-full mx-auto border border-white shadow-sm"
-                                    style={{ 
-                                      background: color.value,
-                                      border: color.id === 'white' ? '1px solid #e5e7eb' : '1px solid white'
-                                    }}
-                                  ></div>
-                                  {customization.letterColor.id === color.id && (
-                                    <div className="mt-1">
-                                      <span className="text-pink-500 text-xs font-medium">✓</span>
-                                    </div>
-                                  )}
-                                </div>
+                                {letter}
                               </div>
-                            ))}
+                              
+                              {Array.from(customization.petName).length < 12 && (
+                                <button
+                                  onClick={() => handleAddLetter(letter)}
+                                  className="w-full mt-1 h-5 sm:h-6 bg-purple-500 hover:bg-purple-600 text-white text-xs sm:text-sm rounded flex items-center justify-center font-bold transition-all touch-manipulation"
+                                  title={`Agregar ${letter}`}
+                                >
+                                  +
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Color de Letra - Solo mostrar si NO es tipo cursivo */}
+                        {customization.letterStyle.id !== 'script' && (
+                          <div className="mt-3 sm:mt-4">
+                            <h4 className="text-xs sm:text-md font-semibold text-gray-700 mb-2 sm:mb-3">
+                              Color de Letra:
+                            </h4>
+                            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                              {colors.filter(color => ['green', 'purple', 'orange', 'pink', 'blue'].includes(color.id)).map((color) => (
+                                <div
+                                  key={color.id}
+                                  className={`relative p-1 rounded-lg border-2 cursor-pointer transition-all ${
+                                    customization.letterColor.id === color.id
+                                      ? 'border-pink-500 bg-pink-50 shadow-lg'
+                                      : 'border-gray-200 hover:border-pink-300'
+                                  }`}
+                                  onClick={() => handleLetterColorSelect(color)}
+                                >
+                                  <div className="text-center">
+                                    <div 
+                                      className="w-4 h-4 sm:w-6 sm:h-6 rounded-full mx-auto border border-white shadow-sm"
+                                      style={{ 
+                                        background: color.value,
+                                        border: color.id === 'white' ? '1px solid #e5e7eb' : '1px solid white'
+                                      }}
+                                    ></div>
+                                    {customization.letterColor.id === color.id && (
+                                      <div className="mt-1">
+                                        <span className="text-pink-500 text-[10px] sm:text-xs font-medium">✓</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      
-                      {/* Mensaje informativo para tipo cursivo */}
-                      {customization.letterStyle.id === 'script' && (
-                        <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                          <p className="text-sm text-gray-600 text-center">
-                            ℹ️ Las letras cursivas solo están disponibles en color negro
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                        
+                        {/* Mensaje informativo para tipo cursivo */}
+                        {customization.letterStyle.id === 'script' && (
+                          <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-100 rounded-lg">
+                            <p className="text-xs sm:text-sm text-gray-600 text-center">
+                              ℹ️ Las letras cursivas solo están disponibles en color negro
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     )}
 
-                    {/* Colores típicos para arrastrar - Solo si seleccionó tipo de charm */}
+                    {/* Colores típicos - Solo si seleccionó tipo de charm */}
                     {customization.charmType.id && (
-                      <div>
-                      <h4 className="text-md font-semibold text-gray-700 mb-3">
-                        Colores:
-                      </h4>
-                      <div className="grid grid-cols-4 gap-3">
-                        {typicalColors.map((colorItem) => (
-                          <div
-                            key={colorItem.id}
-                            draggable={Array.from(customization.petName).length < 12}
-                            onDragStart={(e) => handleTypicalColorDragStart(e, colorItem.id)}
-                            className={`bg-white border-2 border-gray-300 rounded-lg px-3 py-3 text-2xl text-center cursor-grab active:cursor-grabbing hover:bg-purple-50 hover:border-purple-300 transition-all ${
-                              Array.from(customization.petName).length >= 12 ? 'opacity-50 cursor-not-allowed' : ''
-                            }`}
-                            title={Array.from(customization.petName).length >= 12 ? 'Máximo alcanzado' : `Arrastra ${colorItem.label}`}
-                          >
-                            {colorItem.label}
-                          </div>
-                        ))}
-                      </div>
+                      <div className="w-full">
+                        <h4 className="text-sm sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-4">
+                          Colores: Toca + para agregar
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 sm:gap-2">
+                          {typicalColors.map((colorItem) => (
+                            <div
+                              key={colorItem.id}
+                              className="flex flex-col"
+                            >
+                              <div
+                                className={`bg-white border-2 border-gray-300 rounded-lg sm:rounded-xl px-2 sm:px-3 py-2 sm:py-3 text-lg sm:text-2xl text-center transition-all cursor-pointer hover:bg-purple-50 hover:border-purple-300 touch-manipulation ${
+                                  Array.from(customization.petName).length >= 12 ? 'opacity-50' : ''
+                                }`}
+                              >
+                                {colorItem.label}
+                              </div>
+                              
+                              {Array.from(customization.petName).length < 12 && (
+                                <button
+                                  onClick={() => handleAddColor(colorItem.id)}
+                                  className="w-full mt-1 h-5 sm:h-6 bg-purple-500 hover:bg-purple-600 text-white text-xs sm:text-sm rounded flex items-center justify-center font-bold transition-all touch-manipulation"
+                                  title={`Agregar ${colorItem.label}`}
+                                >
+                                  +
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
                   
                   {/* Segundo Collar (solo para diseño combinado) */}
                   {customization.designType?.id === 3 && (
-                    <div className="mt-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <label className="block text-md font-semibold text-gray-700">
-                        Segundo Collar
-                      </label>
-                      <button
-                        onClick={handleClearSecondCollarName}
-                        className="text-xs text-gray-500 hover:text-purple-500 underline"
+                    <div className="mt-4 sm:mt-6 w-full">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2 sm:mb-3">
+                        <label className="text-sm sm:text-md font-semibold text-gray-700">
+                          Segundo Collar
+                        </label>
+                        <button
+                          onClick={handleClearSecondCollarName}
+                          className="text-xs text-gray-500 hover:text-purple-500 underline self-start sm:self-auto"
+                        >
+                          Limpiar
+                        </button>
+                      </div>
+                      
+                      {/* Área de construcción del segundo collar */}
+                      <div
+                        className="w-full min-h-[50px] sm:min-h-[60px] p-2 sm:p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-2 sm:mb-3 flex items-center justify-center flex-wrap gap-1"
+                        onDragOver={handleDragOver}
+                        onDrop={handleDropOnSecondCollar}
                       >
-                        Limpiar
-                      </button>
+                        {Array.from(customization.secondCollar.petName).length === 0 ? (
+                          <span className="text-gray-400 text-sm sm:text-lg text-center px-2">
+                            Usa los botones + para agregar letras y colores
+                          </span>
+                        ) : (
+                          Array.from(customization.secondCollar.petName).map((char, index) => (
+                            <div
+                              key={`second-${char}-${index}`}
+                              className={`relative bg-white border-2 border-purple-300 rounded px-1.5 sm:px-2 py-1 text-sm sm:text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
+                                /[A-Z]/.test(char) ? customization.letterStyle.style : ''
+                              }`}
+                              style={{ 
+                                color: /[A-Z]/.test(char) ? 
+                                  (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
+                                  '#374151'
+                              }}
+                              onClick={() => handleRemoveSecondCollarLetter(index)}
+                              title="Clic para eliminar"
+                            >
+                              {char}
+                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                ×
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      
+                      <p className="text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4">
+                        Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
+                      </p>
                     </div>
-                    
-                    {/* Área de construcción del segundo collar */}
-                    <div
-                      className="w-full min-h-[60px] p-3 border-2 border-dashed border-purple-300 rounded-lg bg-purple-50 mb-3 flex items-center justify-center flex-wrap gap-1"
-                      onDragOver={handleDragOver}
-                      onDrop={handleDropOnSecondCollar}
-                    >
-                      {Array.from(customization.secondCollar.petName).length === 0 ? (
-                        <span className="text-gray-400 text-md">
-                          Arrastra letras y colores aquí
-                        </span>
-                      ) : (
-                        Array.from(customization.secondCollar.petName).map((char, index) => (
-                          <div
-                            key={`second-${char}-${index}`}
-                            className={`relative bg-white border-2 border-purple-300 rounded px-2 py-1 text-lg font-bold shadow-sm hover:shadow-md transition-all cursor-pointer ${
-                              /[A-Z]/.test(char) ? customization.letterStyle.style : ''
-                            }`}
-                            style={{ 
-                              color: /[A-Z]/.test(char) ? 
-                                (customization.letterStyle.id === 'script' ? '#000000' : customization.letterColor.value) : 
-                                '#374151'
-                            }}
-                            onClick={() => handleRemoveSecondCollarLetter(index)}
-                            title="Clic para eliminar"
-                          >
-                            {char}
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                              ×
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    
-                    <p className="text-xs text-gray-500 mb-4">
-                      Máximo 12 caracteres • Clic para eliminar • Caracteres: {Array.from(customization.secondCollar.petName).length}/12
-                    </p>
-                  </div>
                   )}
                 </div>
               )}
@@ -1524,6 +1649,7 @@ DETALLES DEL DISEÑO:
                               </svg>
                             </button>
                           </div>
+                          <h4 className="text-lg font-bold text-gray-800 mb-2">{letterType.name}</h4>
                           <p className="text-sm text-gray-600">{letterType.description}</p>
                         </div>
                       ))}
@@ -1675,10 +1801,10 @@ DETALLES DEL DISEÑO:
           </p>
         </div>
 
-        {/* Progress indicator */}
-        <div ref={stepsRef} className="mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="flex items-center space-x-2">
+        {/* Progress indicator - Mobile responsive */}
+        <div ref={stepsRef} className="mb-8 sm:mb-12">
+          <div className="flex justify-center mb-3 sm:mb-4 overflow-x-auto">
+            <div className="flex items-center space-x-1 sm:space-x-2 px-4 min-w-max">
               {steps.map((step, index) => {
                 // Skip embroidery step in display if not required
                 if (index === 1 && !requiresEmbroidery()) {
@@ -1692,7 +1818,7 @@ DETALLES DEL DISEÑO:
                 
                 return (
                   <div key={index} className="flex items-center">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                       adjustedIndex === currentStep 
                         ? 'bg-pink-500 text-white'
                         : adjustedIndex < currentStep
@@ -1702,7 +1828,7 @@ DETALLES DEL DISEÑO:
                       {adjustedIndex < currentStep ? '✓' : adjustedIndex + 1}
                     </div>
                     {index < steps.length - 1 && (index !== 0 || requiresEmbroidery()) && (
-                      <div className={`w-8 h-1 mx-2 ${
+                      <div className={`w-4 sm:w-8 h-1 mx-1 sm:mx-2 ${
                         adjustedIndex < currentStep ? 'bg-green-500' : 'bg-gray-300'
                       }`}></div>
                     )}
@@ -1711,7 +1837,7 @@ DETALLES DEL DISEÑO:
               })}
             </div>
           </div>
-          <p className="text-center text-gray-600 font-medium">
+          <p className="text-center text-gray-600 font-medium text-sm sm:text-base px-4">
             Paso {getActiveStepNumber()} de {steps.length}: {getActiveStepLabel()}
           </p>
         </div>
@@ -1722,12 +1848,12 @@ DETALLES DEL DISEÑO:
             {renderStepContent()}
             
             {/* Navigation buttons */}
-            <div className="flex justify-between mt-8">
+            <div className="w-full max-w-full flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-8 box-border">
               <Button
                 onClick={prevStep}
                 variant="secondary"
                 disabled={currentStep === 0}
-                className="px-6 py-3"
+                className="w-full sm:w-auto px-4 sm:px-6 py-3 min-w-0"
               >
                 ← Anterior
               </Button>
@@ -1737,7 +1863,7 @@ DETALLES DEL DISEÑO:
                   onClick={() => setIsModalOpen(true)}
                   variant="primary"
                   disabled={!canProceed()}
-                  className="px-6 py-3"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-3 min-w-0"
                 >
                   Ver Resumen Final
                 </Button>
@@ -1746,7 +1872,7 @@ DETALLES DEL DISEÑO:
                   onClick={nextStep}
                   variant="primary"
                   disabled={!canProceed()}
-                  className="px-6 py-3"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-3 min-w-0"
                 >
                   Siguiente →
                 </Button>

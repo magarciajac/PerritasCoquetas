@@ -42,60 +42,62 @@ export default function FeaturedDesigns() {
         
         {/* Carrusel */}
         <div className="relative max-w-4xl mx-auto">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 to-stone-100 aspect-[4/3] flex items-center justify-center shadow-xl">
-            {/* Imagen principal */}
-            <div className="w-full h-full relative">
-              <PatitasImage
-                src={src}
-                fallback={fallback}
-                alt={alt}
-                width={800}
-                height={600}
-                className="w-full h-full object-contain p-8"
-              />
-              
-              {/* Descripción overlay */}
-              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {currentDesign.name}
-                </h3>
-                <p className="text-gray-600 font-light">
-                  {currentDesign.description}
-                </p>
+          <div className="relative overflow-hidden rounded-xl md:rounded-3xl bg-gradient-to-br from-orange-50 to-stone-100 shadow-xl">
+            {/* Contenedor de imagen con overlay */}
+            <div className="w-full flex items-center justify-center p-4 sm:p-6 md:p-8">
+              <div className="relative w-full aspect-[4/5] sm:aspect-[4/3] overflow-hidden rounded-xl md:rounded-2xl bg-stone-100">
+                <PatitasImage
+                  src={src}
+                  fallback={fallback}
+                  alt={alt}
+                  width={800}
+                  height={600}
+                  className="absolute inset-0 w-full h-full object-contain object-center"
+                />
+                
+                {/* Descripción overlay - DENTRO del wrapper de imagen */}
+                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg z-10">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mb-1 md:mb-2">
+                    {currentDesign.name}
+                  </h3>
+                  <p className="text-sm sm:text-sm md:text-base text-gray-600 font-light">
+                    {currentDesign.description}
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Botón anterior */}
+            {/* Botón anterior - Touch friendly */}
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+              className="absolute left-1 sm:left-2 md:left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 touch-manipulation"
             >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
-            {/* Botón siguiente */}
+            {/* Botón siguiente - Touch friendly */}
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+              className="absolute right-1 sm:right-2 md:right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 touch-manipulation"
             >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
-          {/* Indicadores (bolitas) */}
-          <div className="flex justify-center items-center mt-4 space-x-4">
+          {/* Indicadores (bolitas) - Mobile optimized */}
+          <div className="flex justify-center items-center mt-3 md:mt-4 space-x-2 md:space-x-4">
             {baseDesigns.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`flex items-center justify-center transition-all duration-300 ${
+                className={`flex items-center justify-center transition-all duration-300 touch-manipulation ${
                   index === currentIndex
-                    ? 'w-8 h-8 bg-orange-500 text-white rounded-full shadow-lg font-semibold text-sm'
-                    : 'w-6 h-6 bg-gray-300 hover:bg-gray-400 rounded-full'
+                    ? 'w-6 h-6 md:w-8 md:h-8 bg-orange-500 text-white rounded-full shadow-lg font-semibold text-xs md:text-sm'
+                    : 'w-4 h-4 md:w-6 md:h-6 bg-gray-300 hover:bg-gray-400 rounded-full'
                 }`}
               >
                 {index === currentIndex && (index + 1)}
@@ -104,8 +106,8 @@ export default function FeaturedDesigns() {
           </div>
 
           {/* Contador */}
-          <div className="text-center mt-2">
-            <span className="text-sm text-gray-500 font-medium">
+          <div className="text-center mt-1 md:mt-2">
+            <span className="text-xs md:text-sm text-gray-500 font-medium">
               {currentIndex + 1} de {baseDesigns.length}
             </span>
           </div>
