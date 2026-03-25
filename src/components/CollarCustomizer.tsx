@@ -2061,16 +2061,46 @@ DETALLES DEL DISEÑO:
                   <div className="grid grid-cols-1 gap-4 max-w-2xl mx-auto">
                     {/* Primer collar */}
                     <div className="bg-pink-50 rounded-lg p-4">
-                      <h4 className={`text-lg font-semibold text-gray-800 ${customization.letterStyle.style}`}>
-                        {customization.designType?.id === 3 ? 'Primer Collar:' : ''} {customization.petName || 'Nombre de tu Mascota'}
+                      <h4 className={`text-lg font-semibold ${customization.letterStyle.style}`}>
+                        {customization.designType?.id === 3 ? <span className="text-gray-800">Primer Collar: </span> : null}
+                        {customization.petNameItems.length > 0 ? (
+                          <span className="inline-flex flex-wrap gap-0.5">
+                            {customization.petNameItems.map((item) => (
+                              <span
+                                key={item.id}
+                                style={item.type === 'letter' && item.color ? { color: item.color } : undefined}
+                                className="font-bold"
+                              >
+                                {item.value}
+                              </span>
+                            ))}
+                          </span>
+                        ) : (
+                          <span className="text-gray-800">{customization.petName || 'Nombre de tu Mascota'}</span>
+                        )}
                       </h4>
                     </div>
                     
                     {/* Segundo collar solo para diseño combinado */}
                     {customization.designType?.id === 3 && (
                       <div className="bg-purple-50 rounded-lg p-4">
-                        <h4 className={`text-lg font-semibold text-gray-800 ${customization.letterStyle.style}`}>
-                          Segundo Collar: {customization.secondCollar.petName || 'Sin nombre'}
+                        <h4 className={`text-lg font-semibold ${customization.letterStyle.style}`}>
+                          <span className="text-gray-800">Segundo Collar: </span>
+                          {customization.secondCollar.nameItems.length > 0 ? (
+                            <span className="inline-flex flex-wrap gap-0.5">
+                              {customization.secondCollar.nameItems.map((item) => (
+                                <span
+                                  key={item.id}
+                                  style={item.type === 'letter' && item.color ? { color: item.color } : undefined}
+                                  className="font-bold"
+                                >
+                                  {item.value}
+                                </span>
+                              ))}
+                            </span>
+                          ) : (
+                            <span className="text-gray-800">{customization.secondCollar.petName || 'Sin nombre'}</span>
+                          )}
                         </h4>
                       </div>
                     )}
@@ -2132,6 +2162,9 @@ DETALLES DEL DISEÑO:
             petName: customization.designType?.id === 3 ?
                      { collar1: customization.petName || 'Sin contenido', collar2: customization.secondCollar.petName || 'Sin contenido' } :
                      customization.petName || 'Sin contenido',
+            petNameItems: customization.petNameItems.length > 0 ? customization.petNameItems : undefined,
+            secondCollarItems: customization.designType?.id === 3 && customization.secondCollar.nameItems.length > 0
+              ? customization.secondCollar.nameItems : undefined,
             // 5. Tamaño
             size: customization.size.name || 'No seleccionado'
           }}

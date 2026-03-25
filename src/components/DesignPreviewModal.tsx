@@ -15,6 +15,14 @@ const MessageCircleIcon = () => (
   </svg>
 )
 
+type CollarCharacterItem = {
+  id: string
+  type: 'letter' | 'charmColor'
+  value: string
+  color?: string
+  label?: string
+}
+
 interface DesignPreviewModalProps {
   isOpen: boolean
   onClose: () => void
@@ -30,9 +38,31 @@ interface DesignPreviewModalProps {
     charmType: string
     charmTypeImage?: string
     petName: string | { collar1: string; collar2: string }
+    petNameItems?: CollarCharacterItem[]
+    secondCollarItems?: CollarCharacterItem[]
     size: string
   }
   onConfirmOrder: () => void
+}
+
+/* Render each character with its individual color */
+function ColoredName({ items, fallback, className = '' }: { items?: CollarCharacterItem[]; fallback: string; className?: string }) {
+  if (!items || items.length === 0) {
+    return <span className={className}>{fallback}</span>
+  }
+  return (
+    <span className={`inline-flex flex-wrap gap-0.5 ${className}`}>
+      {items.map((item) => (
+        <span
+          key={item.id}
+          style={item.type === 'letter' && item.color ? { color: item.color } : undefined}
+          className="font-bold"
+        >
+          {item.value}
+        </span>
+      ))}
+    </span>
+  )
 }
 
 /* ───────────────────────────────────────────────
@@ -162,22 +192,31 @@ function MobileSummary({
                 <div className="space-y-1.5">
                   <div className="bg-white rounded-lg px-2.5 py-1.5 border border-pink-100">
                     <span className="text-[10px] text-pink-500 font-semibold block">Collar 1 (Bordado)</span>
-                    <p className="text-sm font-bold text-gray-900 leading-tight break-all">
-                      {(designDetails.petName as { collar1: string; collar2: string }).collar1}
-                    </p>
+                    <div className="text-sm leading-tight break-all">
+                      <ColoredName
+                        items={designDetails.petNameItems}
+                        fallback={(designDetails.petName as { collar1: string; collar2: string }).collar1}
+                      />
+                    </div>
                   </div>
                   <div className="bg-white rounded-lg px-2.5 py-1.5 border border-pink-100">
                     <span className="text-[10px] text-pink-500 font-semibold block">Collar 2 (Sencillo)</span>
-                    <p className="text-sm font-bold text-gray-900 leading-tight break-all">
-                      {(designDetails.petName as { collar1: string; collar2: string }).collar2}
-                    </p>
+                    <div className="text-sm leading-tight break-all">
+                      <ColoredName
+                        items={designDetails.secondCollarItems}
+                        fallback={(designDetails.petName as { collar1: string; collar2: string }).collar2}
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
                 <div className="bg-white rounded-lg px-3 py-2 border border-pink-100 text-center">
-                  <p className="text-lg font-bold text-gray-900 break-all">
-                    {designDetails.petName as string}
-                  </p>
+                  <div className="text-lg break-all">
+                    <ColoredName
+                      items={designDetails.petNameItems}
+                      fallback={designDetails.petName as string}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -393,16 +432,31 @@ function DesktopSummary({
                       <div className="grid grid-cols-2 gap-3 text-base">
                         <div className="bg-gray-50 rounded p-3 border border-gray-100">
                           <span className="font-medium text-gray-600">Collar 1:</span>
-                          <p className="text-gray-900 font-bold">{designDetails.petName.collar1}</p>
+                          <div className="text-gray-900">
+                            <ColoredName
+                              items={designDetails.petNameItems}
+                              fallback={designDetails.petName.collar1}
+                            />
+                          </div>
                         </div>
                         <div className="bg-gray-50 rounded p-3 border border-gray-100">
                           <span className="font-medium text-gray-600">Collar 2:</span>
-                          <p className="text-gray-900 font-bold">{designDetails.petName.collar2}</p>
+                          <div className="text-gray-900">
+                            <ColoredName
+                              items={designDetails.secondCollarItems}
+                              fallback={designDetails.petName.collar2}
+                            />
+                          </div>
                         </div>
                       </div>
                     ) : (
                       <div className="bg-gray-50 rounded p-3 border border-gray-100">
-                        <p className="text-gray-900 font-bold text-xl">{designDetails.petName}</p>
+                        <div className="text-xl">
+                          <ColoredName
+                            items={designDetails.petNameItems}
+                            fallback={designDetails.petName}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
