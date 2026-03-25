@@ -3,15 +3,9 @@
 import { Button } from './ui/Button'
 
 // Componentes de iconos SVG inline
-const XIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const XIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-  </svg>
-)
-
-const DownloadIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
   </svg>
 )
 
@@ -25,32 +19,223 @@ interface DesignPreviewModalProps {
   isOpen: boolean
   onClose: () => void
   imageUrl: string
-  secondImageUrl?: string  // Nueva prop para la segunda imagen del combinado
+  secondImageUrl?: string
   designDetails: {
     designType: string
     embroideryType: string
     color: string
     letterStyle: string
-    letterStyleImage?: string  // Nueva prop para imagen de letra
+    letterStyleImage?: string
     letterColor: string
     charmType: string
-    charmTypeImage?: string    // Nueva prop para imagen de charm
+    charmTypeImage?: string
     petName: string | { collar1: string; collar2: string }
     size: string
   }
   onConfirmOrder: () => void
 }
 
-export default function DesignPreviewModal({
-  isOpen,
-  onClose,
+/* ───────────────────────────────────────────────
+   MOBILE SHARE CARD – compacta, screenshot-ready
+   ─────────────────────────────────────────────── */
+function MobileSummary({
   imageUrl,
   secondImageUrl,
   designDetails,
+  onClose,
   onConfirmOrder
-}: DesignPreviewModalProps) {
-  if (!isOpen) return null
+}: Omit<DesignPreviewModalProps, 'isOpen'>) {
+  const isCombined = typeof designDetails.petName === 'object'
 
+  return (
+    <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col">
+      {/* ── Scrollable share-card area ── */}
+      <div className="flex-1 overflow-y-auto px-3 pt-3 pb-2">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          {/* Header compacto */}
+          <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2.5 flex items-center justify-between">
+            <div className="min-w-0">
+              <h2 className="text-base font-bold leading-tight">🐕 Resumen del Collar</h2>
+              <p className="text-pink-100 text-[11px] leading-tight">PatitasCoquetas ✨</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-white/20 rounded-full transition-colors flex-shrink-0 ml-2"
+            >
+              <XIcon className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Preview mini – grid 2x2 */}
+          <div className="px-3 pt-3 pb-2">
+            <div className="grid grid-cols-2 gap-2">
+              {/* Collar principal */}
+              <div className="bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                <img
+                  src={imageUrl}
+                  alt="Collar"
+                  className="w-full h-20 object-contain rounded"
+                />
+                <p className="text-[10px] text-gray-500 text-center mt-0.5 font-medium truncate">
+                  {isCombined ? 'Collar 1' : 'Tu collar'}
+                </p>
+              </div>
+
+              {/* Segundo collar si es combinado, sino placeholder */}
+              {isCombined && secondImageUrl ? (
+                <div className="bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                  <img
+                    src={secondImageUrl}
+                    alt="Collar 2"
+                    className="w-full h-20 object-contain rounded"
+                  />
+                  <p className="text-[10px] text-gray-500 text-center mt-0.5 font-medium truncate">Collar 2</p>
+                </div>
+              ) : (
+                <div className="bg-gray-100 rounded-lg p-1.5 border border-gray-200 border-dashed">
+                  <div className="w-full h-20 flex items-center justify-center text-gray-400">
+                    <span className="text-3xl">🐕</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 text-center mt-0.5 font-medium">Collar único</p>
+                </div>
+              )}
+
+              {/* Letra */}
+              {designDetails.letterStyleImage && designDetails.letterStyle !== 'Sin letras' ? (
+                <div className="bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                  <img
+                    src={designDetails.letterStyleImage}
+                    alt={designDetails.letterStyle}
+                    className="w-full h-20 object-contain rounded"
+                  />
+                  <p className="text-[10px] text-gray-500 text-center mt-0.5 font-medium truncate">{designDetails.letterStyle}</p>
+                </div>
+              ) : (
+                <div className="bg-gray-100 rounded-lg p-1.5 border border-gray-200 border-dashed">
+                  <div className="w-full h-20 flex items-center justify-center text-gray-400">
+                    <span className="text-2xl">ABC</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 text-center mt-0.5 font-medium">Sin letras</p>
+                </div>
+              )}
+
+              {/* Charm */}
+              {designDetails.charmTypeImage && designDetails.charmType !== 'Sin charm' ? (
+                <div className="bg-gray-50 rounded-lg p-1.5 border border-gray-200">
+                  <img
+                    src={designDetails.charmTypeImage}
+                    alt={designDetails.charmType}
+                    className="w-full h-20 object-contain rounded"
+                  />
+                  <p className="text-[10px] text-gray-500 text-center mt-0.5 font-medium truncate">{designDetails.charmType}</p>
+                </div>
+              ) : (
+                <div className="bg-gray-100 rounded-lg p-1.5 border border-gray-200 border-dashed">
+                  <div className="w-full h-20 flex items-center justify-center text-gray-400">
+                    <span className="text-2xl">✨</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 text-center mt-0.5 font-medium">Sin charm</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Grid 2 columnas de datos */}
+          <div className="px-3 pb-2">
+            <div className="grid grid-cols-3 gap-1.5">
+              <MiniChip label="Diseño" value={designDetails.designType} />
+              <MiniChip label="Bordado" value={designDetails.embroideryType} />
+              <MiniChip label="Color" value={designDetails.color} />
+              <MiniChip label="Tamaño" value={designDetails.size} />
+              <MiniChip label="Letra" value={designDetails.letterStyle} />
+              <MiniChip label="Charm" value={designDetails.charmType} />
+            </div>
+          </div>
+
+          {/* Contenido del Collar */}
+          <div className="px-3 pb-3">
+            <div className="bg-pink-50 border border-pink-200 rounded-xl p-2.5">
+              <h4 className="text-xs font-bold text-pink-700 mb-1.5 text-center">
+                📿 Contenido del Collar
+              </h4>
+              {isCombined ? (
+                <div className="space-y-1.5">
+                  <div className="bg-white rounded-lg px-2.5 py-1.5 border border-pink-100">
+                    <span className="text-[10px] text-pink-500 font-semibold block">Collar 1 (Bordado)</span>
+                    <p className="text-sm font-bold text-gray-900 leading-tight break-all">
+                      {(designDetails.petName as { collar1: string; collar2: string }).collar1}
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg px-2.5 py-1.5 border border-pink-100">
+                    <span className="text-[10px] text-pink-500 font-semibold block">Collar 2 (Sencillo)</span>
+                    <p className="text-sm font-bold text-gray-900 leading-tight break-all">
+                      {(designDetails.petName as { collar1: string; collar2: string }).collar2}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg px-3 py-2 border border-pink-100 text-center">
+                  <p className="text-lg font-bold text-gray-900 break-all">
+                    {designDetails.petName as string}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Instrucciones – debajo del card, fuera del screenshot principal */}
+        <div className="mt-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5">
+          <h4 className="font-bold text-blue-800 text-xs mb-1.5">📋 Para completar tu pedido:</h4>
+          <ol className="text-blue-700 text-[11px] space-y-0.5 leading-snug">
+            <li>1. Toma screenshot de esta pantalla</li>
+            <li>2. Presiona &quot;Enviar por WhatsApp&quot;</li>
+            <li>3. Adjunta el screenshot en WhatsApp</li>
+          </ol>
+        </div>
+      </div>
+
+      {/* ── Botones fijos abajo, fuera del scroll ── */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2.5 flex gap-2">
+        <Button
+          onClick={() => onConfirmOrder()}
+          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 text-sm shadow-md rounded-xl"
+        >
+          <MessageCircleIcon />
+          <span className="ml-1">WhatsApp</span>
+        </Button>
+        <Button
+          onClick={onClose}
+          variant="secondary"
+          className="flex-1 text-gray-600 hover:bg-gray-100 py-2.5 border border-gray-300 text-sm rounded-xl"
+        >
+          ✏️ Editar
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+/* Helper: mini chip de dato */
+function MiniChip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-gray-50 rounded-lg px-2 py-1.5 border border-gray-100 text-center min-w-0">
+      <span className="text-[10px] text-gray-400 font-medium block leading-tight">{label}</span>
+      <span className="text-[11px] text-gray-800 font-semibold block leading-tight truncate">{value}</span>
+    </div>
+  )
+}
+
+/* ───────────────────────────────────────────────
+   DESKTOP SUMMARY – la UI actual sin cambios
+   ─────────────────────────────────────────────── */
+function DesktopSummary({
+  imageUrl,
+  secondImageUrl,
+  designDetails,
+  onClose,
+  onConfirmOrder
+}: Omit<DesignPreviewModalProps, 'isOpen'>) {
   return (
     <div className="fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50 p-4">
       <div className="bg-white/95 backdrop-blur-xl shadow-2xl rounded-3xl max-w-6xl w-full max-h-[95vh] overflow-y-auto border border-white/20">
@@ -249,12 +434,41 @@ export default function DesignPreviewModal({
             <h4 className="font-bold text-blue-800 mb-4 text-lg">📋 Pasos para completar tu pedido:</h4>
             <ol className="text-blue-700 text-base space-y-3">
               <li className="flex items-start"><span className="font-bold text-lg mr-2">1.</span> <span className="font-medium">Toma screenshot de esta pantalla</span></li>
-              <li className="flex items-start"><span className="font-bold text-lg mr-2">2.</span> <span className="font-medium">Presiona el botón "Enviar por WhatsApp"</span></li>
+              <li className="flex items-start"><span className="font-bold text-lg mr-2">2.</span> <span className="font-medium">Presiona el botón &quot;Enviar por WhatsApp&quot;</span></li>
               <li className="flex items-start"><span className="font-bold text-lg mr-2">3.</span> <span className="font-medium">En WhatsApp, adjunta el screenshot de tu orden</span></li>
             </ol>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+/* ───────────────────────────────────────────────
+   WRAPPER – elige mobile vs desktop
+   ─────────────────────────────────────────────── */
+export default function DesignPreviewModal({
+  isOpen,
+  onClose,
+  imageUrl,
+  secondImageUrl,
+  designDetails,
+  onConfirmOrder
+}: DesignPreviewModalProps) {
+  if (!isOpen) return null
+
+  const sharedProps = { imageUrl, secondImageUrl, designDetails, onClose, onConfirmOrder }
+
+  return (
+    <>
+      {/* Mobile: visible < md */}
+      <div className="block md:hidden">
+        <MobileSummary {...sharedProps} />
+      </div>
+      {/* Desktop: visible >= md */}
+      <div className="hidden md:block">
+        <DesktopSummary {...sharedProps} />
+      </div>
+    </>
   )
 }
