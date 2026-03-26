@@ -281,6 +281,20 @@ export const images = {
       fallback: '📏',
       alt: 'Tabla de tallas de collares'
     }
+  },
+
+  // Referencia visual de colores de paracord
+  colorReference: {
+    solids: {
+      path: '/images/material%20/ColoresLisos.jpg',
+      fallback: '🎨',
+      alt: 'Colores lisos de paracord disponibles'
+    },
+    multicolor: {
+      path: '/images/material%20/ColoresMixtos.jpg',
+      fallback: '🌈',
+      alt: 'Colores combinados de paracord disponibles'
+    }
   }
 }
 

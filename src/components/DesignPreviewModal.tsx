@@ -175,10 +175,20 @@ function MobileSummary({
             <div className="grid grid-cols-3 gap-1.5">
               <MiniChip label="Diseño" value={designDetails.designType} />
               <MiniChip label="Bordado" value={designDetails.embroideryType} />
-              <MiniChip label="Color" value={designDetails.color} />
               <MiniChip label="Tamaño" value={designDetails.size} />
               <MiniChip label="Letra" value={designDetails.letterStyle} />
               <MiniChip label="Charm" value={designDetails.charmType} />
+            </div>
+            {/* Colores seleccionados - fila separada para que se vean todos */}
+            <div className="mt-1.5 bg-gray-50 rounded-lg px-2 py-1.5 border border-gray-100">
+              <span className="text-[10px] text-gray-400 font-medium block leading-tight text-center mb-1">Color</span>
+              <div className="flex flex-wrap gap-1 justify-center">
+                {designDetails.color.split(', ').map((c, i) => (
+                  <span key={i} className="inline-block px-2 py-0.5 bg-pink-100 text-pink-800 text-[11px] font-semibold rounded-md border border-pink-200">
+                    {c}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -406,7 +416,13 @@ function DesktopSummary({
                   <div className="bg-pink-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-base flex-shrink-0">3</div>
                   <div className="flex-1">
                     <h4 className="font-bold text-gray-800 text-base">Color</h4>
-                    <p className="text-gray-700 font-semibold text-base">{designDetails.color}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {designDetails.color.split(', ').map((c, i) => (
+                        <span key={i} className="inline-block px-2.5 py-1 bg-pink-100 text-pink-800 text-xs font-medium rounded-lg border border-pink-200">
+                          {c}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

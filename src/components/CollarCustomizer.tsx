@@ -25,7 +25,7 @@ interface CollarCustomization {
   // Bordados separados para diseño combinado
   embroideryDesign1: null | { id: string; name: string; imageKey: string; description: string }
   embroideryDesign2: null | { id: string; name: string; imageKey: string; description: string }
-  color: { id: string; label: string; value: string }
+  colors: { id: string; label: string; value: string }[]
   petName: string
   petNameItems: CollarCharacterItem[]
   letterStyle: { id: string; name: string; style: string; imageKey: string }
@@ -37,7 +37,7 @@ interface CollarCustomization {
   secondCollar: {
     petName: string
     nameItems: CollarCharacterItem[]
-    color: { id: string; label: string; value: string }
+    colors: { id: string; label: string; value: string }[]
   }
 }
 
@@ -89,34 +89,94 @@ const colors = [
   // Colores Sólidos - Tercera fila
   { id: 'slate', label: 'Pizarra', value: '#475569', type: 'solid' },
   
-  // Colores Multicolor - Primera fila
+  // Colores Multicolor - Primera fila (9)
   { id: 'multi_pink_purple', label: 'Rosa-Púrpura', value: 'linear-gradient(45deg, #EC4899, #A855F7)', type: 'multicolor' },
   { id: 'multi_red_fire', label: 'Rojo Fuego', value: 'linear-gradient(45deg, #DC2626, #F59E0B)', type: 'multicolor' },
   { id: 'multi_arcoiris', label: 'Arcoíris', value: 'linear-gradient(45deg, #06B6D4, #10B981, #F59E0B)', type: 'multicolor' },
+  { id: 'multi_magenta_neon', label: 'Magenta Neón', value: 'linear-gradient(45deg, #D946EF, #F472B6)', type: 'multicolor' },
   { id: 'multi_lime_yellow', label: 'Lima-Amarillo', value: 'linear-gradient(45deg, #84CC16, #F59E0B)', type: 'multicolor' },
   { id: 'multi_gray_diamond', label: 'Gris Diamante', value: 'linear-gradient(45deg, #6B7280, #D1D5DB)', type: 'multicolor' },
   { id: 'multi_blue_electric', label: 'Azul Eléctrico', value: 'linear-gradient(45deg, #1E40AF, #3B82F6)', type: 'multicolor' },
   { id: 'multi_sky_pattern', label: 'Patrón Cielo', value: 'linear-gradient(45deg, #0EA5E9, #7DD3FC)', type: 'multicolor' },
+  { id: 'multi_celeste_blanco', label: 'Celeste-Blanco', value: 'linear-gradient(45deg, #7DD3FC, #F0F9FF)', type: 'multicolor' },
+  
+  // Colores Multicolor - Segunda fila (9)
   { id: 'multi_purple_galaxy', label: 'Púrpura Galaxia', value: 'linear-gradient(45deg, #581C87, #A855F7)', type: 'multicolor' },
+  { id: 'multi_purpura_azul', label: 'Púrpura-Azul', value: 'linear-gradient(45deg, #6D28D9, #2563EB)', type: 'multicolor' },
   { id: 'multi_forest_camo', label: 'Camuflaje Bosque', value: 'linear-gradient(45deg, #1F2937, #065F46)', type: 'multicolor' },
   { id: 'multi_orange_sunset', label: 'Atardecer Naranja', value: 'linear-gradient(45deg, #EA580C, #F97316)', type: 'multicolor' },
-  
-  // Colores Multicolor - Segunda fila
+  { id: 'multi_gris_blanco', label: 'Gris-Blanco', value: 'linear-gradient(45deg, #9CA3AF, #F3F4F6)', type: 'multicolor' },
   { id: 'multi_mint_fresh', label: 'Menta Fresco', value: 'linear-gradient(45deg, #059669, #6EE7B7)', type: 'multicolor' },
   { id: 'multi_royal_blue', label: 'Azul Real', value: 'linear-gradient(45deg, #1E3A8A, #3B82F6)', type: 'multicolor' },
   { id: 'multi_pink_candy', label: 'Rosa Dulce', value: 'linear-gradient(45deg, #EC4899, #F9A8D4)', type: 'multicolor' },
   { id: 'multi_chocolate_brown', label: 'Café Chocolate', value: 'linear-gradient(45deg, #78350F, #A16207)', type: 'multicolor' },
+  
+  // Colores Multicolor - Tercera fila (9)
   { id: 'multi_turquoise_wave', label: 'Onda Turquesa', value: 'linear-gradient(45deg, #0F766E, #5EEAD4)', type: 'multicolor' },
   { id: 'multi_neon_mix', label: 'Mezcla Neón', value: 'linear-gradient(45deg, #10B981, #3B82F6)', type: 'multicolor' },
   { id: 'multi_military_green', label: 'Verde Militar', value: 'linear-gradient(45deg, #1F2937, #047857)', type: 'multicolor' },
   { id: 'multi_arctic_blue', label: 'Azul Ártico', value: 'linear-gradient(45deg, #075985, #BAE6FD)', type: 'multicolor' },
   { id: 'multi_purple_pink', label: 'Púrpura-Rosa', value: 'linear-gradient(45deg, #7C3AED, #EC4899)', type: 'multicolor' },
   { id: 'multi_black_gray', label: 'Negro-Gris', value: 'linear-gradient(45deg, #000000, #6B7280)', type: 'multicolor' },
-  
-  // Colores Multicolor - Tercera fila (parcial)
   { id: 'multi_azul_blanco', label: 'Azul-Blanco', value: 'linear-gradient(45deg, #3B82F6, #DBEAFE)', type: 'multicolor' },
-  { id: 'multi_verde_amarillo', label: 'Verde-Amarillo', value: 'linear-gradient(45deg, #84CC16, #F59E0B)', type: 'multicolor' }
+  { id: 'multi_verde_amarillo', label: 'Verde-Amarillo', value: 'linear-gradient(45deg, #84CC16, #F59E0B)', type: 'multicolor' },
+  { id: 'multi_negro_blanco', label: 'Negro-Blanco', value: 'linear-gradient(45deg, #111827, #E5E7EB)', type: 'multicolor' },
+  
+  // Colores Multicolor - Cuarta fila (9)
+  { id: 'multi_rojo_negro', label: 'Rojo-Negro', value: 'linear-gradient(45deg, #DC2626, #1F2937)', type: 'multicolor' },
+  { id: 'multi_coral_mix', label: 'Coral Mix', value: 'linear-gradient(45deg, #F87171, #FB923C)', type: 'multicolor' },
+  { id: 'multi_lila_blanco', label: 'Lila-Blanco', value: 'linear-gradient(45deg, #C084FC, #F5F3FF)', type: 'multicolor' },
+  { id: 'multi_amarillo_negro', label: 'Amarillo-Negro', value: 'linear-gradient(45deg, #EAB308, #1F2937)', type: 'multicolor' },
+  { id: 'multi_rosa_blanco', label: 'Rosa-Blanco', value: 'linear-gradient(45deg, #EC4899, #FDF2F8)', type: 'multicolor' },
+  { id: 'multi_azul_negro', label: 'Azul-Negro', value: 'linear-gradient(45deg, #2563EB, #111827)', type: 'multicolor' },
+  { id: 'multi_turquesa_blanco', label: 'Turquesa-Blanco', value: 'linear-gradient(45deg, #14B8A6, #F0FDFA)', type: 'multicolor' },
+  { id: 'multi_verde_blanco', label: 'Verde-Blanco', value: 'linear-gradient(45deg, #22C55E, #F0FDF4)', type: 'multicolor' },
+  { id: 'multi_gris_patron', label: 'Gris Patrón', value: 'linear-gradient(45deg, #374151, #D1D5DB)', type: 'multicolor' }
 ]
+
+// ── Grid de colores: estructura de matriz para overlay + selección ──
+// Cada item mapea a una celda en la rejilla (row/col empiezan en 0)
+// El orden debe coincidir con el layout de la foto de referencia
+
+// ColoresLisos.jpg – 2 columnas × 10 filas = 20 colores
+const solidColorGrid = [
+  // row 0
+  { id: 'yellow', label: 'Amarillo' },  { id: 'amber',  label: 'Arcoíris' },
+  // row 1
+  { id: 'brown',  label: 'Café' },      { id: 'orange', label: 'Naranja' },
+  // row 2
+  { id: 'purple', label: 'Morado' },    { id: 'lime',   label: 'Verde Limón' },
+  // row 3
+  { id: 'teal',   label: 'Turquesa' },  { id: 'pink',   label: 'Rosa' },
+  // row 4
+  { id: 'gray',   label: 'Gris' },      { id: 'cyan',   label: 'Celeste' },
+  // row 5
+  { id: 'green',  label: 'Verde' },     { id: 'white',  label: 'Blanco' },
+  // row 6
+  { id: 'indigo', label: 'Índigo' },     { id: 'rose',   label: 'Salmón' },
+  // row 7
+  { id: 'navy',   label: 'Azul Marino' }, { id: 'red', label: 'Rojo' },
+  // row 8
+  { id: 'slate',  label: 'Gris Oscuro' }, { id: 'blue', label: 'Azul' },
+  // row 9
+  { id: 'tan',    label: 'Militar' },   { id: 'black',  label: 'Negro' },
+]
+const SOLID_COLS = 2
+const SOLID_ROWS = 10
+
+// ColoresMixtos.jpg – 9 columnas × 4 filas = 36 posiciones
+const mixedColorGrid: (string | null)[] = [
+  // Fila 0 (9)
+  'multi_pink_purple', 'multi_red_fire', 'multi_arcoiris', 'multi_magenta_neon', 'multi_lime_yellow', 'multi_gray_diamond', 'multi_blue_electric', 'multi_sky_pattern', 'multi_celeste_blanco',
+  // Fila 1 (9)
+  'multi_purple_galaxy', 'multi_purpura_azul', 'multi_forest_camo', 'multi_orange_sunset', 'multi_gris_blanco', 'multi_mint_fresh', 'multi_royal_blue', 'multi_pink_candy', 'multi_chocolate_brown',
+  // Fila 2 (9)
+  'multi_turquoise_wave', 'multi_neon_mix', 'multi_military_green', 'multi_arctic_blue', 'multi_purple_pink', 'multi_black_gray', 'multi_azul_blanco', 'multi_verde_amarillo', 'multi_negro_blanco',
+  // Fila 3 (9)
+  'multi_rojo_negro', 'multi_coral_mix', 'multi_lila_blanco', 'multi_amarillo_negro', 'multi_rosa_blanco', 'multi_azul_negro', 'multi_turquesa_blanco', 'multi_verde_blanco', 'multi_gris_patron',
+]
+const MIXED_COLS = 9
+const MIXED_ROWS = 4
 
 const letterStyles = [
   { id: 'classic', name: 'Clásica', style: 'font-serif text-2xl', imageKey: 'style1' },
@@ -247,7 +307,7 @@ export default function CollarCustomizer() {
     embroideryType: null,
     embroideryDesign1: null,
     embroideryDesign2: null,
-    color: { id: '', label: '', value: '' },
+    colors: [],
     petName: '',
     petNameItems: [],
     letterStyle: { id: '', name: '', style: '', imageKey: '' },
@@ -258,10 +318,12 @@ export default function CollarCustomizer() {
     secondCollar: {
       petName: '',
       nameItems: [],
-      color: { id: '', label: '', value: '' }
+      colors: []
     }
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isMixedColorsModalOpen, setIsMixedColorsModalOpen] = useState(false)
+  const [isSolidColorsModalOpen, setIsSolidColorsModalOpen] = useState(false)
   const [activeCollarTarget, setActiveCollarTarget] = useState<'first' | 'second'>('first')
   const sectionRef = useRef<HTMLElement>(null)
   const stepsRef = useRef<HTMLDivElement>(null)
@@ -313,10 +375,15 @@ export default function CollarCustomizer() {
   }
 
   const handleColorSelect = (color: typeof colors[0]) => {
-    setCustomization(prev => ({
-      ...prev,
-      color: color
-    }))
+    setCustomization(prev => {
+      const alreadySelected = prev.colors.some(c => c.id === color.id)
+      return {
+        ...prev,
+        colors: alreadySelected
+          ? prev.colors.filter(c => c.id !== color.id)
+          : [...prev.colors, { id: color.id, label: color.label, value: color.value }]
+      }
+    })
   }
 
   const handleLetterStyleSelect = (style: typeof letterStyles[0]) => {
@@ -771,7 +838,7 @@ export default function CollarCustomizer() {
         // Para diseño sin bordado (tipo 2), no requiere embroideryType
         return true
       }
-      case 2: return !requiresColor() || customization.color.id !== ''
+      case 2: return true // Color is now photo-based reference, always allow proceeding
       case 3: {
         // Para diseño combinado, completamente flexible
         if (customization.designType?.id === 3) {
@@ -825,7 +892,7 @@ export default function CollarCustomizer() {
           embroideryType: null,
           embroideryDesign1: null,
           embroideryDesign2: null,
-          color: { id: '', label: '', value: '' },
+          colors: [],
           petName: '',
           petNameItems: [],
           letterStyle: { id: '', name: '', style: '', imageKey: '' },
@@ -836,7 +903,7 @@ export default function CollarCustomizer() {
           secondCollar: {
             petName: '',
             nameItems: [],
-            color: { id: '', label: '', value: '' }
+            colors: []
           }
         })
       }
@@ -874,7 +941,7 @@ DETALLES DEL DISEÑO:
     }
 
     message += `
-- Color: ${customization.color.label || 'No seleccionado'}`
+- Color: ${customization.colors.length > 0 ? customization.colors.map(c => c.label).join(', ') : 'No seleccionado'}`
 
     // Para diseño combinado, mostrar ambos collares
     if (customization.designType?.id === 3) {
@@ -1198,134 +1265,300 @@ DETALLES DEL DISEÑO:
           </div>
         )
       
-      case 2:
+      case 2: {
+        const solidsImg = getImageSrc('colorReference', 'solids')
+        const multiImg = getImageSrc('colorReference', 'multicolor')
+        // Orden exacto de la foto: usamos los arrays de grid que replican la imagen
+        const solidColorsOrdered = solidColorGrid
+          .map(g => colors.find(c => c.id === g.id))
+          .filter((c): c is typeof colors[0] => c != null)
+        const mixedColorsOrdered = mixedColorGrid
+          .filter((id): id is string => id != null)
+          .map(id => colors.find(c => c.id === id))
+          .filter((c): c is typeof colors[0] => c != null)
+        const selectedSolidColors = solidColorsOrdered.filter(c => customization.colors.some(sc => sc.id === c.id))
+        const selectedMixedColors = mixedColorsOrdered.filter(c => customization.colors.some(sc => sc.id === c.id))
+
         return (
           <div>
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">
+            <h3 className="text-xl md:text-2xl font-bold text-center text-gray-800 mb-4 md:mb-8">
               Selecciona el Color del Collar
             </h3>
-            
-            {/* Nota informativa para diseño combinado */}
+
             {customization.designType?.id === 3 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 mb-4 md:mb-8">
                 <div className="flex items-start space-x-3">
                   <span className="text-2xl">ℹ️</span>
                   <div>
                     <h4 className="font-semibold text-blue-800 mb-1">Diseño Combinado</h4>
-                    <p className="text-blue-700 text-sm">
-                      Este color será para el bordado del primer collar. El segundo collar será sencillo sin bordado.
-                    </p>
+                    <p className="text-blue-700 text-sm">Este color será para el bordado del primer collar. El segundo collar será sencillo sin bordado.</p>
                   </div>
                 </div>
               </div>
             )}
-            
-            <div className="space-y-8">
-              {/* Colores Sólidos */}
+
+            <div className="space-y-6 md:space-y-8 max-w-3xl mx-auto">
+
+              {/* ══ SECCIÓN A: Colores Lisos ══ */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-700 mb-4">
-                  Colores Sólidos: Toca + para agregar al nombre
-                </h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-5xl mx-auto">
-                  {colors.filter(color => color.type === 'solid').map((color) => (
-                    <div
-                      key={color.id}
-                      className="relative group"
-                    >
-                      <div
-                        className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all touch-manipulation ${
-                          customization.color.id === color.id
-                            ? 'border-pink-500 bg-pink-50 shadow-lg'
-                            : 'border-gray-200 hover:border-pink-300'
-                        }`}
-                        onClick={() => handleColorSelect(color)}
-                        title={`Seleccionar color: ${color.label}`}
-                      >
-                        <div className="text-center">
-                          <div 
-                            className="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
-                            style={{ 
-                              background: color.value.includes('gradient') ? color.value : color.value,
-                              border: color.id === 'white' ? '2px solid #e5e7eb' : '2px solid white'
-                            }}
-                          ></div>
-                          <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
-                          {customization.color.id === color.id && (
-                            <div className="mt-1">
-                              <span className="text-pink-500 text-xs font-medium">✓</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Botón + para móviles */}
-                      {isTouchDevice() && customization.charmType.id && customization.petNameItems.length < 12 && (
-                        <button
-                          onClick={() => handleAddColor(`paracord_${color.id}`)}
-                          className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
-                          title={`Agregar ${color.label} al nombre`}
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                <h4 className="text-base md:text-lg font-semibold text-gray-700 mb-3 text-center">🎨 Colores Lisos</h4>
+
+                {/* Foto compacta de referencia */}
+                <div className="relative bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-3">
+                  <div className="p-2 md:p-3 bg-gradient-to-br from-gray-50 to-white">
+                    <img src={solidsImg.src} alt={solidsImg.alt} className="w-full h-auto rounded-xl max-h-48 md:max-h-64 object-contain" />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setZoomImageData({ src: solidsImg.src, fallback: solidsImg.fallback, alt: solidsImg.alt, title: 'Colores Lisos Disponibles' })
+                      setIsImageZoomOpen(true)
+                    }}
+                    className="absolute bottom-3 right-3 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 border border-gray-200 z-20"
+                    aria-label="Ampliar imagen de colores lisos"
+                  >
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </button>
                 </div>
+
+                {/* Colores lisos seleccionados */}
+                {selectedSolidColors.length > 0 && (
+                  <div className="mb-3 bg-pink-50 border border-pink-200 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-pink-800">Seleccionados ({selectedSolidColors.length}):</span>
+                      <button
+                        onClick={() => setIsSolidColorsModalOpen(true)}
+                        className="text-xs text-pink-600 font-medium underline underline-offset-2"
+                      >
+                        Cambiar
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedSolidColors.map(c => (
+                        <span key={c.id} className="inline-flex items-center gap-1 px-2 py-1 bg-pink-500 text-white text-xs rounded-lg font-medium">
+                          ✓ {c.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Botón para abrir modal */}
+                <button
+                  onClick={() => setIsSolidColorsModalOpen(true)}
+                  className="w-full py-3 md:py-3.5 rounded-xl text-sm md:text-base font-semibold transition-all touch-manipulation bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md hover:shadow-lg hover:from-pink-600 hover:to-rose-600 flex items-center justify-center gap-2"
+                >
+                  <span>🎨</span>
+                  <span>{selectedSolidColors.length > 0 ? 'Ver colores lisos' : 'Elegir color liso'}</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
               </div>
 
-              {/* Colores Multicolor */}
+              {/* ══ SECCIÓN B: Colores Combinados (compacta) ══ */}
               <div>
-                <h4 className="text-lg font-semibold text-gray-700 mb-4">
-                  Colores Multicolor: Toca + para agregar al nombre
-                </h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-5xl mx-auto">
-                  {colors.filter(color => color.type === 'multicolor').map((color) => (
-                    <div
-                      key={color.id}
-                      className="relative group"
-                    >
-                      <div
-                        className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all touch-manipulation ${
-                          customization.color.id === color.id
-                            ? 'border-pink-500 bg-pink-50 shadow-lg'
-                            : 'border-gray-200 hover:border-pink-300'
-                        }`}
-                        onClick={() => handleColorSelect(color)}
-                        title={`Seleccionar color: ${color.label}`}
-                      >
-                        <div className="text-center">
-                          <div 
-                            className="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-white shadow-md"
-                            style={{ 
-                              background: color.value
-                            }}
-                          ></div>
-                          <h5 className="text-xs font-medium text-gray-800 leading-tight break-words px-1 min-h-[2rem] flex items-center justify-center">{color.label}</h5>
-                          {customization.color.id === color.id && (
-                            <div className="mt-1">
-                              <span className="text-pink-500 text-xs font-medium">✓</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Botón + para móviles */}
-                      {isTouchDevice() && customization.charmType.id && customization.petNameItems.length < 12 && (
-                        <button
-                          onClick={() => handleAddColor(`paracord_${color.id}`)}
-                          className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md transition-all"
-                          title={`Agregar ${color.label} al nombre`}
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                <h4 className="text-base md:text-lg font-semibold text-gray-700 mb-3 text-center">🌈 Colores Combinados</h4>
+
+                {/* Foto compacta de referencia */}
+                <div className="relative bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-3">
+                  <div className="p-2 md:p-3 bg-gradient-to-br from-gray-50 to-white">
+                    <img src={multiImg.src} alt={multiImg.alt} className="w-full h-auto rounded-xl max-h-48 md:max-h-64 object-contain" />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setZoomImageData({ src: multiImg.src, fallback: multiImg.fallback, alt: multiImg.alt, title: 'Colores Combinados Disponibles' })
+                      setIsImageZoomOpen(true)
+                    }}
+                    className="absolute bottom-3 right-3 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 border border-gray-200 z-20"
+                    aria-label="Ampliar imagen de colores combinados"
+                  >
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </button>
                 </div>
+
+                {/* Colores combinados seleccionados */}
+                {selectedMixedColors.length > 0 && (
+                  <div className="mb-3 bg-pink-50 border border-pink-200 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-pink-800">Seleccionados ({selectedMixedColors.length}):</span>
+                      <button
+                        onClick={() => setIsMixedColorsModalOpen(true)}
+                        className="text-xs text-pink-600 font-medium underline underline-offset-2"
+                      >
+                        Cambiar
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedMixedColors.map(c => (
+                        <span key={c.id} className="inline-flex items-center gap-1 px-2 py-1 bg-pink-500 text-white text-xs rounded-lg font-medium">
+                          ✓ {c.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Botón para abrir modal */}
+                <button
+                  onClick={() => setIsMixedColorsModalOpen(true)}
+                  className="w-full py-3 md:py-3.5 rounded-xl text-sm md:text-base font-semibold transition-all touch-manipulation bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md hover:shadow-lg hover:from-purple-600 hover:to-pink-600 flex items-center justify-center gap-2"
+                >
+                  <span>🌈</span>
+                  <span>{selectedMixedColors.length > 0 ? 'Ver colores combinados' : 'Elegir color combinado'}</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </div>
+
+              {/* Nota de ayuda */}
+              <div className="bg-pink-50 border border-pink-200 rounded-xl p-3 md:p-4 text-center">
+                <p className="text-pink-700 text-xs md:text-sm font-medium">
+                  🎨 Elige un color liso arriba o toca el botón para ver colores combinados
+                </p>
               </div>
             </div>
+
+            {/* ══ MODAL: Colores Combinados (full screen en móvil) ══ */}
+            {isMixedColorsModalOpen && (
+              <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center">
+                {/* Backdrop */}
+                <div
+                  className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={() => setIsMixedColorsModalOpen(false)}
+                />
+                {/* Panel */}
+                <div className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl md:mx-4 bg-white md:rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+                  {/* Header sticky */}
+                  <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 md:py-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg md:text-xl font-bold text-gray-800">Selecciona colores combinados</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Toca para seleccionar o deseleccionar</p>
+                    </div>
+                    <button
+                      onClick={() => setIsMixedColorsModalOpen(false)}
+                      className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      aria-label="Cerrar"
+                    >
+                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Scrollable content */}
+                  <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4">
+                    {/* Imagen de referencia */}
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                      <div className="p-2 md:p-3 bg-gradient-to-br from-gray-50 to-white">
+                        <img src={multiImg.src} alt={multiImg.alt} className="w-full h-auto rounded-xl object-contain" />
+                      </div>
+                    </div>
+
+                    {/* Grid de opciones – mismo orden que la foto (9 columnas = igual que la imagen) */}
+                    <div className="grid grid-cols-9 gap-1 md:gap-1.5">
+                      {mixedColorsOrdered.map((color) => {
+                        const isSelected = customization.colors.some(c => c.id === color.id)
+                        return (
+                          <button
+                            key={color.id}
+                            onClick={() => handleColorSelect(color)}
+                            className={`px-2 py-3 rounded-xl text-xs md:text-sm font-medium transition-all touch-manipulation text-center leading-snug ${
+                              isSelected
+                                ? 'bg-pink-500 text-white shadow-md border-2 border-pink-500 ring-2 ring-pink-300'
+                                : 'bg-white text-gray-700 border border-gray-200 hover:border-pink-300 hover:bg-pink-50 active:bg-pink-100'
+                            }`}
+                          >
+                            {isSelected && <span className="mr-1">✓</span>}
+                            {color.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {/* Botón Listo al final del contenido */}
+                    <button
+                      onClick={() => setIsMixedColorsModalOpen(false)}
+                      className="w-full py-3.5 rounded-xl text-base font-semibold bg-pink-500 text-white shadow-md hover:bg-pink-600 transition-all touch-manipulation active:scale-[0.98]"
+                    >
+                      ✓ Listo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ══ MODAL: Colores Lisos (full screen en móvil) ══ */}
+            {isSolidColorsModalOpen && (
+              <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center">
+                {/* Backdrop */}
+                <div
+                  className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={() => setIsSolidColorsModalOpen(false)}
+                />
+                {/* Panel */}
+                <div className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl md:mx-4 bg-white md:rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+                  {/* Header sticky */}
+                  <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 md:py-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg md:text-xl font-bold text-gray-800">Selecciona colores lisos</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Toca para seleccionar o deseleccionar</p>
+                    </div>
+                    <button
+                      onClick={() => setIsSolidColorsModalOpen(false)}
+                      className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      aria-label="Cerrar"
+                    >
+                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Scrollable content */}
+                  <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4">
+                    {/* Imagen de referencia */}
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                      <div className="p-2 md:p-3 bg-gradient-to-br from-gray-50 to-white">
+                        <img src={solidsImg.src} alt={solidsImg.alt} className="w-full h-auto rounded-xl object-contain" />
+                      </div>
+                    </div>
+
+                    {/* Grid de opciones – mismo orden que la foto (2 columnas = igual que la imagen) */}
+                    <div className="grid grid-cols-2 gap-1.5 md:gap-2">
+                      {solidColorsOrdered.map((color) => {
+                        const isSelected = customization.colors.some(c => c.id === color.id)
+                        return (
+                          <button
+                            key={color.id}
+                            onClick={() => handleColorSelect(color)}
+                            className={`px-2 py-3 rounded-xl text-xs md:text-sm font-medium transition-all touch-manipulation text-center leading-snug ${
+                              isSelected
+                                ? 'bg-pink-500 text-white shadow-md border-2 border-pink-500 ring-2 ring-pink-300'
+                                : 'bg-white text-gray-700 border border-gray-200 hover:border-pink-300 hover:bg-pink-50 active:bg-pink-100'
+                            }`}
+                          >
+                            {isSelected && <span className="mr-1">✓</span>}
+                            {color.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {/* Botón Listo al final del contenido */}
+                    <button
+                      onClick={() => setIsSolidColorsModalOpen(false)}
+                      className="w-full py-3.5 rounded-xl text-base font-semibold bg-pink-500 text-white shadow-md hover:bg-pink-600 transition-all touch-manipulation active:scale-[0.98]"
+                    >
+                      ✓ Listo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )
+      }
 
       case 3: {
         const isCombined = customization.designType?.id === 3
@@ -2120,7 +2353,20 @@ DETALLES DEL DISEÑO:
                         <p><strong>Bordado:</strong> {customization.embroideryType?.name || 'No seleccionado'}</p>
                       )
                     )}
-                    <p><strong>Color:</strong> {customization.color.label || 'No seleccionado'}</p>
+                    <div>
+                      <p className="mb-1.5"><strong>Color{customization.colors.length > 1 ? 'es' : ''}:</strong></p>
+                      {customization.colors.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {customization.colors.map(c => (
+                            <span key={c.id} className="inline-block px-2.5 py-1 bg-pink-100 text-pink-800 text-xs font-medium rounded-lg border border-pink-200">
+                              {c.label}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 text-sm">No seleccionado</p>
+                      )}
+                    </div>
                     <p><strong>Estilo:</strong> {customization.letterStyle.name || 'No seleccionado'}</p>
                     <p><strong>Color de Letra:</strong> {customization.letterColor.label || 'Verde'}</p>
                     <p><strong>Charms:</strong> {customization.charms.length > 0 ? customization.charms.map(c => c.label).join(', ') : 'Ninguno'}</p>
@@ -2150,7 +2396,7 @@ DETALLES DEL DISEÑO:
               `${customization.embroideryDesign1?.name || 'Collar personalizado'} + Collar personalizado` :
               customization.embroideryType?.name || (customization.designType?.id === 2 ? 'Sin bordado' : 'No seleccionado'),
             // 3. Color del paracord
-            color: customization.color.label || 'No seleccionado',
+            color: customization.colors.length > 0 ? customization.colors.map(c => c.label).join(', ') : 'No seleccionado',
             // 4. Letras y charms
             letterStyle: customization.letterStyle.name || 'Sin letras',
             letterStyleImage: customization.letterStyle.imageKey ? 
