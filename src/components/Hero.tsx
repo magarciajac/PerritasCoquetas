@@ -62,7 +62,7 @@ export default function Hero() {
           <div className="space-y-6">
             <div className="space-y-4">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-light text-gray-700">
-                Collares Personalizados para Perros,
+                Collares Personalizados para Perros y Gatos
               </h2>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-light text-orange-300">
                 Diseñados con Amor

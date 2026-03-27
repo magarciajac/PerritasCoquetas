@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PatitasCoquetas ✨ - Collares Personalizados para Perros",
   description: "Collares personalizados para perros, diseñados con amor. Crea un diseño único para tu mascota amada con colores personalizados y letras cuidadosamente seleccionadas.",
+  openGraph: {
+    title: "PatitasCoquetas ✨ - Collares Personalizados para Perros",
+    description: "Collares personalizados para perros, diseñados con amor. Crea un diseño único para tu mascota amada con colores personalizados y letras cuidadosamente seleccionadas.",
+    images: [{ url: "/images/material%20/Logo.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default function RootLayout({
