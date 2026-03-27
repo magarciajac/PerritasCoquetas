@@ -8,8 +8,8 @@ export default function PricingSection() {
     { size: 'XS', measurements: '17-29cm', price: '$255' },
     { size: 'S', measurements: '25-40cm', price: '$290' },
     { size: 'M', measurements: '35-46cm', price: '$320' },
-    { size: 'L', measurements: '40-55cm', price: '$500' },
-    { size: 'XL', measurements: '50-66cm', price: '$700' }
+    { size: 'L', measurements: '40-55cm', price: '$400' },
+    { size: 'XL', measurements: '50-66cm', price: '$500' }
   ]
 
   const handleWhatsAppContact = () => {
