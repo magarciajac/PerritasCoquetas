@@ -290,8 +290,8 @@ const sizes = [
   { id: 'xs', name: 'Extra Pequeño', description: 'Medida del cuello: 17-29cm', price: 255 },
   { id: 's', name: 'Pequeño', description: 'Medida del cuello: 25-40cm', price: 290 },
   { id: 'm', name: 'Mediano', description: 'Medida del cuello: 35-46cm', price: 320 },
-  { id: 'l', name: 'Grande', description: 'Medida del cuello: 40-55cm', price: 500 },
-  { id: 'xl', name: 'Extra Grande', description: 'Medida del cuello: 50-66cm', price: 700 }
+  { id: 'l', name: 'Grande', description: 'Medida del cuello: 40-55cm', price: 400 },
+  { id: 'xl', name: 'Extra Grande', description: 'Medida del cuello: 50-66cm', price: 500 }
 ]
 
 export default function CollarCustomizer() {
